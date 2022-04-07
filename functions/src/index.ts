@@ -1,7 +1,9 @@
-import * as functions from 'firebase-functions';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-function */
+import * as xml from 'xml';
 import * as admin from 'firebase-admin';
 import * as formidable from 'formidable';
-
+import * as functions from 'firebase-functions';
 
 admin.initializeApp();
 
@@ -307,6 +309,167 @@ exports.uploadImages = functions.https.onRequest(async (req, res) => {
     });
 
     // return res.status(400).send('Unexpected Error');
+});
+
+exports.getApp = functions.https.onRequest((req, res) => {
+    const app = [{
+        App: [
+            {
+                _attr: {
+                    logo: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Flogo.png?alt=media&token=4fc9ed08-3832-4727-a2aa-717cda834193',
+                    styleurl: '',
+                },
+            },
+            {
+                bottom_nav: [
+                    {
+                        menuItem: [
+                            {
+                                _attr: {
+                                    img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Flogo.png?alt=media&token=4fc9ed08-3832-4727-a2aa-717cda834193',
+                                    href: '',
+                                },
+                            },
+                            'UmuntuWam',
+                        ],
+                    },
+                    {
+                        menuItem: [
+                            {
+                                _attr: {
+                                    img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fchat_logo.png?alt=media&token=55adfc03-d2b8-4b65-bf26-707f4cd5cd16',
+                                    href: '',
+                                },
+                            },
+                            'Chats',
+                        ],
+                    },
+                    {
+                        menuItem: [
+                            {
+                                _attr: {
+                                    img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
+                                    href: '',
+                                },
+                            },
+                            'Profile',
+                        ],
+                    },
+                ],
+            },
+            {
+                Menu: [
+                    {
+                        menuItem: [
+                            {
+                                _attr: {
+                                    action: 'usage',
+                                },
+                            },
+                            'About',
+                        ],
+                    },
+                    {
+                        menuItem: [
+                            {
+                                _attr: {
+                                    action: 'share',
+                                },
+                            },
+                            'Share Moya',
+                        ],
+                    },
+                    {
+                        menuItem: [
+                            {
+                                _attr: {
+                                    action: 'rate',
+                                },
+                            },
+                            'Rate Moya',
+                        ],
+                    },
+                ],
+            },
+            {
+                share: {
+                    _attr: {
+                        action: 'send',
+                        title: 'Moya',
+                        text: 'Check out the Moya #datafree super-app! I use it for #datafree chat and many other services. Even better, it works when you have no airtime or data balance. Get it from https://moya.app/dl/',
+                        subject: 'Moya #datafree app',
+                    },
+                },
+            },
+        ],
+    }];
+
+    res.send(xml(app, true));
+});
+
+exports.getUsersXml = functions.https.onRequest(async (req, res) => {
+    const usersList: any = [];
+    await admin.firestore().collection('users').get()
+    .then((docs) =>{
+       if (!docs.empty) {
+            for (const doc of docs.docs) {
+                const item = {
+                    item: [
+                        {
+                            _attr: {
+                                style: '',
+                                href: '',
+                                layout: 'relative',
+                            },
+                        },
+                        {
+                            img: {
+                                _attr: {
+                                    url: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
+                                },
+                            },
+                        },
+                        {
+                            md: [
+                                {
+                                    _attr: {
+                                        style: '',
+                                    },
+                                },
+                                {
+                                    description: {
+                                        _cdata: doc.data().email,
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                };
+                usersList.push(item);
+            }
+            const doc = [{
+                doc: [
+                    {
+                        _attr: {
+                            title: 'biNu',
+                        },
+                    },
+                    {
+                        list: [
+                            ...usersList,
+                        ],
+                    },
+                ],
+            }];
+
+            res.send(xml(doc, true));
+       } else {
+            return res.status(400).send('No users found');
+       }
+   })
+   .catch((error) => {
+       return res.status(400).send(error);
+   });
 });
 
 // ============================================= Logos ============================================= //
