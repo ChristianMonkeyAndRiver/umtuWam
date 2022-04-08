@@ -78,12 +78,14 @@ exports.likeUser = functions.https.onRequest(async (req, res) => {
             });
         } else {
             await admin.firestore().collection('users').doc(userA).collection('chats').doc(docId2).set({
-                userB: userB,
-                userBName: data.userBName,
+                id: userB,
+                name: data.userBName,
+                imageUrl: data.userBName,
             });
             await admin.firestore().collection('users').doc(userB).collection('chats').doc(docId).set({
-                userA: userA,
-                userAName: data.userAName,
+                id: userA,
+                name: data.userAName,
+                imageUrl: data.userAName,
             });
             await admin.firestore().collection('likes').doc(docId).delete();
         }
@@ -100,6 +102,85 @@ exports.getUser = functions.https.onRequest(async (req, res) => {
     await admin.firestore().collection('users').doc(data.userId).get()
      .then((doc) =>{
         return res.status(200).send(doc.data());
+    })
+    .catch((error) => {
+        return res.status(400).send(error);
+    });
+});
+
+exports.getUserXML = functions.https.onRequest(async (req, res) => {
+    const data = req.body;
+
+    await admin.firestore().collection('users').doc(data.userId).get()
+     .then((document) =>{
+        if (!document.exists) return res.status(400).send('No user found');
+
+
+            const doc = [{
+                doc: [
+                    {
+                        _attr: {
+                            title: 'biNu',
+                        },
+                    },
+                    {
+                        img: {
+                            _attr: {
+                                url: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
+                            },
+                        },
+                    },
+                    {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: document.data()?.name,
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: document.data()?.age,
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: document.data()?.location,
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: document.data()?.bio,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            }];
+
+            res.send(xml(doc, true));
     })
     .catch((error) => {
         return res.status(400).send(error);
@@ -189,13 +270,106 @@ exports.getPropectiveDates = functions.https.onRequest(async (req, res) => {
     });
 });
 
+exports.getPropectiveDatesXML = functions.https.onRequest(async (req, res) => {
+    const data = req.body;
+
+    await admin.firestore().collection('preferences').doc(data.userId).get()
+    .then(async (doc) => {
+        if (!doc.exists) return res.status(400).send('No user found');
+
+        await admin.firestore().collection('users')
+            .where('gender', '==', doc.data()?.gender)
+            .where('age', '>=', doc.data()?.ageMin)
+            .where('age', '<=', doc.data()?.ageMax)
+            .where('location', '==', doc.data()?.location)
+            .limit(20)
+            .get()
+            .then((docs) => {
+                if (docs.empty) return res.status(400).send('No dates found');
+
+                const usersList: any = [];
+
+                for (const doc of docs.docs) {
+                    const item = {
+                        item: [
+                            {
+                                _attr: {
+                                    style: '',
+                                    href: '',
+                                    layout: 'relative',
+                                },
+                            },
+                            {
+                                img: {
+                                    _attr: {
+                                        url: doc.data().images.length > 0 ? doc.data().images[0] : 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
+                                    },
+                                },
+                            },
+                            {
+                                md: [
+                                    {
+                                        _attr: {
+                                            style: '',
+                                        },
+                                    },
+                                    {
+                                        description: {
+                                            _cdata: doc.data().name,
+                                        },
+                                    },
+                                    {
+                                        description: {
+                                            _cdata: doc.data().age,
+                                        },
+                                    },
+                                    {
+                                        description: {
+                                            _cdata: doc.data().location,
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                    };
+                    usersList.push(item);
+                }
+
+                const doc = [{
+                    doc: [
+                        {
+                            _attr: {
+                                title: 'biNu',
+                            },
+                        },
+                        {
+                            list: [
+                                ...usersList,
+                            ],
+                        },
+                    ],
+                }];
+
+                res.send(xml(doc, true));
+            })
+            .catch((error) => {
+                console.error('error:' + error);
+                return res.status(400).send(error);
+            });
+    })
+    .catch((error) => {
+        console.error('error:' + error);
+        return res.status(400).send(error);
+    });
+});
+
 exports.getChats = functions.https.onRequest(async (req, res) => {
     const data = req.body;
 
     await admin.firestore().collection('users').doc(data.userId).collection('chats')
     .get()
     .then((docs) => {
-        if (docs.empty) return;
+        if (docs.empty) return res.status(400).send('No user found');
 
         const docsArray = [];
         for (const doc of docs.docs) {
@@ -203,6 +377,75 @@ exports.getChats = functions.https.onRequest(async (req, res) => {
         }
 
         return res.status(200).send(docsArray);
+    })
+    .catch((error) => {
+        console.error('error:' + error);
+        return res.status(400).send(error);
+    });
+});
+
+exports.getChatsXML = functions.https.onRequest(async (req, res) => {
+    const data = req.body;
+
+    await admin.firestore().collection('users').doc(data.userId).collection('chats')
+    .get()
+    .then((docs) => {
+        if (docs.empty) return res.status(400).send('No user found');
+
+        const usersList: any = [];
+        for (const doc of docs.docs) {
+            const item = {
+                item: [
+                    {
+                        _attr: {
+                            style: '',
+                            href: '',
+                            layout: 'relative',
+                        },
+                    },
+                    {
+                        img: {
+                            _attr: {
+                                url: doc.data().imageUrl != '' ? doc.data().imageUrl : 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
+                            },
+                        },
+                    },
+                    {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: doc.data().name,
+                                },
+                            },
+
+                        ],
+                    },
+                ],
+            };
+            usersList.push(item);
+        }
+
+        const doc = [{
+            doc: [
+                {
+                    _attr: {
+                        title: 'biNu',
+                    },
+                },
+                {
+                    list: [
+                        ...usersList,
+                    ],
+                },
+            ],
+        }];
+
+        res.send(xml(doc, true));
     })
     .catch((error) => {
         console.error('error:' + error);
@@ -472,6 +715,136 @@ exports.getUsersXml = functions.https.onRequest(async (req, res) => {
    });
 });
 
+exports.getMembershipPageXML = functions.https.onRequest(async (req, res) => {
+    const doc = [{
+        doc: [
+            {
+                _attr: {
+                    title: 'UmuntuWam',
+                },
+            },
+            {
+                list: [
+                    {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: 'Membership',
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        hr: [],
+                    },
+                    {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: 'Chatting',
+                                },
+                            },
+                        ],
+                    },
+                   {
+                        a: [
+                            {
+                                _attr: {
+                                    href: '',
+                                },
+                            },
+                            'Click to pay R1 to chat for a day',
+                        ],
+                   },
+                   {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: 'Featured profile',
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        a: [
+                            {
+                                _attr: {
+                                    href: '',
+                                },
+                            },
+                            'Click to pay R1 to be boosted in searches for a day',
+                        ],
+                    },
+                    {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: 'See all photos',
+                                },
+                            },
+                        ],
+                    },
+                   {
+                        a: [
+                            {
+                                _attr: {
+                                    href: '',
+                                },
+                            },
+                            'Click to pay R1 to see all profile photos',
+                        ],
+                   },
+                   {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: 'Verified profile',
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        a: [
+                            {
+                                _attr: {
+                                    href: '',
+                                },
+                            },
+                            'Click to pay R1 to show a VERIFIED badge on your profile',
+                        ],
+                    },
+                ],
+            },
+        ],
+    }];
+
+    res.send(xml(doc, true));
+});
 // ============================================= Logos ============================================= //
 // umtuWam logo with background - https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2FUmtuWam%20Logo.jpeg?alt=media&token=f6389109-0137-4b7a-a452-4a23f137862a
 // umtuWam logo small with background - https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2FUmtuWam%20small%20logo.jpeg?alt=media&token=180b987f-7aad-4f41-aceb-260e9fd48aa2
