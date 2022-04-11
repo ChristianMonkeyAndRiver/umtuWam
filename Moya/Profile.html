@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>UmtuWam</title>
+    <link rel="stylesheet" href="./Profile.css" type="text/css">
+</head>
+
+<body>
+    <div>
+        <hr>
+        <h2>Your profile - make it complete!</h2>
+        <hr>
+    </div>
+    <form action="" method="">
+        <div>
+            <label>Name:</label>
+            <input type="text" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$">
+            <br>
+            <label>Age:</label>
+            <input type="text" id="age" name="age" pattern="[0-9]+">
+            <br>
+            <label>Location:</label>
+            <select name="location" id="location">
+                <option></option>
+                <option value="Bloemfontein">Bloemfontein</option>
+                <option value="Cape Town">Cape Town</option>
+                <option value="Durban">Durban</option>
+                <option value="Johannesburg">Johannesburg</option>
+                <option value="Kimberley">Kimberley</option>
+                <option value="Nelspruit">Nelspruit</option>
+                <option value="PE">PE</option>
+                <option value="Polokwane">Polokwane</option>
+                <option value="Pretoria">Pretoria</option>
+                <option value="Soweto">Soweto</option>
+            </select>
+            <br>
+            <label>About me:</label>
+            <input type="text" class="bio" maxlength="255">
+            <br>
+            <label>Looking for a:</label>
+            <input id="Ufemale" type="checkbox">
+            <label for="Ufemale">Woman</label>
+            <input id="Umale" type="checkbox">
+            <label for="Umale">Man</label>
+            <br>
+            <label>Ages:</label>
+            <input class="age" type="text" id="ageFrom" name="ageFrom" pattern="[0-9]+">
+            <label>to:</label>
+            <input class="age" type="text" id="ageTo" name="ageTo" pattern="[0-9]+">
+        </div>
+        <button type="button">Add your photos</button>
+        <button class="member" type="button">Membership (chat and more)</button>
+        <button type="submit">Save changes</button>
+    </form>
+</body>
+
+</html>
