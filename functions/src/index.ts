@@ -8,54 +8,203 @@ import * as functions from 'firebase-functions';
 admin.initializeApp();
 
 exports.signUp = functions.https.onRequest((req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-    const phoneNumber = req.body.phoneNumber;
+    const phoneNumber = '0748956221';
 
-    admin.auth().createUser({
-        email: email,
-        emailVerified: false,
+    const name = 'name';
+    const gender = 'gender';
+    const lookingFor = 'lookingFor';
+    const age = 'age';
+    const location = 'location';
+    const nameIndex = req.url.indexOf(name);
+    const genderIndex = req.url.indexOf(gender);
+    const lookingForIndex = req.url.indexOf(lookingFor);
+    const ageIndex = req.url.indexOf(age);
+    const locationIndex = req.url.indexOf(location);
+
+    const nameString = req.url.substring(nameIndex+name.length+1, genderIndex-1);
+
+    const genderString = req.url.substring(genderIndex+gender.length+1, lookingForIndex-1);
+
+    const lookingForString = req.url.substring(lookingForIndex+lookingFor.length+1, ageIndex-1);
+
+    const ageString = req.url.substring(ageIndex+age.length+1, locationIndex-1);
+
+    const locationString = req.url.substring(locationIndex+location.length+1);
+
+    const ageNumber = Number(ageString);
+
+    const ageMin = ageNumber - 5;
+    const ageMax = ageNumber + 5;
+
+    admin.firestore().collection('users').doc().set({
+        age: ageString,
+        name: nameString,
+        bio: '',
+        gender: genderString,
+        images: ['https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53'],
+        location: locationString,
+        lookingFor: lookingForString,
         phoneNumber: phoneNumber,
-        password: password,
-        disabled: false,
+    });
+
+    admin.firestore().collection('preferences').doc().set({
+        gender: lookingForString,
+        location: locationString,
+        ageMin: ageMin.toString(),
+        ageMax: ageMax.toString(),
+        phoneNumber: phoneNumber,
+    });
+
+    res.send('Done');
+    // const email = req.body.email;
+    // const password = req.body.password;
+    // const phoneNumber = req.body.phoneNumber;
+
+    // admin.auth().createUser({
+    //     email: email,
+    //     emailVerified: false,
+    //     phoneNumber: phoneNumber,
+    //     password: password,
+    //     disabled: false,
+    // })
+    // .then((userRecord) => {
+    //     console.log('Successfully created new user:', userRecord.uid);
+    //     return res.status(200).send(userRecord);
+    // })
+    // .catch((error) => {
+    //     console.log('Error creating new user:', error);
+    //     res.status(400).send(error);
+    // });
+});
+
+exports.getUser = functions.https.onRequest(async (req, res) => {
+    const phoneNumber = '0748956221';
+
+
+    await admin.firestore().collection('users').where('phoneNumber', '==', phoneNumber).get()
+    .then(async (docs) =>{
+        if (docs.empty) return res.status(400).send('No user found');
+
+        await admin.firestore().collection('users').doc(docs.docs[0].id).get()
+        .then((doc) => {
+            return res.send(doc.data());
+        });
     })
-    .then((userRecord) => {
-        console.log('Successfully created new user:', userRecord.uid);
-        return res.status(200).send(userRecord);
+    .catch(() => {
+        return res.status(400).send('Error');
+    });
+});
+
+exports.updateUser = functions.https.onRequest(async (req, res) => {
+    const phoneNumber = '0748956221';
+    const name = 'name';
+    const bio = 'bio';
+    const gender = 'gender';
+    const lookingFor = 'lookingFor';
+    const age = 'age';
+    const location = 'location';
+    const bioIndex = req.url.indexOf(bio);
+    const nameIndex = req.url.indexOf(name);
+    const genderIndex = req.url.indexOf(gender);
+    const lookingForIndex = req.url.indexOf(lookingFor);
+    const ageIndex = req.url.indexOf(age);
+    const locationIndex = req.url.indexOf(location);
+
+    const nameString = req.url.substring(nameIndex+name.length+1, bioIndex-1);
+
+    const bioString = req.url.substring(bioIndex+bio.length+1, genderIndex-1);
+
+    const genderString = req.url.substring(genderIndex+gender.length+1, lookingForIndex-1);
+
+    const lookingForString = req.url.substring(lookingForIndex+lookingFor.length+1, ageIndex-1);
+
+    const ageString = req.url.substring(ageIndex+age.length+1, locationIndex-1);
+
+    const locationString = req.url.substring(locationIndex+location.length+1);
+
+    await admin.firestore().collection('users').where('phoneNumber', '==', phoneNumber).get()
+    .then(async (docs) =>{
+        if (docs.empty) return res.status(400).send('No user found');
+
+        await admin.firestore().collection('users').doc(docs.docs[0].id).update({
+            age: ageString == '-1' ? docs.docs[0].data().age : ageString,
+            bio: bioString == '-1' ? docs.docs[0].data().bio : bioString,
+            name: nameString == '-1' ? docs.docs[0].data().name : nameString,
+            gender: genderString == '-1' ? docs.docs[0].data().gender : genderString,
+            location: locationString == '-1' ? docs.docs[0].data().location : locationString,
+            lookingFor: lookingForString == '-1' ? docs.docs[0].data().lookingFor : lookingForString,
+        });
+    })
+    .catch(() => {
+        return res.status(400).send('Error');
+    });
+
+    await admin.firestore().collection('preferences').where('phoneNumber', '==', phoneNumber).get()
+    .then(async (docs) =>{
+        if (docs.empty) return res.status(400).send('No user found');
+
+        await admin.firestore().collection('preferences').doc(docs.docs[0].id).update({
+            location: locationString == '-1' ? docs.docs[0].data().location : locationString,
+            gender: lookingForString == '-1' ? docs.docs[0].data().gender : lookingForString,
+        });
+       return res.status(200).send('User successfully updated');
     })
     .catch((error) => {
-        console.log('Error creating new user:', error);
-        res.status(400).send(error);
+        return res.status(400).send(error);
     });
 });
 
-exports.newUserSignUp = functions.auth.user().onCreate(async (user) => {
-     const userId = user.uid;
-    admin.firestore().collection('users').doc(userId).set({
-        age: 18,
-        name: '',
-        bio: '',
-        gender: '',
-        images: [],
-        location: '',
-        lookingFor: '',
-        email: user.email ?? '',
-        phoneNumber: user.phoneNumber ?? '',
-    });
+exports.getPreferences = functions.https.onRequest(async (req, res) => {
+    const phoneNumber = '0748956221';
 
-    admin.firestore().collection('preferences').doc(userId).set({
-        gender: '',
-        location: '',
-        ageMin: 18,
-        ageMax: 40,
+    await admin.firestore().collection('preferences').where('phoneNumber', '==', phoneNumber).get()
+    .then(async (docs) =>{
+        if (docs.empty) return res.status(400).send('No user found');
+
+        await admin.firestore().collection('preferences').doc(docs.docs[0].id).get()
+        .then((doc) => {
+            return res.send(doc.data());
+        });
+    })
+    .catch(() => {
+        return res.status(400).send('Error');
     });
 });
 
-exports.userDeleted = functions.auth.user().onDelete(async (user) => {
-    await admin.firestore().collection('users').doc(user.uid).delete();
-    await admin.firestore().collection('preferences').doc(user.uid).delete();
+exports.updatePreferences = functions.https.onRequest(async (req, res) =>{
+    const phoneNumber = '0748956221';
+    const ageMin = 'ageMin';
+    const ageMax = 'ageMax';
+    const gender = 'gender';
+    const location = 'location';
+    const ageMinIndex = req.url.indexOf(ageMin);
+    const ageMaxIndex = req.url.indexOf(ageMax);
+    const genderIndex = req.url.indexOf(gender);
+    const locationIndex = req.url.indexOf(location);
 
-    return;
+    const ageMinString = req.url.substring(ageMinIndex+ageMin.length+1, ageMaxIndex-1);
+
+    const ageMaxString = req.url.substring(ageMaxIndex+ageMax.length+1, genderIndex-1);
+
+    const genderString = req.url.substring(genderIndex+gender.length+1, locationIndex-1);
+
+    const locationString = req.url.substring(locationIndex+location.length+1);
+
+    await admin.firestore().collection('preferences').where('phoneNumber', '==', phoneNumber).get()
+    .then(async (docs) =>{
+        if (docs.empty) return res.status(400).send('No user found');
+
+        await admin.firestore().collection('preferences').doc(docs.docs[0].id).update({
+            ageMin: ageMinString == '-1' ? docs.docs[0].data().ageMax : ageMinString,
+            ageMax: ageMaxString == '-1' ? docs.docs[0].data().ageMax : ageMaxString,
+            gender: genderString == '-1' ? docs.docs[0].data().gender : genderString,
+            location: locationString == '-1' ? docs.docs[0].data().location : locationString,
+        });
+       return res.status(200).send('User successfully updated');
+    })
+    .catch((error) => {
+        return res.status(400).send(error);
+    });
 });
 
 exports.likeUser = functions.https.onRequest(async (req, res) => {
@@ -93,18 +242,6 @@ exports.likeUser = functions.https.onRequest(async (req, res) => {
     .catch((error) =>{
         console.error('error:' + error);
         return res.status(400).send();
-    });
-});
-
-exports.getUser = functions.https.onRequest(async (req, res) => {
-    const data = req.body;
-
-    await admin.firestore().collection('users').doc(data.userId).get()
-     .then((doc) =>{
-        return res.status(200).send(doc.data());
-    })
-    .catch((error) => {
-        return res.status(400).send(error);
     });
 });
 
@@ -181,54 +318,6 @@ exports.getUserXML = functions.https.onRequest(async (req, res) => {
             }];
 
             res.send(xml(doc, true));
-    })
-    .catch((error) => {
-        return res.status(400).send(error);
-    });
-});
-
-exports.updateUser = functions.https.onRequest(async (req, res) => {
-    const data = req.body;
-
-    await admin.firestore().collection('users').doc(data.userId).update({
-        age: data.age,
-        bio: data.bio,
-        name: data.name,
-        gender: data.gender,
-        location: data.location,
-        lookingFor: data.lookingFor,
-    })
-    .then(() =>{
-        res.status(200).send('User successfully updated');
-    })
-    .catch((error) => {
-        return res.status(400).send(error);
-    });
-});
-
-exports.getPreferences = functions.https.onRequest(async (req, res) => {
-    const data = req.body;
-
-    await admin.firestore().collection('preferences').doc(data.userId).get()
-    .then((doc) =>{
-        return res.status(200).send(doc.data());
-    })
-    .catch((error) => {
-        return res.status(400).send(error);
-    });
-});
-
-exports.updatePreferences = functions.https.onRequest(async (req, res) => {
-    const data = req.body;
-
-    await admin.firestore().collection('preferences').doc(data.userId).update({
-        ageMax: data.ageMax,
-        ageMin: data.ageMin,
-        gender: data.gender,
-        location: data.location,
-    })
-    .then(() =>{
-        res.status(200).send('Preferences successfully updated');
     })
     .catch((error) => {
         return res.status(400).send(error);
@@ -845,6 +934,7 @@ exports.getMembershipPageXML = functions.https.onRequest(async (req, res) => {
 
     res.send(xml(doc, true));
 });
+
 // ============================================= Logos ============================================= //
 // umtuWam logo with background - https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2FUmtuWam%20Logo.jpeg?alt=media&token=f6389109-0137-4b7a-a452-4a23f137862a
 // umtuWam logo small with background - https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2FUmtuWam%20small%20logo.jpeg?alt=media&token=180b987f-7aad-4f41-aceb-260e9fd48aa2
