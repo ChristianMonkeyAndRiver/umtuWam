@@ -1,13 +1,13 @@
 <App title="MoyaLaid" styleurl="" showfree="false">
     <drawer>
-        <menuItem img="http://192.168.8.134:5500/logo.png" href="">MoyaLaid</menuItem>
+        <menuItem img="http://192.168.8.134:5500/Moya/logo.png" href="">MoyaLaid</menuItem>
         <menuItem action="share">Share App</menuItem>
         <menuItem action="rate">Rate App</menuItem>
     </drawer>
     <bottom_nav>
-        <menuItem img="http://192.168.8.134:5500/logo.png" href="http://192.168.8.134:5500/Startup.xml" default="true">Startup</menuItem>
-        <menuItem img="http://192.168.8.134:5500/chat_logo.png">Chats</menuItem>
-        <menuItem img="http://192.168.8.134:5500/profile_logo.png" href="http://192.168.8.134:5500/Profile.xml">Profile</menuItem>
+        <menuItem img="http://192.168.8.134:5500/Moya/logo.png" href="http://192.168.8.134:5500/Moya/Startup.xml" default="true">Startup</menuItem>
+        <menuItem img="http://192.168.8.134:5500/Moya/chat_logo.png">Chats</menuItem>
+        <menuItem img="http://192.168.8.134:5500/Moya/profile_logo.png" href="http://192.168.8.134:5500/Moya/Profile.xml">Profile</menuItem>
         <!-- <menuItem href="https://us-central1-umtuwam.cloudfunctions.net/getUsersXml">test</menuItem> -->
         <!-- <menuItem href="https://us-central1-umtuwam.cloudfunctions.net/getChat">test</menuItem> -->
         
