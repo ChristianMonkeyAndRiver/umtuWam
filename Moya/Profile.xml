@@ -1,0 +1,4 @@
+<doc title="Profile">
+    <webview href="http://192.168.8.134:5500/Moya/Profile.html" proxymode="native">
+    </webview>
+</doc>

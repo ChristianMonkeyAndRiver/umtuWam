@@ -1,0 +1,21 @@
+<App title="MoyaLaid" styleurl="" showfree="false">
+    <drawer>
+        <menuItem img="http://192.168.8.134:5500/Moya/logo.png" href="">MoyaLaid</menuItem>
+        <menuItem action="share">Share App</menuItem>
+        <menuItem action="rate">Rate App</menuItem>
+    </drawer>
+    <bottom_nav>
+        <menuItem img="http://192.168.8.134:5500/Moya/logo.png" href="http://192.168.8.134:5500/Moya/Startup.xml" default="true">Startup</menuItem>
+        <menuItem img="http://192.168.8.134:5500/Moya/chat_logo.png">Chats</menuItem>
+        <menuItem img="http://192.168.8.134:5500/Moya/profile_logo.png" href="http://192.168.8.134:5500/Moya/Profile.xml">Profile</menuItem>
+        <!-- <menuItem href="https://us-central1-umtuwam.cloudfunctions.net/getUsersXml">test</menuItem> -->
+        <!-- <menuItem href="https://us-central1-umtuwam.cloudfunctions.net/getChat">test</menuItem> -->
+        
+    </bottom_nav>
+    <Menu>
+        <menuItem action="usage">About</menuItem>
+        <menuitem action="share">Share Moya</menuitem>
+        <menuitem action="rate">Rate Moya</menuitem>
+    </Menu>
+    <share action="send" title="Moya" text="Check out the Moya #datafree super-app! I use it for #datafree chat and many other services. Even better, it works when you have no airtime or data balance. Get it from https://moya.app/dl/" subject="Moya #datafree app"/>
+</App>

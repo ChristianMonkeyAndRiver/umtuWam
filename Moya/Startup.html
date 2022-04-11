@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>UmtuWam</title>
+    <link rel="stylesheet" href="./Startup.css" type="text/css">
+</head>
+
+<body>
+    <form action="" method="">
+        <div>
+            <img class="logo" src="./logo.png" alt="UmtuWam">
+            <h2 class="h">Lets start dating!</h2>
+            <br>
+            <label>I am a:</label>
+            <input id="Ifemale" type="radio" name="gender">
+            <label for="Ifemale">Woman</label>
+            <input id="Imale" type="radio" name="gender">
+            <label for="Imale">Man</label>
+            <br>
+            <label>Looking for a:</label>
+            <input id="Ufemale" type="checkbox">
+            <label for="Ufemale">Woman</label>
+            <input id="Umale" type="checkbox">
+            <label for="Umale">Man</label>
+            <br>
+            <label>My age:</label>
+            <input type="text" id="age" name="age" pattern="[0-9]+">
+            <br>
+            <label>My location:</label>
+            <select name="location" id="location">
+                <option value="" disabled selected>Select your location</option>
+                <option value="Eastern Cape">Eastern Cape</option>
+                <option value="Free State">Free State</option>
+                <option value="Gauteng">Gauteng</option>
+                <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                <option value="Limpopo">Limpopo</option>
+                <option value="Mpumalanga">Mpumalanga</option>
+                <option value="Northern Cape">Northern Cape</option>
+                <option value="North West">North West</option>
+                <option value="Western Cape">Western Cape</option>
+            </select>
+        </div>
+        <button type="submit">Start dating</button>
+    </form>
+</body>
+
+</html>
