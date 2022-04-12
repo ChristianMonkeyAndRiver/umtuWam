@@ -28,7 +28,7 @@
         <h2>Your profile - make it complete!</h2>
         <hr>
     </div>
-    <form action="" method="">
+    <form action="http://localhost:5001/umtuwam/us-central1/updateUser" method="get">
         <div>
             <label>Name:</label>
             <input type="text" name="name" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$" required>
@@ -52,18 +52,18 @@
             </select>
             <br>
             <label>About me:</label>
-            <input type="text" class="bio" maxlength="255">
+            <input type="text" class="bio" maxlength="255" name="bio">
             <br>
             <label>Looking for a:</label>
-            <input id="Ufemale" type="checkbox">
+            <input id="Ufemale" type="checkbox" name="lookingFor" value="Woman">
             <label for="Ufemale">Woman</label>
-            <input id="Umale" type="checkbox">
+            <input id="Umale" type="checkbox" name="lookingFor" value="Woman">
             <label for="Umale">Man</label>
             <br>
-            <label>Ages:</label>
+            <!-- <label>Ages:</label>
             <input class="age" type="text" id="ageFrom" name="ageFrom" pattern="[0-9]+" required>
             <label>to:</label>
-            <input class="age" type="text" id="ageTo" name="ageTo" pattern="[0-9]+" required>
+            <input class="age" type="text" id="ageTo" name="ageTo" pattern="[0-9]+" required> -->
         </div>
         <button type="button">Add your photos</button>
         <button class="member" type="button">Membership (chat and more)</button>
