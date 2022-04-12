@@ -8,6 +8,8 @@ import * as functions from 'firebase-functions';
 admin.initializeApp();
 
 exports.signUp = functions.https.onRequest((req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const phoneNumber = '0748956221';
 
     const name = 'name';
@@ -56,28 +58,11 @@ exports.signUp = functions.https.onRequest((req, res) => {
     });
 
     res.send('Done');
-    // const email = req.body.email;
-    // const password = req.body.password;
-    // const phoneNumber = req.body.phoneNumber;
-
-    // admin.auth().createUser({
-    //     email: email,
-    //     emailVerified: false,
-    //     phoneNumber: phoneNumber,
-    //     password: password,
-    //     disabled: false,
-    // })
-    // .then((userRecord) => {
-    //     console.log('Successfully created new user:', userRecord.uid);
-    //     return res.status(200).send(userRecord);
-    // })
-    // .catch((error) => {
-    //     console.log('Error creating new user:', error);
-    //     res.status(400).send(error);
-    // });
 });
 
 exports.getUser = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const phoneNumber = '0748956221';
 
 
@@ -96,31 +81,29 @@ exports.getUser = functions.https.onRequest(async (req, res) => {
 });
 
 exports.updateUser = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const phoneNumber = '0748956221';
     const name = 'name';
     const bio = 'bio';
-    const gender = 'gender';
     const lookingFor = 'lookingFor';
     const age = 'age';
     const location = 'location';
-    const bioIndex = req.url.indexOf(bio);
     const nameIndex = req.url.indexOf(name);
-    const genderIndex = req.url.indexOf(gender);
-    const lookingForIndex = req.url.indexOf(lookingFor);
     const ageIndex = req.url.indexOf(age);
     const locationIndex = req.url.indexOf(location);
+    const bioIndex = req.url.indexOf(bio);
+    const lookingForIndex = req.url.indexOf(lookingFor);
 
-    const nameString = req.url.substring(nameIndex+name.length+1, bioIndex-1);
-
-    const bioString = req.url.substring(bioIndex+bio.length+1, genderIndex-1);
-
-    const genderString = req.url.substring(genderIndex+gender.length+1, lookingForIndex-1);
-
-    const lookingForString = req.url.substring(lookingForIndex+lookingFor.length+1, ageIndex-1);
+    const nameString = req.url.substring(nameIndex+name.length+1, ageIndex-1);
 
     const ageString = req.url.substring(ageIndex+age.length+1, locationIndex-1);
 
-    const locationString = req.url.substring(locationIndex+location.length+1);
+    const locationString = req.url.substring(locationIndex+location.length+1, bioIndex-1);
+
+    const bioString = req.url.substring(bioIndex+bio.length+1, lookingForIndex-1);
+
+    const lookingForString = req.url.substring(lookingForIndex+lookingFor.length+1);
 
     await admin.firestore().collection('users').where('phoneNumber', '==', phoneNumber).get()
     .then(async (docs) =>{
@@ -130,7 +113,6 @@ exports.updateUser = functions.https.onRequest(async (req, res) => {
             age: ageString == '-1' ? docs.docs[0].data().age : ageString,
             bio: bioString == '-1' ? docs.docs[0].data().bio : bioString,
             name: nameString == '-1' ? docs.docs[0].data().name : nameString,
-            gender: genderString == '-1' ? docs.docs[0].data().gender : genderString,
             location: locationString == '-1' ? docs.docs[0].data().location : locationString,
             lookingFor: lookingForString == '-1' ? docs.docs[0].data().lookingFor : lookingForString,
         });
@@ -155,6 +137,8 @@ exports.updateUser = functions.https.onRequest(async (req, res) => {
 });
 
 exports.getPreferences = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const phoneNumber = '0748956221';
 
     await admin.firestore().collection('preferences').where('phoneNumber', '==', phoneNumber).get()
@@ -172,6 +156,8 @@ exports.getPreferences = functions.https.onRequest(async (req, res) => {
 });
 
 exports.updatePreferences = functions.https.onRequest(async (req, res) =>{
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const phoneNumber = '0748956221';
     const ageMin = 'ageMin';
     const ageMax = 'ageMax';
@@ -207,7 +193,103 @@ exports.updatePreferences = functions.https.onRequest(async (req, res) =>{
     });
 });
 
+exports.getPropectiveDatesXML = functions.https.onRequest(async (req, res) => {
+    const jsonString = req.headers['x-binu'] ?? '';
+    const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
+
+    await admin.firestore().collection('preferences').where('phoneNumber', '==', binu.did).get()
+    .then(async (docs) => {
+        if (docs.empty) return res.status(400).send('No user found');
+
+        await admin.firestore().collection('users')
+            .where('gender', '==', docs.docs[0].data()?.gender)
+            .where('age', '>=', docs.docs[0].data()?.ageMin)
+            .where('age', '<=', docs.docs[0].data()?.ageMax)
+            .where('location', '==', docs.docs[0].data()?.location)
+            .limit(20)
+            .get()
+            .then((docs) => {
+                if (docs.empty) return res.status(400).send('No dates found');
+
+                const usersList: any = [];
+
+                for (const doc of docs.docs) {
+                    const item = {
+                        item: [
+                            {
+                                _attr: {
+                                    style: '',
+                                    href: `http://localhost:5001/umtuwam/us-central1/getUserProfileXML?uid=${doc.id}`,
+                                    layout: 'relative',
+                                },
+                            },
+                            {
+                                img: {
+                                    _attr: {
+                                        url: doc.data().images.length > 0 ? doc.data().images[0] : 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
+                                    },
+                                },
+                            },
+                            {
+                                md: [
+                                    {
+                                        _attr: {
+                                            style: '',
+                                        },
+                                    },
+                                    {
+                                        description: {
+                                            _cdata: doc.data().name,
+                                        },
+                                    },
+                                    {
+                                        description: {
+                                            _cdata: doc.data().age,
+                                        },
+                                    },
+                                    {
+                                        description: {
+                                            _cdata: doc.data().location,
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                    };
+                    usersList.push(item);
+                }
+
+                const doc = [{
+                    doc: [
+                        {
+                            _attr: {
+                                title: 'biNu',
+                            },
+                        },
+                        {
+                            list: [
+                                ...usersList,
+                            ],
+                        },
+                    ],
+                }];
+
+                res.send(xml(doc, true));
+            })
+            .catch((error) => {
+                console.error('error:' + error);
+                return res.status(400).send(error);
+            });
+    })
+    .catch((error) => {
+        console.error('error:' + error);
+        return res.status(400).send(error);
+    });
+});
+
 exports.likeUser = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const data = req.body;
 
     const userA = data.userA;
@@ -246,6 +328,8 @@ exports.likeUser = functions.https.onRequest(async (req, res) => {
 });
 
 exports.getUserXML = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const data = req.body;
 
     await admin.firestore().collection('users').doc(data.userId).get()
@@ -324,7 +408,90 @@ exports.getUserXML = functions.https.onRequest(async (req, res) => {
     });
 });
 
+exports.getUserProfileXML = functions.https.onRequest(async (req, res) => {
+    const uid = 'uid';
+    const uidIndex = req.url.indexOf(uid);
+    const uidString = req.url.substring(uidIndex+uid.length+1);
+
+
+    await admin.firestore().collection('users').doc(uidString).get()
+     .then((docs) =>{
+        if (!docs.exists) return res.status(400).send('No user found');
+
+            const doc = [{
+                doc: [
+                    {
+                        _attr: {
+                            title: 'biNu',
+                        },
+                    },
+                    {
+                        img: {
+                            _attr: {
+                                url: docs.data()?.images.length > 0 ? docs.data()?.images[0] : 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
+                            },
+                        },
+                    },
+                    {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: docs.data()?.name,
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: docs.data()?.age,
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: docs.data()?.location,
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: docs.data()?.bio,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            }];
+
+            res.send(xml(doc, true));
+    })
+    .catch((error) => {
+        return res.status(400).send(error);
+    });
+});
+
 exports.getPropectiveDates = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const data = req.body;
 
     await admin.firestore().collection('preferences').doc(data.userId).get()
@@ -359,100 +526,9 @@ exports.getPropectiveDates = functions.https.onRequest(async (req, res) => {
     });
 });
 
-exports.getPropectiveDatesXML = functions.https.onRequest(async (req, res) => {
-    const data = req.body;
-
-    await admin.firestore().collection('preferences').doc(data.userId).get()
-    .then(async (doc) => {
-        if (!doc.exists) return res.status(400).send('No user found');
-
-        await admin.firestore().collection('users')
-            .where('gender', '==', doc.data()?.gender)
-            .where('age', '>=', doc.data()?.ageMin)
-            .where('age', '<=', doc.data()?.ageMax)
-            .where('location', '==', doc.data()?.location)
-            .limit(20)
-            .get()
-            .then((docs) => {
-                if (docs.empty) return res.status(400).send('No dates found');
-
-                const usersList: any = [];
-
-                for (const doc of docs.docs) {
-                    const item = {
-                        item: [
-                            {
-                                _attr: {
-                                    style: '',
-                                    href: '',
-                                    layout: 'relative',
-                                },
-                            },
-                            {
-                                img: {
-                                    _attr: {
-                                        url: doc.data().images.length > 0 ? doc.data().images[0] : 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
-                                    },
-                                },
-                            },
-                            {
-                                md: [
-                                    {
-                                        _attr: {
-                                            style: '',
-                                        },
-                                    },
-                                    {
-                                        description: {
-                                            _cdata: doc.data().name,
-                                        },
-                                    },
-                                    {
-                                        description: {
-                                            _cdata: doc.data().age,
-                                        },
-                                    },
-                                    {
-                                        description: {
-                                            _cdata: doc.data().location,
-                                        },
-                                    },
-                                ],
-                            },
-                        ],
-                    };
-                    usersList.push(item);
-                }
-
-                const doc = [{
-                    doc: [
-                        {
-                            _attr: {
-                                title: 'biNu',
-                            },
-                        },
-                        {
-                            list: [
-                                ...usersList,
-                            ],
-                        },
-                    ],
-                }];
-
-                res.send(xml(doc, true));
-            })
-            .catch((error) => {
-                console.error('error:' + error);
-                return res.status(400).send(error);
-            });
-    })
-    .catch((error) => {
-        console.error('error:' + error);
-        return res.status(400).send(error);
-    });
-});
-
 exports.getChats = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const data = req.body;
 
     await admin.firestore().collection('users').doc(data.userId).collection('chats')
@@ -474,6 +550,8 @@ exports.getChats = functions.https.onRequest(async (req, res) => {
 });
 
 exports.getChatsXML = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const data = req.body;
 
     await admin.firestore().collection('users').doc(data.userId).collection('chats')
@@ -543,6 +621,8 @@ exports.getChatsXML = functions.https.onRequest(async (req, res) => {
 });
 
 exports.getChat = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const data = req.body;
 
     const chatId = data.userId.concat('_').concat(data.userB);
@@ -568,6 +648,8 @@ exports.getChat = functions.https.onRequest(async (req, res) => {
 });
 
 exports.sendMessage = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const data = req.body;
 
     const chatId = data.senderId.concat('_').concat(data.recipientId);
@@ -645,10 +727,10 @@ exports.uploadImages = functions.https.onRequest(async (req, res) => {
 
 exports.getApp = functions.https.onRequest((req, res) => {
     const app = [{
-        App: [
+        app: [
             {
                 _attr: {
-                    logo: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Flogo.png?alt=media&token=4fc9ed08-3832-4727-a2aa-717cda834193',
+                    // logo: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Flogo.png?alt=media&token=4fc9ed08-3832-4727-a2aa-717cda834193',
                     styleurl: '',
                 },
             },
@@ -658,7 +740,7 @@ exports.getApp = functions.https.onRequest((req, res) => {
                         menuItem: [
                             {
                                 _attr: {
-                                    img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Flogo.png?alt=media&token=4fc9ed08-3832-4727-a2aa-717cda834193',
+                                    // img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Flogo.png?alt=media&token=4fc9ed08-3832-4727-a2aa-717cda834193',
                                     href: '',
                                 },
                             },
@@ -669,7 +751,7 @@ exports.getApp = functions.https.onRequest((req, res) => {
                         menuItem: [
                             {
                                 _attr: {
-                                    img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fchat_logo.png?alt=media&token=55adfc03-d2b8-4b65-bf26-707f4cd5cd16',
+                                    // img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fchat_logo.png?alt=media&token=55adfc03-d2b8-4b65-bf26-707f4cd5cd16',
                                     href: '',
                                 },
                             },
@@ -680,7 +762,7 @@ exports.getApp = functions.https.onRequest((req, res) => {
                         menuItem: [
                             {
                                 _attr: {
-                                    img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
+                                    // img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
                                     href: '',
                                 },
                             },
@@ -690,7 +772,7 @@ exports.getApp = functions.https.onRequest((req, res) => {
                 ],
             },
             {
-                Menu: [
+                menu: [
                     {
                         menuItem: [
                             {
@@ -740,6 +822,8 @@ exports.getApp = functions.https.onRequest((req, res) => {
 });
 
 exports.getUsersXml = functions.https.onRequest(async (req, res) => {
+    // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const usersList: any = [];
     await admin.firestore().collection('users').get()
     .then((docs) =>{
@@ -805,6 +889,8 @@ exports.getUsersXml = functions.https.onRequest(async (req, res) => {
 });
 
 exports.getMembershipPageXML = functions.https.onRequest(async (req, res) => {
+        // const jsonString = req.headers['x-binu'] ?? '';
+    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
     const doc = [{
         doc: [
             {
@@ -934,6 +1020,244 @@ exports.getMembershipPageXML = functions.https.onRequest(async (req, res) => {
 
     res.send(xml(doc, true));
 });
+
+exports.addTestUsers = functions.https.onRequest(async (req, res) => {
+    for (const user of userTestData) {
+        const ageNumber = Number(user.age);
+
+        const ageMin = ageNumber - 5;
+        const ageMax = ageNumber + 5;
+
+        try {
+            await admin.firestore().collection('users').doc().set({
+                age: user.age,
+                name: user.name,
+                bio: user.bio,
+                gender: user.gender,
+                images: user.images,
+                location: user.location,
+                lookingFor: user.lookingFor,
+                phoneNumber: user.phoneNumber,
+            });
+
+            await admin.firestore().collection('preferences').doc().set({
+                gender: user.lookingFor,
+                location: user.location,
+                ageMin: ageMin.toString(),
+                ageMax: ageMax.toString(),
+                phoneNumber: user.phoneNumber,
+            });
+        } catch (e) {
+            res.status(404).send(e);
+        }
+    }
+
+    res.send('Done');
+});
+
+const userTestData = [
+    {
+        age: '20',
+        name: 'John Doe',
+        bio: 'John Doe Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'female',
+        phoneNumber: '0789956621',
+    },
+    {
+        age: '23',
+        name: 'Peter Doe',
+        bio: 'Peter Doe Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'female',
+        phoneNumber: '0789956622',
+    },
+    {
+        age: '26',
+        name: 'Mark Doe',
+        bio: 'Mark Doe Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/photo-1504593811423-6dd665756598?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Cape Town',
+        lookingFor: 'female',
+        phoneNumber: '0789956623',
+    },
+    {
+        age: '29',
+        name: 'Craig Doe',
+        bio: 'Craig Doe Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/photo-1500048993953-d23a436266cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=869&q=80'],
+        location: 'Cape Town',
+        lookingFor: 'female',
+        phoneNumber: '0789956624',
+    },
+    {
+        age: '32',
+        name: 'Ronny Doe',
+        bio: 'Ronny Doe Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/photo-1496302662116-35cc4f36df92?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'female',
+        phoneNumber: '0789956625',
+    },
+    {
+        age: '35',
+        name: 'James Doe',
+        bio: 'James Doe Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'female',
+        phoneNumber: '0789956626',
+    },
+    {
+        age: '38',
+        name: 'Anthony Doe',
+        bio: 'Anthony Doe Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/photo-1557862921-37829c790f19?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=871&q=80'],
+        location: 'Cape Town',
+        lookingFor: 'female',
+        phoneNumber: '0789956627',
+    },
+    {
+        age: '41',
+        name: 'Hamilton Doe',
+        bio: 'Hamilton Doe Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Cape Town',
+        lookingFor: 'female',
+        phoneNumber: '0789956628',
+    },
+    {
+        age: '18',
+        name: 'Timmy Doe',
+        bio: 'Timmy Doe Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=876&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'female',
+        phoneNumber: '0789956629',
+    },
+    {
+        age: '21',
+        name: 'Jacob Doe',
+        bio: 'Jacob Doe Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/photo-1523910088385-d313124c68aa?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'female',
+        phoneNumber: '0789956620',
+    },
+    // ===============================================
+    {
+        age: '20',
+        name: 'Susan Taylor',
+        bio: 'John Taylor Test Bio',
+        gender: 'male',
+        images: ['https://images.unsplash.com/photo-1525875975471-999f65706a10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'male',
+        phoneNumber: '0849956621',
+    },
+    {
+        age: '23',
+        name: 'Abby Taylor',
+        bio: 'Abby Taylor Test Bio',
+        gender: 'female',
+        images: ['https://images.unsplash.com/photo-1588701177361-c42359b29f68?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'male',
+        phoneNumber: '0849956622',
+    },
+    {
+        age: '26',
+        name: 'Sarah Taylor',
+        bio: 'Sarah Taylor Test Bio',
+        gender: 'female',
+        images: ['https://images.unsplash.com/photo-1615473967657-9dc21773daa3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Cape Town',
+        lookingFor: 'male',
+        phoneNumber: '0849956623',
+    },
+    {
+        age: '29',
+        name: 'Craig Taylor',
+        bio: 'Craig Taylor Test Bio',
+        gender: 'female',
+        images: ['https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Cape Town',
+        lookingFor: 'male',
+        phoneNumber: '0849956624',
+    },
+    {
+        age: '32',
+        name: 'Barbra Taylor',
+        bio: 'Ronny Taylor Test Bio',
+        gender: 'female',
+        images: ['https://images.unsplash.com/photo-1648737963503-1a26da876aca?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'male',
+        phoneNumber: '0849956625',
+    },
+    {
+        age: '35',
+        name: 'Tare Taylor',
+        bio: 'James Taylor Test Bio',
+        gender: 'female',
+        images: ['https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=876&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'male',
+        phoneNumber: '0849956626',
+    },
+    {
+        age: '38',
+        name: 'Shannon Taylor',
+        bio: 'Anthony Taylor Test Bio',
+        gender: 'female',
+        images: ['https://images.unsplash.com/photo-1593104547489-5cfb3839a3b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=853&q=80'],
+        location: 'Cape Town',
+        lookingFor: 'male',
+        phoneNumber: '0849956627',
+    },
+    {
+        age: '41',
+        name: 'Caitlyn Taylor',
+        bio: 'Caitlyn Taylor Test Bio',
+        gender: 'female',
+        images: ['https://images.unsplash.com/photo-1648737963059-59ec8e2d50c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Cape Town',
+        lookingFor: 'male',
+        phoneNumber: '0849956628',
+    },
+    {
+        age: '18',
+        name: 'Chrystal Taylor',
+        bio: 'Chrystal Taylor Test Bio',
+        gender: 'female',
+        images: ['https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'male',
+        phoneNumber: '0849956629',
+    },
+    {
+        age: '21',
+        name: 'Silver Taylor',
+        bio: 'Silver Taylor Test Bio',
+        gender: 'female',
+        images: ['https://images.unsplash.com/photo-1648737965955-735637020c7a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=871&q=80'],
+        location: 'Johannesburg',
+        lookingFor: 'male',
+        phoneNumber: '0849956620',
+    },
+];
 
 // ============================================= Logos ============================================= //
 // umtuWam logo with background - https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2FUmtuWam%20Logo.jpeg?alt=media&token=f6389109-0137-4b7a-a452-4a23f137862a
