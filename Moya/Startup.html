@@ -5,31 +5,49 @@
     <meta charset="UTF-8">
     <title>UmtuWam</title>
     <link rel="stylesheet" href="./Startup.css" type="text/css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 </head>
 
 <body>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#checkBtn').click(function () {
+                checked = $("input[type=checkbox]:checked").length;
+
+                if (!checked) {
+                    alert("You must check at least one checkbox.");
+                    return false;
+                }
+
+            });
+        });
+
+    </script>
     <form action="" method="">
         <div>
             <img class="logo" src="./logo.png" alt="UmtuWam">
             <h2 class="h">Lets start dating!</h2>
             <br>
+            <label>My name is:</label>
+            <input type="text" id="name" name="name" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$" required>
+            <br>
             <label>I am a:</label>
-            <input id="Ifemale" type="radio" name="gender">
+            <input id="Ifemale" type="radio" name="gender" required>
             <label for="Ifemale">Woman</label>
             <input id="Imale" type="radio" name="gender">
             <label for="Imale">Man</label>
             <br>
             <label>Looking for a:</label>
-            <input id="Ufemale" type="checkbox">
+            <input id="Ufemale" type="checkbox" name="gen" >
             <label for="Ufemale">Woman</label>
-            <input id="Umale" type="checkbox">
+            <input id="Umale" type="checkbox" name="gen" >
             <label for="Umale">Man</label>
             <br>
             <label>My age:</label>
-            <input type="text" id="age" name="age" pattern="[0-9]+">
+            <input type="text" id="age" name="age" pattern="[0-9]+" required>
             <br>
             <label>My location:</label>
-            <select name="location" id="location">
+            <select name="location" id="location" required>
                 <option value="" disabled selected>Select your location</option>
                 <option value="Eastern Cape">Eastern Cape</option>
                 <option value="Free State">Free State</option>
@@ -42,7 +60,7 @@
                 <option value="Western Cape">Western Cape</option>
             </select>
         </div>
-        <button type="submit">Start dating</button>
+        <button type="submit" id="checkBtn">Start dating</button>
     </form>
 </body>
 
