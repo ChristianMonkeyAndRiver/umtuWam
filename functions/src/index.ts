@@ -8,9 +8,9 @@ import * as functions from 'firebase-functions';
 admin.initializeApp();
 
 exports.signUp = functions.https.onRequest((req, res) => {
-    // const jsonString = req.headers['x-binu'] ?? '';
-    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-    const phoneNumber = '0748956221';
+    const jsonString = req.headers['x-binu'] ?? '';
+    const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
+    const phoneNumber = binu.did;
 
     const name = 'name';
     const gender = 'gender';
@@ -254,6 +254,17 @@ exports.getPropectiveDatesXML = functions.https.onRequest(async (req, res) => {
                                     },
                                 ],
                             },
+                            {
+                                item: [
+                                    {
+                                        _attr: {
+                                            style: '',
+                                            href: `http://localhost:5001/umtuwam/us-central1/likeUser?uid=${doc.id}`,
+                                            layout: 'relative',
+                                        },
+                                    },
+                                ],
+                            },
                         ],
                     };
                     usersList.push(item);
@@ -288,15 +299,26 @@ exports.getPropectiveDatesXML = functions.https.onRequest(async (req, res) => {
 });
 
 exports.likeUser = functions.https.onRequest(async (req, res) => {
-    // const jsonString = req.headers['x-binu'] ?? '';
-    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-    const data = req.body;
+    const jsonString = req.headers['x-binu'] ?? '';
+    const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
 
-    const userA = data.userA;
-    const userB = data.userB;
+    const mainUserDoc = await admin.firestore().collection('users').where('phoneNumber', '==', binu.did).get();
+    if (mainUserDoc.empty) res.status(400).send('No user found');
+
+    const uid = 'uid';
+    const uidIndex = req.url.indexOf(uid);
+    let uidString = req.url.substring(uidIndex+uid.length+1);
+    uidString = uidString.replace('%20', ' ');
+
+    const userA = mainUserDoc.docs[0].id;
+    const userB = uidString;
+
+    const userBdoc = await admin.firestore().collection('users').doc(userB).get();
 
     const docId = userB.concat('_').concat(userA);
+    console.log(docId);
     const docId2 = userA.concat('_').concat(userB);
+    console.log(docId2);
 
     await admin.firestore().collection('likes').doc(docId).get()
     .then(async (doc) => {
@@ -304,27 +326,27 @@ exports.likeUser = functions.https.onRequest(async (req, res) => {
             await admin.firestore().collection('likes').doc(docId2).set({
                 userA: userA,
                 userB: userB,
-                userAName: data.userAName,
-                userBName: data.userBName,
             });
         } else {
             await admin.firestore().collection('users').doc(userA).collection('chats').doc(docId2).set({
                 id: userB,
-                name: data.userBName,
-                imageUrl: data.userBName,
+                name: userBdoc.data()?.name,
+                imageUrl: userBdoc.data()?.images.length > 0 ? userBdoc.data()?.images[0] : 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
             });
             await admin.firestore().collection('users').doc(userB).collection('chats').doc(docId).set({
                 id: userA,
-                name: data.userAName,
-                imageUrl: data.userAName,
+                name: mainUserDoc.docs[0].data().name,
+                imageUrl: mainUserDoc.docs[0].data().images.length > 0 ? mainUserDoc.docs[0].data().images[0] : 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
             });
             await admin.firestore().collection('likes').doc(docId).delete();
         }
     })
     .catch((error) =>{
         console.error('error:' + error);
-        return res.status(400).send();
+        res.status(400).send();
     });
+
+    res.status(200).send('Done');
 });
 
 exports.getUserXML = functions.https.onRequest(async (req, res) => {
@@ -527,11 +549,13 @@ exports.getPropectiveDates = functions.https.onRequest(async (req, res) => {
 });
 
 exports.getChats = functions.https.onRequest(async (req, res) => {
-    // const jsonString = req.headers['x-binu'] ?? '';
-    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-    const data = req.body;
+    const jsonString = req.headers['x-binu'] ?? '';
+    const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
 
-    await admin.firestore().collection('users').doc(data.userId).collection('chats')
+    const mainUserDoc = await admin.firestore().collection('users').where('phoneNumber', '==', binu.did).get();
+    if (mainUserDoc.empty) res.status(400).send('No user found');
+
+    await admin.firestore().collection('users').doc(mainUserDoc.docs[0].id).collection('chats')
     .get()
     .then((docs) => {
         if (docs.empty) return res.status(400).send('No user found');
@@ -550,11 +574,13 @@ exports.getChats = functions.https.onRequest(async (req, res) => {
 });
 
 exports.getChatsXML = functions.https.onRequest(async (req, res) => {
-    // const jsonString = req.headers['x-binu'] ?? '';
-    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-    const data = req.body;
+    const jsonString = req.headers['x-binu'] ?? '';
+    const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
 
-    await admin.firestore().collection('users').doc(data.userId).collection('chats')
+    const mainUserDoc = await admin.firestore().collection('users').where('phoneNumber', '==', binu.did).get();
+    if (mainUserDoc.empty) res.status(400).send('No user found');
+
+    await admin.firestore().collection('users').doc(mainUserDoc.docs[0].id).collection('chats')
     .get()
     .then((docs) => {
         if (docs.empty) return res.status(400).send('No user found');
@@ -566,7 +592,7 @@ exports.getChatsXML = functions.https.onRequest(async (req, res) => {
                     {
                         _attr: {
                             style: '',
-                            href: '',
+                            href: `http://localhost:5001/umtuwam/us-central1/getChat?uid=${doc.data().id}`,
                             layout: 'relative',
                         },
                     },
@@ -621,13 +647,20 @@ exports.getChatsXML = functions.https.onRequest(async (req, res) => {
 });
 
 exports.getChat = functions.https.onRequest(async (req, res) => {
-    // const jsonString = req.headers['x-binu'] ?? '';
-    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-    const data = req.body;
+    const jsonString = req.headers['x-binu'] ?? '';
+    const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
 
-    const chatId = data.userId.concat('_').concat(data.userB);
+    const mainUserDoc = await admin.firestore().collection('users').where('phoneNumber', '==', binu.did).get();
+    if (mainUserDoc.empty) res.status(400).send('No user found');
 
-    await admin.firestore().collection('users').doc(data.userId).collection('chats').doc(chatId).collection('messages')
+    const uid = 'uid';
+    const uidIndex = req.url.indexOf(uid);
+    let uidString = req.url.substring(uidIndex+uid.length+1);
+    uidString = uidString.replace('%20', ' ');
+
+    const chatId = mainUserDoc.docs[0].id.concat('_').concat(uidString);
+
+    await admin.firestore().collection('users').doc(mainUserDoc.docs[0].id).collection('chats').doc(chatId).collection('messages')
     .orderBy('timestamp')
     .limit(20)
     .get()
@@ -648,34 +681,46 @@ exports.getChat = functions.https.onRequest(async (req, res) => {
 });
 
 exports.sendMessage = functions.https.onRequest(async (req, res) => {
-    // const jsonString = req.headers['x-binu'] ?? '';
-    // const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-    const data = req.body;
+    const jsonString = req.headers['x-binu'] ?? '';
+    const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
 
-    const chatId = data.senderId.concat('_').concat(data.recipientId);
+    const mainUserDoc = await admin.firestore().collection('users').where('phoneNumber', '==', binu.did).get();
+    if (mainUserDoc.empty) res.status(400).send('No user found');
+
+    const uid = 'uid';
+    const content = 'content';
+    const uidIndex = req.url.indexOf(uid);
+    const contentIndex = req.url.indexOf(content);
+    let uidString = req.url.substring(uidIndex+uid.length+1, contentIndex-1);
+    let contentString = req.url.substring(contentIndex+content.length+1);
+    contentString = contentString.split('%20').join(' ');
+    uidString = uidString.replace('%20', ' ');
+
+
+    const chatId = mainUserDoc.docs[0].id.concat('_').concat(uidString);
     const timestamp = admin.firestore.Timestamp.now();
 
-    await admin.firestore().collection('users').doc(data.senderId).collection('chats').doc(chatId).collection('messages')
+    await admin.firestore().collection('users').doc(mainUserDoc.docs[0].id).collection('chats').doc(chatId).collection('messages')
     .doc()
     .set({
-        idFrom: data.senderId,
-        idTo: data.recipientId,
+        idFrom: mainUserDoc.docs[0].id,
+        idTo: uidString,
         timestamp: timestamp,
-        content: data.content,
+        content: contentString,
     });
 
-    const chatId2 = data.recipientId.concat('_').concat(data.senderId);
+    const chatId2 = uidString.concat('_').concat(mainUserDoc.docs[0].id);
 
-    await admin.firestore().collection('users').doc(data.recipientId).collection('chats').doc(chatId2).collection('messages')
+    await admin.firestore().collection('users').doc(uidString).collection('chats').doc(chatId2).collection('messages')
     .doc()
     .set({
-        idFrom: data.senderId,
-        idTo: data.recipientId,
+        idFrom: mainUserDoc.docs[0].id,
+        idTo: uidString,
         timestamp: timestamp,
-        content: data.content,
+        content: contentString,
     })
-    .then(async (doc) => {
-        return res.send(200).send(doc);
+    .then(async () => {
+        return res.status(200).send('Done');
      })
     .catch((error) => {
         console.error('error:' + error);
@@ -1028,8 +1073,10 @@ exports.addTestUsers = functions.https.onRequest(async (req, res) => {
         const ageMin = ageNumber - 5;
         const ageMax = ageNumber + 5;
 
+        const userId = `${user.name}_${user.location}`;
+
         try {
-            await admin.firestore().collection('users').doc().set({
+            await admin.firestore().collection('users').doc(userId).set({
                 age: user.age,
                 name: user.name,
                 bio: user.bio,
@@ -1040,7 +1087,7 @@ exports.addTestUsers = functions.https.onRequest(async (req, res) => {
                 phoneNumber: user.phoneNumber,
             });
 
-            await admin.firestore().collection('preferences').doc().set({
+            await admin.firestore().collection('preferences').doc(userId).set({
                 gender: user.lookingFor,
                 location: user.location,
                 ageMin: ageMin.toString(),
@@ -1051,8 +1098,46 @@ exports.addTestUsers = functions.https.onRequest(async (req, res) => {
             res.status(404).send(e);
         }
     }
+    console.log(userTestChat);
 
     res.send('Done');
+});
+
+// Returns a Promise that resolves after "ms" Milliseconds
+const timer = (ms: number | undefined) => new Promise((res) => setTimeout(res, ms));
+
+exports.addTestChatsUsers = functions.https.onRequest(async (req, res) => {
+    for (const user of userTestChat) {
+        const chatId = user.senderId.concat('_').concat(user.recipientId);
+        const timestamp = admin.firestore.Timestamp.now();
+
+        await admin.firestore().collection('users').doc(user.senderId).collection('chats').doc(chatId).collection('messages')
+        .doc()
+        .set({
+            idFrom: user.senderId,
+            idTo: user.recipientId,
+            timestamp: timestamp,
+            content: user.content.replace('%20', ' '),
+        });
+
+        const chatId2 = user.recipientId.concat('_').concat(user.senderId);
+
+        await admin.firestore().collection('users').doc(user.recipientId).collection('chats').doc(chatId2).collection('messages')
+        .doc()
+        .set({
+            idFrom: user.senderId,
+            idTo: user.recipientId,
+            timestamp: timestamp,
+            content: user.content.replace('%20', ' '),
+        })
+        .catch((error) => {
+            console.error('error:' + error);
+            return res.status(400).send(error);
+        });
+
+        await timer(1000);
+    }
+    res.status(200).send('Done');
 });
 
 const userTestData = [
@@ -1156,12 +1241,12 @@ const userTestData = [
         lookingFor: 'female',
         phoneNumber: '0789956620',
     },
-    // ===============================================
+    // ==============================================================================================
     {
         age: '20',
         name: 'Susan Taylor',
         bio: 'John Taylor Test Bio',
-        gender: 'male',
+        gender: 'female',
         images: ['https://images.unsplash.com/photo-1525875975471-999f65706a10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80'],
         location: 'Johannesburg',
         lookingFor: 'male',
@@ -1257,6 +1342,67 @@ const userTestData = [
         lookingFor: 'male',
         phoneNumber: '0849956620',
     },
+];
+
+const userTestChat = [
+    {
+        'content': 'Hi',
+        'senderId': 'John Doe_Johannesburg',
+        'recipientId': 'Susan Taylor_Johannesburg',
+    },
+    {
+        'content': 'How are you?',
+        'senderId': 'Susan Taylor_Johannesburg',
+        'recipientId': 'John Doe_Johannesburg',
+    },
+    {
+        'content': 'Im all good now girl :)',
+        'senderId': 'John Doe_Johannesburg',
+        'recipientId': 'Susan Taylor_Johannesburg',
+    },
+    {
+        'content': 'Ohh really now ?',
+        'senderId': 'Susan Taylor_Johannesburg',
+        'recipientId': 'John Doe_Johannesburg',
+    },
+    {
+        'content': 'Yeah girl fr! why wouldnt I be excited, speaking to a fine ting like yourself!!',
+        'senderId': 'John Doe_Johannesburg',
+        'recipientId': 'Susan Taylor_Johannesburg',
+    },
+    {
+        'content': 'psshhh you probably say that to all the girls. SO dont even try that shit with me.',
+        'senderId': 'Susan Taylor_Johannesburg',
+        'recipientId': 'John Doe_Johannesburg',
+    },
+    {
+        'content': 'Youre right I say it to all the girls, but only the ones I actually like. And rn that person is you.',
+        'senderId': 'John Doe_Johannesburg',
+        'recipientId': 'Susan Taylor_Johannesburg',
+    },
+    {
+        'content': 'ncaww fr?!',
+        'senderId': 'Susan Taylor_Johannesburg',
+        'recipientId': 'John Doe_Johannesburg',
+    },
+    {
+        'content': 'yeah baby girl fr fr',
+        'senderId': 'John Doe_Johannesburg',
+        'recipientId': 'Susan Taylor_Johannesburg',
+    },
+    {
+        'content': 'So what you been up to then',
+        'senderId': 'Susan Taylor_Johannesburg',
+        'recipientId': 'John Doe_Johannesburg',
+    },
+
+    {
+        'content': 'just chillin, been a slow day wby?',
+        'senderId': 'John Doe_Johannesburg',
+        'recipientId': 'Susan Taylor_Johannesburg',
+    },
+
+
 ];
 
 // ============================================= Logos ============================================= //
