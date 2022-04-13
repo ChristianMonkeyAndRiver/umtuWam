@@ -1,4 +1,4 @@
 <doc title="Startup">
-    <webview href="http://192.168.8.134:5500/Moya/Startup.html">
+    <webview href="http://localhost:5500/Moya/Startup.html">
     </webview>
 </doc>
