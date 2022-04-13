@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>UmtuWam</title>
+</head>
+
+<body>
+    <button onclick="test()">TEST</button>
+    <script>
+        const test = async function () {
+            const poll = async function (fn, fnCondition, ms) {
+                let result = await fn();
+                while (fnCondition(result)) {
+                    await wait(ms);
+                    result = await fn();
+                }
+                return result;
+            };
+
+            const wait = function (ms = 1000) {
+                return new Promise(resolve => {
+                    setTimeout(resolve, ms);
+                });
+            };
+
+            let fetchData = () => location.href="http://localhost:5001/umtuwam/us-central1/getUsersXml"
+            let testCondition = result => 3;
+            let response = await poll(fetchData, testCondition, 3000);
+        }
+
+    </script>
+</body>
+
+</html>
