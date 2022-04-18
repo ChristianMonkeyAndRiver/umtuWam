@@ -372,6 +372,8 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
                         usersList.push(item);
                     }
 
+                    const newUsersList = addNextButtonItemXML(usersList);
+
                     const doc = [{
                         doc: [
                             {
@@ -381,7 +383,7 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
                             },
                             {
                                 list: [
-                                    ...usersList,
+                                    ...newUsersList,
                                 ],
                             },
                         ],
@@ -480,6 +482,44 @@ const getUserProfileXML = async (req:functions.https.Request, res: functions.Res
         return;
     });
 };
+
+function addNextButtonItemXML(itemsArray:any [] ) {
+    const item = {
+        item: [
+            {
+                _attr: {
+                    style: '',
+                    href: 'http://localhost:5001/umtuwam/us-central1/getProspectiveDatesXML&start_index=40',
+                    layout: 'relative',
+                },
+            },
+            {
+                img: {
+                    _attr: {
+                        url: util.FunctionsConstants.NextImage,
+                    },
+                },
+            },
+            {
+                md: [
+                    {
+                        _attr: {
+                            style: '',
+                        },
+                    },
+                    {
+                        description: {
+                            _cdata: util.FunctionsConstants.Next,
+                        },
+                    },
+                ],
+            },
+        ],
+    };
+    itemsArray.push(item);
+    return itemsArray;
+}
+
 export {
     getAppXML,
     getUserProfileXML,
