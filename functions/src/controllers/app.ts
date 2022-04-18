@@ -164,6 +164,30 @@ const getMembershipPageXML = async (req:functions.https.Request, res: functions.
                             util.FunctionsConstants.ClickToPayChats,
                         ],
                    },
+                   {
+                    md: [
+                            {
+                                _attr: {
+                                    style: '',
+                                },
+                            },
+                            {
+                                description: {
+                                    _cdata: util.FunctionsConstants.Featured,
+                                },
+                            },
+                        ],
+                    },
+                    {
+                            a: [
+                                {
+                                    _attr: {
+                                        href: '',
+                                    },
+                                },
+                                util.FunctionsConstants.ClickToPayFeatured,
+                            ],
+                    },
                     {
                         md: [
                             {

@@ -14,11 +14,14 @@ const createMySubscription = async (req:functions.https.Request, res: functions.
         const uid = binu.did;
 
         const uidIndex = req.url.indexOf(util.FunctionsConstants.Uid);
-        const productIdIndex = req.url.indexOf(util.FunctionsConstants.ProductId);
         const phoneNumberIndex = req.url.indexOf(util.FunctionsConstants.PhoneNumber);
-        const uidString = req.url.substring(uidIndex+util.FunctionsConstants.Uid.length+1, productIdIndex-1);
+        const productIdIndex = req.url.indexOf(util.FunctionsConstants.ProductId);
+        let uidString = req.url.substring(uidIndex+util.FunctionsConstants.Uid.length+1, phoneNumberIndex-1);
         const phoneNumberString = req.url.substring(phoneNumberIndex+util.FunctionsConstants.PhoneNumber.length+1, productIdIndex-1);
         const productIdString = req.url.substring(productIdIndex+util.FunctionsConstants.ProductId.length+1);
+
+        uidString = uidString.replace(util.FunctionsConstants.SpaceParsedValue, ' ');
+
 
         const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
@@ -36,7 +39,7 @@ const createMySubscription = async (req:functions.https.Request, res: functions.
             body: JSON.stringify({
                 amount: 100,
                 username: phoneNumberString,
-                webhookUrl: '',
+                webhookUrl: config.CALLBACK_URL,
             }),
         };
 
@@ -49,8 +52,11 @@ const createMySubscription = async (req:functions.https.Request, res: functions.
             });
 
             const chatId = uid.concat('_').concat(uidString);
+            console.log(chatId);
 
             if (productIdString == util.Products.Chats) {
+                console.log(chatId);
+
                 await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).collection(util.FunctionsConstants.Chats).doc(chatId)
                 .update({
                     chatsPaymentID: json.paymentID,
@@ -66,7 +72,14 @@ const createMySubscription = async (req:functions.https.Request, res: functions.
                     isVerified: true,
                     verifiedPaymentsId: json.paymentID,
                 });
+            } else if (productIdString == util.Products.Featured) {
+                await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid)
+                .update({
+                    isFeatured: true,
+                    verifiedFeaturedPaymentsId: json.paymentID,
+                });
             }
+
             res.status(200).send(util.SuccessMessages.SuccessMessage);
             return;
         });
@@ -86,11 +99,13 @@ const createOtherSubscription = async (req:functions.https.Request, res: functio
          const uidIndex = req.url.indexOf(util.FunctionsConstants.Uid);
          const productIdIndex = req.url.indexOf(util.FunctionsConstants.ProductId);
          const phoneNumberIndex = req.url.indexOf(util.FunctionsConstants.PhoneNumber);
-         const uidString = req.url.substring(uidIndex+util.FunctionsConstants.Uid.length+1, productIdIndex-1);
+         let uidString = req.url.substring(uidIndex+util.FunctionsConstants.Uid.length+1, phoneNumberIndex-1);
          const phoneNumberString = req.url.substring(phoneNumberIndex+util.FunctionsConstants.PhoneNumber.length+1, productIdIndex-1);
          const productIdString = req.url.substring(productIdIndex+util.FunctionsConstants.ProductId.length+1);
 
          const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
+
+         uidString = uidString.replace(util.FunctionsConstants.SpaceParsedValue, ' ');
 
          if (!userDocument.exists) {
              res.status(400).send(util.ErrorMessages.NoUserError);
@@ -106,7 +121,7 @@ const createOtherSubscription = async (req:functions.https.Request, res: functio
              body: JSON.stringify({
                  amount: 100,
                  username: phoneNumberString,
-                 webhookUrl: '',
+                 webhookUrl: config.CALLBACK_URL,
              }),
          };
 
@@ -125,7 +140,7 @@ const createOtherSubscription = async (req:functions.https.Request, res: functio
                 return;
              }
 
-             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).collection(util.FunctionsConstants.Chats).doc(chatId)
+             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uidString).collection(util.FunctionsConstants.Chats).doc(chatId)
              .update({
                  chatsPaymentID: json.paymentID,
              });
@@ -151,6 +166,7 @@ const subscriptionCallBackUrl = async (req:functions.https.Request, res: functio
             },
         };
 
+        // `${config.MOYA_PAY_URL}/payments/${data.paymentID}`
         fetch(`${config.MOYA_PAY_URL}/payments/${data.paymentID}`, options)
         .then((result) => result.json())
         .then(async (json) => {
@@ -168,10 +184,12 @@ const subscriptionCallBackUrl = async (req:functions.https.Request, res: functio
                 }
 
                 const now = admin.firestore.Timestamp.now();
-                const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60*1000, now.nanoseconds);
-                await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().update({
+                const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60, now.nanoseconds);
+                await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc(docs.docs[0].id).update({
                     expiryDate: expiresAt,
                 });
+
+                res.status(200).send(util.SuccessMessages.SuccessMessage);
                 return;
             });
         });
@@ -182,7 +200,24 @@ const subscriptionCallBackUrl = async (req:functions.https.Request, res: functio
     }
 };
 
+const testPaymentsAPI = async (req:functions.https.Request, res: functions.Response<any>) => {
+    res.status(200).send({
+        'paymentID': '99955-87bb-4eaa-8eb5-a6c4a5006a88',
+    });
+    return;
+};
+
+const getPaymentAPI = async (req:functions.https.Request, res: functions.Response<any>) => {
+    res.status(200).send({
+        'state': 'ACCPETED',
+        'paymentID': '99955-87bb-4eaa-8eb5-a6c4a5006a88',
+    });
+    return;
+};
+
 export {
+    getPaymentAPI,
+    testPaymentsAPI,
     createMySubscription,
     createOtherSubscription,
     subscriptionCallBackUrl,

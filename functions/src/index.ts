@@ -47,9 +47,13 @@ exports.sendMessage = functions.https.onRequest(chatsController.sendMessage);
 
 // =====================================================================================================================
 
+exports.getPaymentAPI = functions.https.onRequest(paymentsController.getPaymentAPI);
+
+exports.testPaymentsAPI = functions.https.onRequest(paymentsController.testPaymentsAPI);
+
 exports.createMySubscription = functions.https.onRequest(paymentsController.createMySubscription);
 
-exports.createMySubscription = functions.https.onRequest(paymentsController.createOtherSubscription);
+exports.createOtherSubscription = functions.https.onRequest(paymentsController.createOtherSubscription);
 
 exports.subscriptionCallBackUrl = functions.https.onRequest(paymentsController.subscriptionCallBackUrl);
 

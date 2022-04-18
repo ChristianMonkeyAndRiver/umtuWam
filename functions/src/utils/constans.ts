@@ -2,6 +2,7 @@ enum Products {
     Chats = 'Chats',
     Photos = 'Photos',
     Verified = 'Verified',
+    Featured = 'Featured',
 }
 
 enum PaymentState {
@@ -53,6 +54,7 @@ enum FunctionsConstants {
     Product = 'product',
     Messages = 'messages',
     Chatting = 'Chatting',
+    Featured = 'Featured',
     Location = 'location',
     UmtuWam = 'UmuntuWam',
     RateMoya = 'Rate Moya',
@@ -71,6 +73,7 @@ enum FunctionsConstants {
     MoyaSubjectText = 'Moya #datafree app',
     ClickToPayChats = 'Click to pay R1 to chat for a day',
     ClickToPayPhotos = 'Click to pay R1 to see all profile photos',
+    ClickToPayFeatured = 'Click to pay R1 to have your profile boosed for a day',
     ClickToPayVerified = 'Click to pay R1 to show a VERIFIED badge on your profile',
     DefualtImage = 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
     MoyaShareText = 'Check out the Moya #datafree super-app! I use it for #datafree chat and many other services. Even better, it works when you have no airtime or data balance. Get it from https://moya.app/dl/',
