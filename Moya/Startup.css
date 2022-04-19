@@ -22,17 +22,17 @@ br {
 }
 
 select {
-    width: 40%;
     height: 35px;
-    margin: 5px;
 }
 
 input[type="text"] {
-    width: 20%;
     height: 30px;
-    margin: 5px;
 }
 
 body {
     padding-bottom: 50px;
+}
+
+.age {
+    width: 10%;
 }

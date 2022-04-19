@@ -8,18 +8,16 @@ button {
     border-radius: 5px;
 }
 
-.member {
+.membership {
     background-color: #f86612;
 }
 
-br {
-    margin-bottom: 5px;
+p label {
+    margin-right: auto;
 }
 
 select {
-    width: 40%;
     height: 35px;
-    margin: 5px;
 }
 
 input[type="text"] {
@@ -33,5 +31,10 @@ input[type="text"] {
 }
 
 .bio {
-    height: 100px !important;
+    resize: none;
+    width: 70%;
+}
+
+label textarea {
+    vertical-align: middle;
 }
