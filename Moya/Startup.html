@@ -5,60 +5,74 @@
     <meta charset="UTF-8">
     <title>UmtuWam</title>
     <link rel="stylesheet" href="./Startup.css" type="text/css">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 </head>
 
 <body>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#checkBtn').click(function () {
-                checked = $("input[type=checkbox]:checked").length;
-
-                if (!checked) {
-                    alert("You must check at least one checkbox.");
-                    return false;
+    <script>
+        function validateThis() {
+            var checkboxes = document.getElementsByName("lookingFor");
+            var okay = false;
+            for (var i = 0, l = checkboxes.length; i < l; i++) {
+                if (checkboxes[i].checked) {
+                    okay = true;
+                    break;
                 }
+            }
+            if (!okay) {
+                alert("please select box");
+                event.preventDefault();
+            } else {
 
-            });
-        });
-
+            }
+        }
     </script>
-    <form action="http://localhost:5001/umtuwam/us-central1/signUp" method="get">
+    <form action="http://localhost:5001/umtuwam/us-central1/signUp" onsubmit="validateThis();" method="get">
         <div>
             <img class="logo" src="./logo.png" alt="UmtuWam">
             <h2 class="h">Lets start dating!</h2>
-            <br>
-            <label>My name is:</label>
-            <input type="text" id="name" name="name" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$" required>
-            <br>
-            <label>I am a:</label>
-            <input id="Ifemale" type="radio" name="gender" value="Woman" required>
-            <label for="Ifemale">Woman</label>
-            <input id="Imale" type="radio" name="gender" value="Man">
-            <label for="Imale">Man</label>
-            <br>
-            <label>Looking for a:</label>
-            <input id="Ufemale" type="checkbox" name="lookingFor" value="Woman">
-            <label for="Ufemale">Woman</label>
-            <input id="Umale" type="checkbox" name="lookingFor" value="Man">
-            <label for="Umale">Man</label>
-            <br>
-            <label>My age:</label>
-            <input type="text" id="age" name="age" pattern="[0-9]+" required>
-            <br>
-            <label>My location:</label>
-            <select name="location" id="location" required>
-                <option value="" disabled selected>Select your location</option>
-                <option value="Eastern Cape">Eastern Cape</option>
-                <option value="Free State">Free State</option>
-                <option value="Gauteng">Gauteng</option>
-                <option value="KwaZulu-Natal">KwaZulu-Natal</option>
-                <option value="Limpopo">Limpopo</option>
-                <option value="Mpumalanga">Mpumalanga</option>
-                <option value="Northern Cape">Northern Cape</option>
-                <option value="North West">North West</option>
-                <option value="Western Cape">Western Cape</option>
-            </select>
+            <p>
+                <label>My name is:
+                    <input type="text" id="name" name="name" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$" required>
+                </label>
+            </p>
+            <p>
+                <label>I am a:
+                    <input id="Ifemale" type="radio" name="gender" value="Woman" required>
+                    <label for="Ifemale">Woman</label>
+                    <input id="Imale" type="radio" name="gender" value="Man">
+                    <label for="Imale">Man</label>
+                </label>
+            </p>
+            <p>
+                <label>Looking for a:
+                    <input id="Ufemale" type="checkbox" name="lookingFor" value="Woman">
+                    <label for="Ufemale">Woman</label>
+                    <input id="Umale" type="checkbox" name="lookingFor" value="Man">
+                    <label for="Umale">Man</label>
+                </label>
+            </p>
+            <p>
+                <label>My age:
+                    <input type="text" id="age" name="age" class="age" pattern="[0-9]+" required>
+                </label>
+            </p>
+            <p>
+                <label>My location:
+                    <select name="location" id="location" required>
+                        <option value="" disabled selected>Select your location</option>
+                        <option value="Bloemfontein">Bloemfontein</option>
+                        <option value="Cape Town">Cape Town</option>
+                        <option value="Durban">Durban</option>
+                        <option value="Johannesburg">Johannesburg</option>
+                        <option value="Kimberley">Kimberley</option>
+                        <option value="Nelspruit">Nelspruit</option>
+                        <option value="PE">PE</option>
+                        <option value="Polokwane">Polokwane</option>
+                        <option value="Pretoria">Pretoria</option>
+                        <option value="Soweto">Soweto</option>
+                    </select>
+                </label>
+            </p>
         </div>
         <button type="submit" id="checkBtn">Start dating</button>
     </form>

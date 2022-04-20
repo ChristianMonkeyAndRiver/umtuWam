@@ -1,4 +1,4 @@
 <doc title="Profile">
-    <webview href="http://localhost:5500/Moya/Profile.html" proxymode="native">
+    <webview href="https://b1e5-196-201-233-26.ngrok.io/Moya/Profile.html" proxymode="inapp" internal="true">
     </webview>
 </doc>
