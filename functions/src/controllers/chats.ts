@@ -203,6 +203,7 @@ const getChat = async (req:functions.https.Request, res: functions.Response) => 
         const uidIndex = req.url.indexOf(util.FunctionsConstants.Uid);
         let uidString = req.url.substring(uidIndex+util.FunctionsConstants.Uid.length+1);
         uidString = uidString.replace(util.FunctionsConstants.SpaceParsedValue, ' ');
+        uidString = uidString.replace(util.FunctionsConstants.PlusSign, ' ');
 
         const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
@@ -380,6 +381,7 @@ const sendMessage = async (req:functions.https.Request, res: functions.Response)
         let contentString = req.url.substring(contentIndex+util.FunctionsConstants.Content.length+1);
         contentString = contentString.split(util.FunctionsConstants.SpaceParsedValue).join(' ');
         uidString = uidString.replace(util.FunctionsConstants.SpaceParsedValue, ' ');
+        uidString = uidString.replace(util.FunctionsConstants.PlusSign, ' ');
 
         const chatId = uid.concat('_').concat(uidString);
         const timestamp = admin.firestore.Timestamp.now();
@@ -429,6 +431,8 @@ const likeUser = async (req:functions.https.Request, res: functions.Response) =>
         const uidIndex = req.url.indexOf(util.FunctionsConstants.Uid);
         let uidString = req.url.substring(uidIndex+util.FunctionsConstants.Uid.length+1);
         uidString = uidString.replace(util.FunctionsConstants.SpaceParsedValue, ' ');
+        uidString = uidString.replace(util.FunctionsConstants.PlusSign, ' ');
+
 
         const userB = uidString;
         const userBdoc = await admin.firestore().collection(util.FunctionsConstants.Users).doc(userB).get();

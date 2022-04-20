@@ -21,6 +21,7 @@ const createMySubscription = async (req:functions.https.Request, res: functions.
         const productIdString = req.url.substring(productIdIndex+util.FunctionsConstants.ProductId.length+1);
 
         uidString = uidString.replace(util.FunctionsConstants.SpaceParsedValue, ' ');
+        uidString = uidString.replace(util.FunctionsConstants.PlusSign, ' ');
 
 
         const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
@@ -106,6 +107,8 @@ const createOtherSubscription = async (req:functions.https.Request, res: functio
          const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
          uidString = uidString.replace(util.FunctionsConstants.SpaceParsedValue, ' ');
+         uidString = uidString.replace(util.FunctionsConstants.PlusSign, ' ');
+
 
          if (!userDocument.exists) {
              res.status(400).send(util.ErrorMessages.NoUserError);

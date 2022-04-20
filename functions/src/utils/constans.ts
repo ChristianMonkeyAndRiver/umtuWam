@@ -62,6 +62,7 @@ enum FunctionsConstants {
     ProductId = 'productId',
     Timestamp = 'timestamp',
     ShareMoya = 'Share Moya',
+    PlusSign = '+',
     SpaceParsedValue = '%20',
     Membership = 'Membership',
     LookingFor = 'lookingFor',

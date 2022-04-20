@@ -16,7 +16,9 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
         const ageIndex = req.url.indexOf(util.FunctionsConstants.Age);
         const locationIndex = req.url.indexOf(util.FunctionsConstants.Location);
 
-        const nameString = req.url.substring(nameIndex+util.FunctionsConstants.Name.length+1, genderIndex-1);
+        let nameString = req.url.substring(nameIndex+util.FunctionsConstants.Name.length+1, genderIndex-1);
+        nameString = nameString.replace(util.FunctionsConstants.PlusSign, ' ');
+
 
         const genderString = req.url.substring(genderIndex+util.FunctionsConstants.Gender.length+1, lookingForIndex-1);
 
@@ -24,7 +26,9 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
 
         const ageString = req.url.substring(ageIndex+util.FunctionsConstants.Age.length+1, locationIndex-1);
 
-        const locationString = req.url.substring(locationIndex+util.FunctionsConstants.Location.length+1);
+        let locationString = req.url.substring(locationIndex+util.FunctionsConstants.Location.length+1);
+        locationString = locationString.replace(util.FunctionsConstants.PlusSign, ' ');
+
 
         const ageNumber = Number(ageString);
 
@@ -92,13 +96,18 @@ const updateUserInformation = async (req:functions.https.Request, res: functions
         const bioIndex = req.url.indexOf(util.FunctionsConstants.Bio);
         const lookingForIndex = req.url.indexOf(util.FunctionsConstants.LookingFor);
 
-        const nameString = req.url.substring(nameIndex+util.FunctionsConstants.Name.length+1, ageIndex-1);
+        let nameString = req.url.substring(nameIndex+util.FunctionsConstants.Name.length+1, ageIndex-1);
+        nameString = nameString.replace(util.FunctionsConstants.PlusSign, ' ');
 
         const ageString = req.url.substring(ageIndex+util.FunctionsConstants.Age.length+1, locationIndex-1);
 
-        const locationString = req.url.substring(locationIndex+util.FunctionsConstants.Location.length+1, bioIndex-1);
+        let locationString = req.url.substring(locationIndex+util.FunctionsConstants.Location.length+1, bioIndex-1);
+        locationString = locationString.replace(util.FunctionsConstants.PlusSign, ' ');
 
-        const bioString = req.url.substring(bioIndex+util.FunctionsConstants.Bio.length+1, lookingForIndex-1);
+
+        let bioString = req.url.substring(bioIndex+util.FunctionsConstants.Bio.length+1, lookingForIndex-1);
+        bioString = bioString.replace(util.FunctionsConstants.PlusSign, ' ');
+
 
         const lookingForString = req.url.substring(lookingForIndex+util.FunctionsConstants.LookingFor.length+1);
 
@@ -162,7 +171,8 @@ const updateUserPreferences = async (req:functions.https.Request, res: functions
 
         const genderString = req.url.substring(genderIndex+util.FunctionsConstants.Gender.length+1, locationIndex-1);
 
-        const locationString = req.url.substring(locationIndex+util.FunctionsConstants.Location.length+1);
+        let locationString = req.url.substring(locationIndex+util.FunctionsConstants.Location.length+1);
+        locationString = locationString.replace(util.FunctionsConstants.PlusSign, ' ');
 
         const userPreferenceDocument = await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get();
 
