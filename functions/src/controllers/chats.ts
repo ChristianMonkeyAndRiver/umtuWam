@@ -196,14 +196,13 @@ async function checkSubscription(id: string, recipientId: string) : Promise<bool
 
 const getChat = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-        const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-        const uid = binu.did;
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
 
-        const uidIndex = req.url.indexOf(util.FunctionsConstants.Uid);
-        let uidString = req.url.substring(uidIndex+util.FunctionsConstants.Uid.length+1);
-        uidString = uidString.replace(util.FunctionsConstants.SpaceParsedValue, ' ');
-        uidString = uidString.replace(util.FunctionsConstants.PlusSign, ' ');
+        const queryUid = req.query.uid ?? '';
+        const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
+        const uidString = formattedUid.toString();
 
         const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
@@ -255,9 +254,9 @@ const getChat = async (req:functions.https.Request, res: functions.Response) => 
 
 const getMatches = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-        const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-        const uid = binu.did;
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
 
         const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
@@ -287,9 +286,9 @@ const getMatches = async (req:functions.https.Request, res: functions.Response) 
 };
 
 const getMatchesXML = async (req:functions.https.Request, res: functions.Response) => {
-    const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-    const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-    const uid = binu.did;
+    const queryId = req.query.id ?? '';
+    const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+    const uid = formattedId.toString();
 
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).collection(util.FunctionsConstants.Chats)
     .get()
@@ -364,9 +363,9 @@ const getMatchesXML = async (req:functions.https.Request, res: functions.Respons
 
 const sendMessage = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-        const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-        const uid = binu.did;
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
 
         const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
@@ -375,13 +374,10 @@ const sendMessage = async (req:functions.https.Request, res: functions.Response)
             return;
         }
 
-        const uidIndex = req.url.indexOf(util.FunctionsConstants.Uid);
-        const contentIndex = req.url.indexOf(util.FunctionsConstants.Content);
-        let uidString = req.url.substring(uidIndex+util.FunctionsConstants.Uid.length+1, contentIndex-1);
-        let contentString = req.url.substring(contentIndex+util.FunctionsConstants.Content.length+1);
-        contentString = contentString.split(util.FunctionsConstants.SpaceParsedValue).join(' ');
-        uidString = uidString.replace(util.FunctionsConstants.SpaceParsedValue, ' ');
-        uidString = uidString.replace(util.FunctionsConstants.PlusSign, ' ');
+
+        const queryUid = req.query.uid ?? '';
+        const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
+        const uidString = formattedUid.toString();
 
         const chatId = uid.concat('_').concat(uidString);
         const timestamp = admin.firestore.Timestamp.now();
@@ -392,7 +388,7 @@ const sendMessage = async (req:functions.https.Request, res: functions.Response)
             idFrom: uid,
             idTo: uidString,
             timestamp: timestamp,
-            content: contentString,
+            content: req.query.content,
         });
 
         const chatId2 = uidString.concat('_').concat(uid);
@@ -403,7 +399,7 @@ const sendMessage = async (req:functions.https.Request, res: functions.Response)
             idFrom: uid,
             idTo: uidString,
             timestamp: timestamp,
-            content: contentString,
+            content: req.query.content,
         });
 
         res.status(200).send(util.SuccessMessages.SuccessMessage);
@@ -417,9 +413,9 @@ const sendMessage = async (req:functions.https.Request, res: functions.Response)
 
 const likeUser = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-        const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-        const uid = binu.did;
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
 
         const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
@@ -428,19 +424,17 @@ const likeUser = async (req:functions.https.Request, res: functions.Response) =>
             return;
         }
 
-        const uidIndex = req.url.indexOf(util.FunctionsConstants.Uid);
-        let uidString = req.url.substring(uidIndex+util.FunctionsConstants.Uid.length+1);
-        uidString = uidString.replace(util.FunctionsConstants.SpaceParsedValue, ' ');
-        uidString = uidString.replace(util.FunctionsConstants.PlusSign, ' ');
+
+        const queryUid = req.query.uid ?? '';
+        const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
+        const uidString = formattedUid.toString();
 
 
         const userB = uidString;
         const userBdoc = await admin.firestore().collection(util.FunctionsConstants.Users).doc(userB).get();
 
         const docId = userB.concat('_').concat(uid);
-        console.log(docId);
         const docId2 = uid.concat('_').concat(userB);
-        console.log(docId2);
 
         await admin.firestore().collection(util.FunctionsConstants.Likes).doc(docId).get()
         .then(async (doc) => {

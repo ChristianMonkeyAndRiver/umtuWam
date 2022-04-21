@@ -6,9 +6,9 @@ import * as functions from 'firebase-functions';
 
 const signUp = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-        const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-        const uid = binu.did;
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
 
 
         const ageNumber = Number(req.query.age);
@@ -33,6 +33,7 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
             location: req.query.location,
             ageMin: ageMin.toString(),
             ageMax: ageMax.toString(),
+            currentIndex: 0,
         });
 
         res.status(200).send(util.SuccessMessages.SuccessMessage);
@@ -43,9 +44,9 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
 };
 
 const getUserInformation = async (req:functions.https.Request, res: functions.Response) => {
-    const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-    const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-    const uid = binu.did;
+    const queryId = req.query.id ?? '';
+    const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+    const uid = formattedId.toString();
 
     try {
         const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
@@ -61,9 +62,9 @@ const getUserInformation = async (req:functions.https.Request, res: functions.Re
 
 const updateUserInformation = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-        const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-        const uid = binu.did;
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
 
         const updateObject = {};
 
@@ -85,31 +86,26 @@ const updateUserInformation = async (req:functions.https.Request, res: functions
 
 const getUserPreferences = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-        const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-        const uid = binu.did;
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
 
         const userPreferencesDoc = await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get();
 
-        if (!userPreferencesDoc.exists) {
-            res.status(400).send(util.ErrorMessages.NoUserError);
-            return;
-        }
+        if (!userPreferencesDoc.exists) res.status(400).send(util.ErrorMessages.NoUserError);
 
         res.status(200).send(userPreferencesDoc.data());
-        return;
     } catch (error) {
         console.error(util.ErrorMessages.ErrorText, error);
         res.status(404).send(util.ErrorMessages.UnexpectedExrror);
-        return;
     }
 };
 
 const updateUserPreferences = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-        const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-        const uid = binu.did;
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
 
         const updateObject = {};
 

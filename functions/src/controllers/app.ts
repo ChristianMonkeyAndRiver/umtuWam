@@ -103,16 +103,13 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
 };
 
 const getMembershipPageXML = async (req:functions.https.Request, res: functions.Response) => {
-    const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-    const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-    const uid = binu.did;
+    const queryId = req.query.id ?? '';
+    const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+    const uid = formattedId.toString();
 
     const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
-    if (!userDocument.exists) {
-        res.status(400).send(util.ErrorMessages.NoUserError);
-        return;
-    }
+    if (!userDocument.exists) res.status(400).send(util.ErrorMessages.NoUserError);
 
     const doc = [{
         doc: [
@@ -241,43 +238,46 @@ const getMembershipPageXML = async (req:functions.https.Request, res: functions.
         ],
     }];
 
-    res.send(xml(doc, true));
-    return;
+    res.status(200).send(xml(doc, true));
 };
 
 const getProspectiveDates = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-        const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-        const uid = binu.did;
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
 
         await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get()
         .then(async (doc) => {
-            if (!doc.exists) {
-                res.status(400).send(util.ErrorMessages.NoUserError);
-                return;
-            }
+            if (!doc.exists) res.status(400).send(util.ErrorMessages.NoUserError);
 
             await admin.firestore().collection(util.FunctionsConstants.Users)
                 .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
                 .where(util.FunctionsConstants.Age, '>=', doc.data()?.ageMin)
                 .where(util.FunctionsConstants.Age, '<=', doc.data()?.ageMax)
                 .where(util.FunctionsConstants.Location, '==', doc.data()?.location)
+                .orderBy(util.FunctionsConstants.Points)
+                .startAt(doc.data()?.currentIndex)
                 .limit(20)
                 .get()
                 .then((docs) => {
                     if (docs.empty) {
+                        doc.ref.update({currentIndex: 0});
                         res.status(400).send(util.ErrorMessages.NoDatesMessage);
-                        return;
-                    }
+                    } else {
+                        const docsArray = [];
+                        for (const doc of docs.docs) {
+                            docsArray.push(doc.data());
+                        }
 
-                    const docsArray = [];
-                    for (const doc of docs.docs) {
-                        docsArray.push(doc.data());
-                    }
+                        const currentIndex = doc.data()?.currentIndex + docs.docs.length;
 
-                    res.status(200).send(docsArray);
-                    return;
+                        doc.ref.update({
+                            currentIndex: currentIndex,
+                        });
+
+                        res.status(200).send(docsArray);
+                    }
                 });
         });
     } catch (error) {
@@ -289,18 +289,16 @@ const getProspectiveDates = async (req:functions.https.Request, res: functions.R
 
 const getProspectiveDatesXML = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        const jsonString = req.headers[util.FunctionsConstants.Xbinu] ?? '';
-        const binu = JSON.parse(Array.isArray(jsonString) ? jsonString[0] : jsonString);
-        const uid = binu.did;
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
 
         await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get()
         .then(async (doc) => {
             if (!doc.exists) {
                 res.status(400).send(util.ErrorMessages.NoUserError);
-                return;
-            }
-
-            await admin.firestore().collection(util.FunctionsConstants.Users)
+            } else {
+                await admin.firestore().collection(util.FunctionsConstants.Users)
                 .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
                 .where(util.FunctionsConstants.Age, '>=', doc.data()?.ageMin)
                 .where(util.FunctionsConstants.Age, '<=', doc.data()?.ageMax)
@@ -389,20 +387,20 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
                         ],
                     }];
 
-                    res.send(xml(doc, true));
-                    return;
+                    res.status(200).send(xml(doc, true));
                 });
+            }
         });
     } catch (error) {
         console.error(util.ErrorMessages.ErrorText, error);
         res.status(404).send(util.ErrorMessages.UnexpectedExrror);
-        return;
     }
 };
 
 const getUserProfileXML = async (req:functions.https.Request, res: functions.Response) => {
-    const uidIndex = req.url.indexOf(util.FunctionsConstants.Uid);
-    const uidString = req.url.substring(uidIndex+util.FunctionsConstants.Uid.length+1);
+    const queryUid = req.query.uid ?? '';
+    const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
+    const uidString = formattedUid.toString();
 
 
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(uidString).get()
@@ -474,12 +472,10 @@ const getUserProfileXML = async (req:functions.https.Request, res: functions.Res
             }];
 
             res.send(xml(doc, true));
-            return;
     })
     .catch((error) => {
         console.error(util.ErrorMessages.ErrorText, error);
         res.status(404).send(util.ErrorMessages.UnexpectedExrror);
-        return;
     });
 };
 
