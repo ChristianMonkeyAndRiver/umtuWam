@@ -3,6 +3,7 @@
 import * as admin from 'firebase-admin';
 import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
+import {faker} from '@faker-js/faker';
 
 const addTestUsers = async (req:functions.https.Request, res: functions.Response) => {
     try {
@@ -76,6 +77,327 @@ const addTestChatsUsers = async (req:functions.https.Request, res: functions.Res
         return;
     }
 };
+
+const createDB = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        for (let i = 0; i < 100; i++) {
+            const name = faker.name.findName();
+            const rand = Math.floor(Math.random()*locationsData.length);
+            const location = locationsData[rand];
+
+            const low = 18;
+            const high = 40;
+            let age = (Math.random()*(high - low)) + low;
+
+            age = Math.ceil(age);
+
+            await admin.firestore().collection(util.FunctionsConstants.Users).doc(name).set({
+                age: age.toString(),
+                name: name,
+                points: 0,
+                isVerified: false,
+                bio: faker.lorem.paragraph(),
+                gender: faker.name.gender(true),
+                images: [
+                    faker.image.people(480, 480, true),
+                    faker.image.people(480, 480, true),
+                    faker.image.people(480, 480, true),
+                    faker.image.people(480, 480, true),
+                    faker.image.people(480, 480, true),
+                ],
+                location: location,
+            });
+
+            await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(name).set({
+                gender: faker.name.gender(true),
+                location: location,
+                ageMin: (age-5).toString(),
+                ageMax: (age+5).toString(),
+                currentIndex: 0,
+            });
+        }
+
+        res.status(200).send(util.SuccessMessages.SuccessMessage);
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
+const verifyFunction = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const users = await admin.firestore().collection(util.FunctionsConstants.Users).get();
+
+        if (users.empty) {
+            res.status(400).send(util.ErrorMessages.NoUserError);
+            return;
+        }
+
+        for (const doc of users.docs) {
+            const isVerified = (Math.floor(Math.random() * 2) == 0);
+
+
+            if (isVerified) {
+                const paymentId = faker.datatype.uuid();
+
+                doc.ref.set({
+                    isVerified: isVerified,
+                    verifiedPaymentId: paymentId,
+                }, {merge: true});
+                const now = admin.firestore.Timestamp.now();
+                const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60*100000, now.nanoseconds);
+                admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+                    purchaserId: doc.id,
+                    paymentId: paymentId,
+                    expiresAt: expiresAt,
+                    product: util.Products.Verified,
+                });
+            }
+        }
+
+        res.status(200).send(util.SuccessMessages.SuccessMessage);
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
+const boostFunction = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const users = await admin.firestore().collection(util.FunctionsConstants.Users).get();
+
+        if (users.empty) {
+            res.status(400).send(util.ErrorMessages.NoUserError);
+            return;
+        }
+
+        for (const doc of users.docs) {
+            const isBoosted = (Math.floor(Math.random() * 2) == 0);
+
+
+            if (isBoosted) {
+                const paymentId = faker.datatype.uuid();
+
+                doc.ref.set({
+                    points: 10,
+                    featuredPaymentId: paymentId,
+                }, {merge: true});
+
+                const now = admin.firestore.Timestamp.now();
+                const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60, now.nanoseconds);
+                await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+                    purchaserId: doc.id,
+                    paymentId: paymentId,
+                    expiresAt: expiresAt,
+                    product: util.Products.Featured,
+                });
+            }
+        }
+
+        res.status(200).send(util.SuccessMessages.SuccessMessage);
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
+// const createChats
+const createChats = async (req:functions.https.Request, res: functions.Response) => {
+    await admin.firestore().collection(util.FunctionsConstants.Users).limit(10).get()
+    .then(async (users) => {
+        for (const doc of users.docs) {
+            const potentialMatches = await getPotentialMatches(doc.id);
+
+            for (const potentialMatch of potentialMatches) {
+                const randomNumber = Math.floor(Math.random()*3);
+
+                if (randomNumber == 0) {
+                    await likeUser(doc.data(), potentialMatch);
+                } else if (randomNumber == 1) {
+                    await paidChat(doc.data(), potentialMatch);
+                } else {
+                    await halfPaidChat(doc.data(), potentialMatch);
+                }
+            }
+        }
+        res.status(200).send(util.SuccessMessages.SuccessMessage);
+        return;
+    })
+    .catch((error) =>{
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    });
+};
+
+async function getPotentialMatches(id: string): Promise<any[]> {
+        const docsArray: any[] | PromiseLike<any[]> = [];
+
+        await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(id).get()
+        .then(async (doc) => {
+            if (!doc.exists) {
+                throw new Error(util.ErrorMessages.NoUserError);
+            }
+
+            await admin.firestore().collection(util.FunctionsConstants.Users)
+                .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
+                .where(util.FunctionsConstants.Age, '>=', doc.data()?.ageMin)
+                .where(util.FunctionsConstants.Age, '<=', doc.data()?.ageMax)
+                .where(util.FunctionsConstants.Location, '==', doc.data()?.location)
+                .orderBy(util.FunctionsConstants.Age, 'asc')
+                .orderBy(util.FunctionsConstants.Points, 'desc')
+                .startAt(doc.data()?.currentIndex)
+                .limit(20)
+                .get()
+                .then(async (docs) => {
+                    if (docs.empty) {
+                        await doc.ref.update({currentIndex: 0});
+                        // throw new Error(util.ErrorMessages.NoDatesMessage);
+                    } else {
+                        for (const doc of docs.docs) {
+                            docsArray.push(doc.data());
+                        }
+
+                        const currentIndex = doc.data()?.currentIndex + docs.docs.length;
+
+                        await doc.ref.update({
+                            currentIndex: currentIndex,
+                        });
+                        return docsArray;
+                    }
+                });
+        });
+
+        return docsArray;
+}
+
+async function likeUser(user1: any, user2: any) {
+    const docId = user1.name.concat('_').concat(user2.name);
+    const docId2 = user2.name.concat('_').concat(user1.name);
+
+    await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.name).collection(util.FunctionsConstants.Chats).doc(docId).set({
+        id: user2.name,
+        chatsPaymentID: '',
+        imagesPaymentID: '',
+        name: user2.name,
+        imageUrl: user2.images[0],
+    });
+    await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.name).collection(util.FunctionsConstants.Chats).doc(docId2).set({
+        id: user1.name,
+        chatsPaymentID: '',
+        imagesPaymentID: '',
+        name: user1.name,
+        imageUrl: user1.images[0],
+    });
+}
+
+async function paidChat(user1: any, user2: any) {
+    const docId = user1.name.concat('_').concat(user2.name);
+    const docId2 = user2.name.concat('_').concat(user1.name);
+    const paymentId = faker.datatype.uuid();
+    const paymentId2 = faker.datatype.uuid();
+
+    await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.name).collection(util.FunctionsConstants.Chats).doc(docId).set({
+        id: user2.name,
+        chatsPaymentID: paymentId,
+        imagesPaymentID: '',
+        name: user2.name,
+        imageUrl: user2.images[0],
+    });
+    await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.name).collection(util.FunctionsConstants.Chats).doc(docId2).set({
+        id: user1.name,
+        chatsPaymentID: paymentId2,
+        imagesPaymentID: '',
+        name: user1.name,
+        imageUrl: user1.images[0],
+    });
+    const timestamp = admin.firestore.Timestamp.now();
+    let counter = 0;
+
+    for (const message of userTestChat) {
+        await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.name).collection(util.FunctionsConstants.Chats).doc(docId).collection(util.FunctionsConstants.Messages)
+        .doc()
+        .set({
+            idFrom: counter%2 == 0 ? user1.name : user2.name,
+            idTo: counter%2 == 0 ? user2.name : user1.name,
+            timestamp: timestamp,
+            content: message.content,
+        });
+
+        await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.name).collection(util.FunctionsConstants.Chats).doc(docId2).collection(util.FunctionsConstants.Messages)
+        .doc()
+        .set({
+            idFrom: counter%2 == 0 ? user1.name : user2.name,
+            idTo: counter%2 == 0 ? user2.name : user1.name,
+            timestamp: timestamp,
+            content: message.content,
+        });
+        counter++;
+    }
+    const now = admin.firestore.Timestamp.now();
+    const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60, now.nanoseconds);
+    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+        purchaserId: user1.name,
+        paymentId: paymentId,
+        expiresAt: expiresAt,
+        product: util.Products.Chats,
+    });
+    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+        purchaserId: user2.name,
+        paymentId: paymentId2,
+        expiresAt: expiresAt,
+        product: util.Products.Chats,
+    });
+}
+
+async function halfPaidChat(user1: any, user2: any) {
+    const docId = user1.name.concat('_').concat(user2.name);
+    const docId2 = user2.name.concat('_').concat(user1.name);
+    const paymentId = faker.datatype.uuid();
+
+    await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.name).collection(util.FunctionsConstants.Chats).doc(docId).set({
+        id: user2.name,
+        chatsPaymentID: paymentId,
+        imagesPaymentID: '',
+        name: user2.name,
+        imageUrl: user2.images[0],
+    });
+    await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.name).collection(util.FunctionsConstants.Chats).doc(docId2).set({
+        id: user1.name,
+        chatsPaymentID: '',
+        imagesPaymentID: '',
+        name: user1.name,
+        imageUrl: user1.images[0],
+    });
+
+    const now = admin.firestore.Timestamp.now();
+    const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60, now.nanoseconds);
+    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+        purchaserId: user1.name,
+        paymentId: paymentId,
+        expiresAt: expiresAt,
+        product: util.Products.Chats,
+    });
+}
+
+const locationsData = [
+    'Bloemfontein',
+    'Cape Town',
+    'Durban',
+    'Johannesburg',
+    'Kimberley',
+    'Nelspruit',
+    'PE',
+    'Polokwane',
+    'Pretoria',
+    'Soweto',
+];
 
 const userTestData = [
     {
@@ -342,7 +664,12 @@ const userTestChat = [
 
 ];
 
+
 export {
+    createDB,
+    createChats,
     addTestUsers,
     addTestChatsUsers,
+    boostFunction,
+    verifyFunction,
 };

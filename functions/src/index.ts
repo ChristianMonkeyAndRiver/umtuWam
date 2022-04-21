@@ -59,6 +59,14 @@ exports.subscriptionCallBackUrl = functions.https.onRequest(paymentsController.s
 
 // =====================================================================================================================
 
+exports.createDB = functions.https.onRequest(testController.createDB);
+
+exports.createChats = functions.https.onRequest(testController.createChats);
+
+exports.boostFunction = functions.https.onRequest(testController.boostFunction);
+
+exports.verifyFunction = functions.https.onRequest(testController.verifyFunction);
+
 exports.addTestUsers = functions.https.onRequest(testController.addTestUsers);
 
 exports.addTestChatsUsers = functions.https.onRequest(testController.addTestChatsUsers);
