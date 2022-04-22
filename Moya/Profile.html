@@ -9,37 +9,44 @@
 
 <body>
     <script>
-        fetch('http://localhost:5001/umtuwam/us-central1/getUserInformation')
-            .then(res => res.json())
-            .then((out) => {
-                var name = document.getElementById("name");
-                name.setAttribute("value", out.name);
+        window.onload = function () {
+            var params = location.search.substring(1);
+            var temp = params.split("=");
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${temp[1]}`)
+                .then(res => res.json())
+                .then((out) => {
+                    var name = document.getElementById("name");
+                    name.setAttribute("value", out.name);
 
-                var age = document.getElementById("age");
-                age.setAttribute("value", out.age);
+                    var age = document.getElementById("age");
+                    age.setAttribute("value", out.age);
 
-                var location = document.getElementById("location");
-                location.setAttribute("value", out.location);
+                    var location = document.getElementById("location").children[2];
+                    location.setAttribute("selected", out.location);
 
-                var bio = document.getElementById("bio");
-                bio.setAttribute("value", out.bio);
-            }).catch(err => console.error(err));
+                    var bio = document.getElementById("bio");
+                    bio.setAttribute("value", out.bio);
+                }).catch(err => console.error(err));
+        }
+        function stop() {
+            event.preventDefault();
+            var name = document.getElementById("name").value;
 
-        function validateThis() {
-            var checkboxes = document.getElementsByName("lookingFor");
-            var okay = false;
-            for (var i = 0, l = checkboxes.length; i < l; i++) {
-                if (checkboxes[i].checked) {
-                    okay = true;
-                    break;
-                }
-            }
-            if (!okay) {
-                alert("please select box");
-                event.preventDefault();
-            } else {
+            var bio = document.getElementById("bio").value;
 
-            }
+            var age = document.getElementById("age").value;
+
+            var location = document.getElementById("location").value;
+
+            var id = document.getElementById("id").value;
+
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/signUp?name=${name}&age=${age}&location=${location}&bio=${bio}&id=${id}`;
+
+            fetch(url).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                console.log(data);
+            });
         }
     </script>
     <div>
@@ -47,17 +54,18 @@
         <h2>Your profile - make it complete!</h2>
         <hr>
     </div>
-    <form id="form" action="http://localhost:5001/umtuwam/us-central1/updateUserInformation" onsubmit="validateThis();"
-        method="get">
-        <div>
+    <form id="form" action="https://us-central1-umtuwam.cloudfunctions.net/updateUserInformation" method="get">
+        <div class="container">
             <p>
                 <label>Name:
-                    <input type="text" id="name" name="name" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$" required>
+                    <br />
+                    <input type="text" id="name" name="name" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$" maxlength="50" required>
                 </label>
             </p>
             <p>
                 <label>Age:
-                    <input type="text" id="age" name="age" pattern="[0-9]+" required>
+                    <br />
+                    <input type="text" id="age" name="age" pattern="[0-9]+" maxlength="3" required>
                 </label>
             </p>
             <p>
@@ -79,24 +87,18 @@
             </p>
             <p>
                 <label>About me:
+                    <br />
                     <textarea class="bio" id="bio" maxlength="255" name="bio" rows="5"></textarea>
                 </label>
             </p>
-            <p>
-                <label>Looking for a:
-                    <input id="female" type="checkbox" name="lookingFor" value="Woman">
-                    <label for="female">Woman</label>
-                    <input id="male" type="checkbox" name="lookingFor" value="Woman">
-                    <label for="male">Man</label>
-                </label>
-            </p>
-            <!-- <label>Ages:</label>
-            <input class="age" type="text" id="ageFrom" name="ageFrom" pattern="[0-9]+" required>
-            <label>to:</label>
-            <input class="age" type="text" id="ageTo" name="ageTo" pattern="[0-9]+" required> -->
+            <input type="text" id="id" name="id" hidden value= />
         </div>
+
         <button type="button">Add your photos</button>
-        <a href="http://localhost:5001/umtuwam/us-central1/getMembershipPageXML" class="membership">Membership (chat and more)</a>
+        <a href="https://us-central1-umtuwam.cloudfunctions.net/getMembershipPageXML?id=0727888675"
+            class="membership">Membership
+            (chat and
+            more)</a>
         <button type="submit" id="checkBtn">Save changes</button>
     </form>
 </body>

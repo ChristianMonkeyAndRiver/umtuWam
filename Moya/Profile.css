@@ -8,8 +8,12 @@ button {
     border-radius: 5px;
 }
 
-.membership {
-    background-color: #f86612;
+h2 {
+    text-align: center;
+}
+
+.container {
+    padding-left: 10%;
 }
 
 p label {
@@ -21,20 +25,39 @@ select {
 }
 
 input[type="text"] {
-    width: 66%;
+    width: 80%;
     height: 30px;
-    margin: 5px;
 }
 
 .age {
+    text-align: center;
     width: 20% !important;
 }
 
 .bio {
     resize: none;
-    width: 70%;
+    width: 80%;
 }
 
 label textarea {
     vertical-align: middle;
+}
+
+.membership {
+    justify-content: center;
+    align-items: center;
+    color: black;
+    text-decoration: none;
+    background-color: #f86612;
+    height: 40px;
+    font-size: large;
+    width: 80%;
+    margin: 10px auto;
+    display: flex;
+    border: solid black 2px;
+    border-radius: 5px;
+}
+
+body {
+    padding-bottom: 150px;
 }

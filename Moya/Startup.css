@@ -8,8 +8,8 @@ button {
     border-radius: 5px;
 }
 
-br {
-    margin-bottom: 5px;
+.container {
+    padding-left: 10%;
 }
 
 .logo {
@@ -21,18 +21,24 @@ br {
     text-align: center;
 }
 
+label {
+    vertical-align: top;
+}
+
 select {
     height: 35px;
 }
 
 input[type="text"] {
     height: 30px;
+    width: 80%;
 }
 
 body {
-    padding-bottom: 50px;
+    padding-bottom: 150px;
 }
 
 .age {
-    width: 10%;
+    text-align: center;
+    width: 10% !important;
 }
