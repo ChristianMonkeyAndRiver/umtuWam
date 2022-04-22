@@ -61,7 +61,7 @@ const getUserInformation = async (req:functions.https.Request, res: functions.Re
         try {
             const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
-            if (!userDocument.exists) res.status(400).send(util.ErrorMessages.NoUserError);
+            if (!userDocument.exists) res.status(500).send(util.ErrorMessages.NoUserError);
 
 
             res.status(200).send(userDocument.data());
@@ -114,7 +114,7 @@ const getUserPreferences = async (req:functions.https.Request, res: functions.Re
 
             const userPreferencesDoc = await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get();
 
-            if (!userPreferencesDoc.exists) res.status(400).send(util.ErrorMessages.NoUserError);
+            if (!userPreferencesDoc.exists) res.status(500).send(util.ErrorMessages.NoUserError);
 
 
             res.status(200).send(userPreferencesDoc.data());

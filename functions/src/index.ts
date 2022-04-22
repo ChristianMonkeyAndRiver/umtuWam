@@ -111,14 +111,14 @@ exports.addTestChatsUsers = functions.https.onRequest(testController.addTestChat
 //     await admin.firestore().collection(util.FunctionsConstants.Users).doc(data.userId).update({
 //         images: admin.firestore.FieldValue.arrayUnion(url),
 //     }).catch((error) => {
-//         return res.status(400).send(error);
+//         return res.status(500).send(error);
 //     });
 //     return res.status(200).send({
 //         'imageUrl': url,
 //     });
 // })
 // .catch((error) => {
-//     return res.status(400).send(error);
+//     return res.status(500).send(error);
 // });
 
 
@@ -127,9 +127,9 @@ exports.addTestChatsUsers = functions.https.onRequest(testController.addTestChat
 
 //     await admin.firestore().collection(util.FunctionsConstants.Users).doc(data.userId).get()
 //     .then(async (doc) => {
-//         if (!doc.exists) return res.status(400).send(util.ErrorMessages.NoUserError);
+//         if (!doc.exists) return res.status(500).send(util.ErrorMessages.NoUserError);
 
-//         if (doc.data()?.images.length == 5) return res.status(400).send(util.ErrorMessages.TooManyimagesError);
+//         if (doc.data()?.images.length == 5) return res.status(500).send(util.ErrorMessages.TooManyimagesError);
 
 //         const imageArrayLength = (doc.data()?.images.length + 1);
 
@@ -158,8 +158,8 @@ exports.addTestChatsUsers = functions.https.onRequest(testController.addTestChat
 //           });
 //     })
 //     .catch((error) => {
-//         return res.status(400).send(error);
+//         return res.status(500).send(error);
 //     });
 
-//     // return res.status(400).send('Unexpected Error');
+//     // return res.status(500).send('Unexpected Error');
 // });

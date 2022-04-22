@@ -131,7 +131,7 @@ const verifyFunction = async (req:functions.https.Request, res: functions.Respon
         const users = await admin.firestore().collection(util.FunctionsConstants.Users).get();
 
         if (users.empty) {
-            res.status(400).send(util.ErrorMessages.NoUserError);
+            res.status(500).send(util.ErrorMessages.NoUserError);
             return;
         }
 
@@ -171,7 +171,7 @@ const boostFunction = async (req:functions.https.Request, res: functions.Respons
         const users = await admin.firestore().collection(util.FunctionsConstants.Users).get();
 
         if (users.empty) {
-            res.status(400).send(util.ErrorMessages.NoUserError);
+            res.status(500).send(util.ErrorMessages.NoUserError);
             return;
         }
 
@@ -209,20 +209,22 @@ const boostFunction = async (req:functions.https.Request, res: functions.Respons
 
 // const createChats
 const createChats = async (req:functions.https.Request, res: functions.Response) => {
-    await admin.firestore().collection(util.FunctionsConstants.Users).limit(10).get()
+    await admin.firestore().collection(util.FunctionsConstants.Users).limit(20).get()
     .then(async (users) => {
         for (const doc of users.docs) {
             const potentialMatches = await getPotentialMatches(doc.id);
 
             for (const potentialMatch of potentialMatches) {
-                const randomNumber = Math.floor(Math.random()*3);
+                const randomNumber = Math.floor(Math.random()*4);
 
                 if (randomNumber == 0) {
                     await likeUser(doc.data(), potentialMatch);
                 } else if (randomNumber == 1) {
                     await paidChat(doc.data(), potentialMatch);
-                } else {
+                } else if (randomNumber == 2) {
                     await halfPaidChat(doc.data(), potentialMatch);
+                } else {
+                    await payForImage(doc.data(), potentialMatch);
                 }
             }
         }
@@ -383,6 +385,21 @@ async function halfPaidChat(user1: any, user2: any) {
         paymentId: paymentId,
         expiresAt: expiresAt,
         product: util.Products.Chats,
+    });
+}
+
+async function payForImage(user1: any, user2: any) {
+    const docId = user1.name.concat('_').concat(user2.name);
+
+    const paymentId = faker.datatype.uuid();
+    const now = admin.firestore.Timestamp.now();
+    const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60, now.nanoseconds);
+
+    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc(docId).set({
+        purchaserId: user1.name,
+        paymentId: paymentId,
+        expiresAt: expiresAt,
+        product: util.Products.Photos,
     });
 }
 

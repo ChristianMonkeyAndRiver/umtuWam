@@ -39,7 +39,7 @@ const createMySubscription = async (req:functions.https.Request, res: functions.
             .then((result) => result.json())
             .then(async (json) => {
                 console.log(json);
-                if (req.query.productId == util.Products.Chats || req.query.productId == util.Products.Photos) {
+                if (req.query.productId == util.Products.Chats) {
                     const queryUid = req.query.uid ?? '';
                     const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
                     const uidString = formattedUid.toString();
@@ -47,6 +47,17 @@ const createMySubscription = async (req:functions.https.Request, res: functions.
                     admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
                         purchaserId: uid,
                         matchId: uidString,
+                        paymentId: json.paymentID,
+                        product: req.query.productId,
+                    });
+                } else if (req.query.productId == util.Products.Photos) {
+                    const queryUid = req.query.uid ?? '';
+                    const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
+                    const uidString = formattedUid.toString();
+                    const id = uid.concat('_').concat(uidString);
+
+                    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc(id).set({
+                        purchaserId: uid,
                         paymentId: json.paymentID,
                         product: req.query.productId,
                     });
@@ -105,7 +116,7 @@ const createOtherSubscription = async (req:functions.https.Request, res: functio
             .then((result) => result.json())
             .then(async (json) => {
                if (req.query.productId != util.Products.Chats) {
-                   res.status(400).send(util.ErrorMessages.IncorrectProductId);
+                   res.status(500).send(util.ErrorMessages.IncorrectProductId);
                    return;
                 }
 
@@ -152,7 +163,7 @@ const subscriptionCallBackUrl = async (req:functions.https.Request, res: functio
                     .then(async (docs) => {
                         docs.docs[0].ref.delete();
                     });
-                    res.status(500).send(util.ErrorMessages.PaymentFailureError);
+                    res.status(200).send(util.ErrorMessages.PaymentFailureError);
                     return;
                 }
 
@@ -160,7 +171,7 @@ const subscriptionCallBackUrl = async (req:functions.https.Request, res: functio
                 .get()
                 .then(async (docs) => {
                     if (docs.empty) {
-                        res.status(400).send(util.ErrorMessages.SubscritionNotFound);
+                        res.status(500).send(util.ErrorMessages.SubscritionNotFound);
                         return;
                     }
 
@@ -182,15 +193,6 @@ const subscriptionCallBackUrl = async (req:functions.https.Request, res: functio
                         const promise2 = docs.docs[0].ref.update({expiresAt: expiresAt});
                         promises.push(promise2);
                     } else if (docs.docs[0].data().productId == util.Products.Photos) {
-                        const chatId = docs.docs[0].data().purchaserId.concat('_').concat(docs.docs[0].data().matchId);
-
-                        const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().purchaserId).collection(util.FunctionsConstants.Chats).doc(chatId)
-                            .update({
-                            imagesPaymentID: json.paymentID,
-                        });
-
-                        promises.push(promise1);
-
                         const now = admin.firestore.Timestamp.now();
                         const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60*100000, now.nanoseconds);
                         const promise2 = docs.docs[0].ref.update({expiresAt: expiresAt});

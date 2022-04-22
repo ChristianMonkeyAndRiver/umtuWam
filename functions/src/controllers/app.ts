@@ -116,7 +116,7 @@ const getMembershipPageXML = async (req:functions.https.Request, res: functions.
 
         const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
-        if (!userDocument.exists) res.status(400).send(util.ErrorMessages.NoUserError);
+        if (!userDocument.exists) res.status(500).send(util.ErrorMessages.NoUserError);
 
         const doc = [{
             doc: [
@@ -259,7 +259,7 @@ const getProspectiveDates = async (req:functions.https.Request, res: functions.R
 
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get()
             .then(async (doc) => {
-                if (!doc.exists) res.status(400).send(util.ErrorMessages.NoUserError);
+                if (!doc.exists) res.status(500).send(util.ErrorMessages.NoUserError);
 
                 await admin.firestore().collection(util.FunctionsConstants.Users)
                     .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
@@ -274,7 +274,7 @@ const getProspectiveDates = async (req:functions.https.Request, res: functions.R
                     .then((docs) => {
                         if (docs.empty) {
                             doc.ref.update({currentIndex: 0});
-                            res.status(400).send(util.ErrorMessages.NoDatesMessage);
+                            res.status(500).send(util.ErrorMessages.NoDatesMessage);
                         } else {
                             const docsArray = [];
                             for (const doc of docs.docs) {
@@ -311,7 +311,7 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get()
             .then(async (doc) => {
                 if (!doc.exists) {
-                    res.status(400).send(util.ErrorMessages.NoUserError);
+                    res.status(500).send(util.ErrorMessages.NoUserError);
                 } else {
                     await admin.firestore().collection(util.FunctionsConstants.Users)
                     .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
@@ -322,7 +322,7 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
                     .get()
                     .then((docs) => {
                         if (docs.empty) {
-                            res.status(400).send(util.ErrorMessages.NoDatesMessage);
+                            res.status(500).send(util.ErrorMessages.NoDatesMessage);
                             return;
                         }
 
@@ -424,7 +424,7 @@ const getUserProfileXML = async (req:functions.https.Request, res: functions.Res
 
         await admin.firestore().collection(util.FunctionsConstants.Users).doc(uidString).get()
          .then((docs) =>{
-            if (!docs.exists) return res.status(400).send(util.ErrorMessages.NoUserError);
+            if (!docs.exists) return res.status(500).send(util.ErrorMessages.NoUserError);
 
                 const doc = [{
                     doc: [

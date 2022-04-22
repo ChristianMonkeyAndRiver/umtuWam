@@ -211,7 +211,7 @@ const getChat = async (req:functions.https.Request, res: functions.Response) => 
             const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
             if (!userDocument.exists) {
-                res.status(400).send(util.ErrorMessages.NoUserError);
+                res.status(500).send(util.ErrorMessages.NoUserError);
                 return;
             }
 
@@ -266,14 +266,14 @@ const getMatches = async (req:functions.https.Request, res: functions.Response) 
             const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
             if (!userDocument.exists) {
-                res.status(400).send(util.ErrorMessages.NoUserError);
+                res.status(500).send(util.ErrorMessages.NoUserError);
                 return;
             }
 
             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).collection(util.FunctionsConstants.Chats)
             .get()
             .then((docs) => {
-                if (docs.empty) return res.status(400).send(util.ErrorMessages.NoUserError);
+                if (docs.empty) return res.status(500).send(util.ErrorMessages.NoUserError);
 
                 const docsArray = [];
                 for (const doc of docs.docs) {
@@ -302,7 +302,7 @@ const getMatchesXML = async (req:functions.https.Request, res: functions.Respons
         .get()
         .then((docs) => {
             if (docs.empty) {
-                res.status(400).send(util.ErrorMessages.NoUserError);
+                res.status(500).send(util.ErrorMessages.NoUserError);
                 return;
             }
 
@@ -381,7 +381,7 @@ const sendMessage = async (req:functions.https.Request, res: functions.Response)
             const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
             if (!userDocument.exists) {
-                res.status(400).send(util.ErrorMessages.NoUserError);
+                res.status(500).send(util.ErrorMessages.NoUserError);
                 return;
             }
 
@@ -434,7 +434,7 @@ const likeUser = async (req:functions.https.Request, res: functions.Response) =>
             const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
             if (!userDocument.exists) {
-                res.status(400).send(util.ErrorMessages.NoUserError);
+                res.status(500).send(util.ErrorMessages.NoUserError);
                 return;
             }
 
