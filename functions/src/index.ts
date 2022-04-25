@@ -59,13 +59,25 @@ exports.subscriptionCallBackUrl = functions.https.onRequest(paymentsController.s
 
 // =====================================================================================================================
 
-exports.createDB = functions.https.onRequest(testController.createDB);
+exports.createDB = functions.runWith({
+    timeoutSeconds: 540,
+    memory: '512MB',
+  }).https.onRequest(testController.createDB);
 
-exports.createChats = functions.https.onRequest(testController.createChats);
+exports.createChats = functions.runWith({
+    timeoutSeconds: 540,
+    memory: '512MB',
+  }).https.onRequest(testController.createChats);
 
-exports.boostFunction = functions.https.onRequest(testController.boostFunction);
+exports.boostFunction = functions.runWith({
+    timeoutSeconds: 540,
+    memory: '512MB',
+  }).https.onRequest(testController.boostFunction);
 
-exports.verifyFunction = functions.https.onRequest(testController.verifyFunction);
+exports.verifyFunction = functions.runWith({
+    timeoutSeconds: 540,
+    memory: '512MB',
+  }).https.onRequest(testController.verifyFunction);
 
 exports.addTestUsers = functions.https.onRequest(testController.addTestUsers);
 

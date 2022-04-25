@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>UmtuWam</title>
+    <link rel="stylesheet" href="./Filters.css" type="text/css">
+</head>
+
+<body>
+    <script>
+        function validateThis() {
+            var checkboxes = document.getElementsByName("lookingFor");
+            var okay = false;
+            for (var i = 0, l = checkboxes.length; i < l; i++) {
+                if (checkboxes[i].checked) {
+                    okay = true;
+                    break;
+                }
+            }
+            if (!okay) {
+                var error = document.getElementById("error");
+                error.removeAttribute("hidden");
+                return false;
+            } else {
+                var error = document.getElementById("error");
+                error.setAttribute("hidden", true);
+                return true;
+            }
+        }
+
+        window.onload = function () {
+            var params = location.search.substring(1);
+            var temp = params.split("=");
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserPreferences?id=${temp[1]}`)
+                .then(res => res.json())
+                .then((out) => {
+                    if (out.gender == "female") {
+                        var gender = document.getElementById("female")
+                        gender.setAttribute("checked", true)
+                    } else {
+                        var gender = document.getElementById("male")
+                        gender.setAttribute("checked", true)
+                    }
+
+                    var ageMin = document.getElementById("ageFrom");
+                    ageMin.setAttribute("value", out.ageMin);
+
+                    var ageMax = document.getElementById("ageTo");
+                    ageMax.setAttribute("value", out.ageMax);
+
+                    var location = document.getElementById("location").children[2];
+                    location.setAttribute("selected", out.location);
+                }).catch(err => console.error(err));
+        }
+
+        function stop() {
+            event.preventDefault();
+            if (validateThis()) {
+
+                var ageFrom = document.getElementById("ageFrom").value;
+
+                var ageTo = document.getElementById("ageTo").value;
+
+                var lookingFor = "";
+                if (document.getElementById("UFemale")) {
+                    lookingFor = "female";
+                } else {
+                    lookingFor = "male";
+                }
+
+                var id = document.getElementById("id").value;
+
+                var location = document.getElementById("location").value;
+
+                var url = `https://us-central1-umtuwam.cloudfunctions.net/signUp?ageFrom=${ageFrom}&ageTo=${ageTo}&location=${location}&lookingFor=${lookingFor}&id=${id}`;
+
+                fetch(url).then(function (response) {
+                    return response.json();
+                }).then(function (data) {
+                    console.log(data);
+                });
+            }
+        }
+
+    </script>
+    <form action="https://us-central1-umtuwam.cloudfunctions.net/updateUserPreferences" method="get">
+        <hr>
+        <h2>Preferences:</h2>
+        <hr>
+        <div class="container">
+            <p>
+                <label>Ages:
+                    <input class="age" type="text" id="ageFrom" name="ageMin" pattern="[0-9]+" maxlength="3" required>
+                    <label for="ageTo">to:</label>
+                    <input class="age" type="text" id="ageTo" name="ageMax" pattern="[0-9]+" maxlength="3" required>
+                </label>
+            </p>
+            <p>
+                <label>Looking for:
+                    <input id="female" type="checkbox" name="gender" value="Woman">
+                    <label for="female">Woman</label>
+                    <input id="male" type="checkbox" name="gender" value="Woman">
+                    <label for="male">Man</label>
+                </label>
+            <p id="error" hidden style="color: red;">Please select at least one checkbox</p>
+            </p>
+            <p>
+                <label>Location:
+                    <select name="location" id="location" required>
+                        <option value="" disabled selected>Select your location</option>
+                        <option value="Bloemfontein">Bloemfontein</option>
+                        <option value="Cape Town">Cape Town</option>
+                        <option value="Durban">Durban</option>
+                        <option value="Johannesburg">Johannesburg</option>
+                        <option value="Kimberley">Kimberley</option>
+                        <option value="Nelspruit">Nelspruit</option>
+                        <option value="PE">PE</option>
+                        <option value="Polokwane">Polokwane</option>
+                        <option value="Pretoria">Pretoria</option>
+                        <option value="Soweto">Soweto</option>
+                    </select>
+                </label>
+            </p>
+            <input type="text" id="id" name="id" hidden value= />
+        </div>
+        <button type="submit">Save Changes</button>
+    </form>
+</body>
+
+</html>

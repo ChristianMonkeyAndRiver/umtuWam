@@ -8,6 +8,7 @@ enum Products {
 enum PaymentState {
     Created = 'CREATED',
     Accepted = 'ACCPETED',
+    Approved = 'APPROVED',
 }
 
 enum ErrorMessages {

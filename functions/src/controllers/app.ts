@@ -128,116 +128,73 @@ const getMembershipPageXML = async (req:functions.https.Request, res: functions.
                 {
                     list: [
                         {
-                            md: [
+                            item: [
                                 {
                                     _attr: {
                                         style: '',
-                                    },
-                                },
-                                {
-                                    description: {
-                                        _cdata: util.FunctionsConstants.Membership,
-                                    },
-                                },
-                            ],
-                        },
-                        {
-                            hr: [],
-                        },
-                        {
-                            md: [
-                                {
-                                    _attr: {
-                                        style: '',
-                                    },
-                                },
-                                {
-                                    description: {
-                                        _cdata: util.FunctionsConstants.Chatting,
-                                    },
-                                },
-                            ],
-                        },
-                       {
-                            a: [
-                                {
-                                    _attr: {
                                         href: '',
-                                    },
-                                },
-                                util.FunctionsConstants.ClickToPayChats,
-                            ],
-                       },
-                       {
-                        md: [
-                                {
-                                    _attr: {
-                                        style: '',
+                                        layout: 'relative',
                                     },
                                 },
                                 {
-                                    description: {
-                                        _cdata: util.FunctionsConstants.Featured,
-                                    },
+                                    md: util.FunctionsConstants.Membership,
                                 },
                             ],
                         },
                         {
-                                a: [
-                                    {
-                                        _attr: {
-                                            href: '',
-                                        },
-                                    },
-                                    util.FunctionsConstants.ClickToPayFeatured,
-                                ],
-                        },
-                        {
-                            md: [
+                            item: [
                                 {
                                     _attr: {
                                         style: '',
-                                    },
-                                },
-                                {
-                                    description: {
-                                        _cdata: 'See all photos',
-                                    },
-                                },
-                            ],
-                        },
-                       {
-                            a: [
-                                {
-                                    _attr: {
                                         href: '',
-                                    },
-                                },
-                                util.FunctionsConstants.ClickToPayPhotos,
-                            ],
-                       },
-                       {
-                            md: [
-                                {
-                                    _attr: {
-                                        style: '',
+                                        layout: 'relative',
                                     },
                                 },
                                 {
-                                    description: {
-                                        _cdata: util.FunctionsConstants.Verified,
-                                    },
+                                    md: `${util.FunctionsConstants.Chatting}: ${util.FunctionsConstants.ClickToPayChats}`,
                                 },
                             ],
                         },
                         {
-                            a: [
+                            item: [
                                 {
                                     _attr: {
+                                        style: '',
                                         href: '',
+                                        layout: 'relative',
                                     },
                                 },
-                                util.FunctionsConstants.ClickToPayVerified,
+                                {
+                                    md: `${util.FunctionsConstants.Featured} ${util.FunctionsConstants.ClickToPayFeatured}`,
+                                },
+                            ],
+                        },
+                        {
+                            item: [
+                                {
+                                    _attr: {
+                                        style: '',
+                                        href: '',
+                                        layout: 'relative',
+                                    },
+                                },
+                                {
+                                    md: `${util.FunctionsConstants.SeeAllPhotos} ${util.FunctionsConstants.ClickToPayPhotos}`,
+                                },
+                            ],
+                        },
+                        {
+                            item: [
+                                {
+                                    _attr: {
+                                        style: '',
+                                        href: '',
+                                        layout: 'relative',
+                                    },
+                                },
+                                {
+                                    md: `${util.FunctionsConstants.Verified} ${util.FunctionsConstants.ClickToPayVerified}`,
+                                },
                             ],
                         },
                     ],
@@ -259,7 +216,10 @@ const getProspectiveDates = async (req:functions.https.Request, res: functions.R
 
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get()
             .then(async (doc) => {
-                if (!doc.exists) res.status(500).send(util.ErrorMessages.NoUserError);
+                if (!doc.exists) {
+                    res.status(500).send(util.ErrorMessages.NoUserError);
+                    return;
+                }
 
                 await admin.firestore().collection(util.FunctionsConstants.Users)
                     .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
@@ -271,10 +231,11 @@ const getProspectiveDates = async (req:functions.https.Request, res: functions.R
                     .startAt(doc.data()?.currentIndex)
                     .limit(20)
                     .get()
-                    .then((docs) => {
+                    .then(async (docs) => {
                         if (docs.empty) {
                             doc.ref.update({currentIndex: 0});
                             res.status(500).send(util.ErrorMessages.NoDatesMessage);
+                            return;
                         } else {
                             const docsArray = [];
                             for (const doc of docs.docs) {
@@ -283,7 +244,7 @@ const getProspectiveDates = async (req:functions.https.Request, res: functions.R
 
                             const currentIndex = doc.data()?.currentIndex + docs.docs.length;
 
-                            doc.ref.update({
+                            await doc.ref.update({
                                 currentIndex: currentIndex,
                             });
 
@@ -312,100 +273,110 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
             .then(async (doc) => {
                 if (!doc.exists) {
                     res.status(500).send(util.ErrorMessages.NoUserError);
-                } else {
-                    await admin.firestore().collection(util.FunctionsConstants.Users)
-                    .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
-                    .where(util.FunctionsConstants.Age, '>=', doc.data()?.ageMin)
-                    .where(util.FunctionsConstants.Age, '<=', doc.data()?.ageMax)
-                    .where(util.FunctionsConstants.Location, '==', doc.data()?.location)
-                    .limit(20)
-                    .get()
-                    .then((docs) => {
-                        if (docs.empty) {
-                            res.status(500).send(util.ErrorMessages.NoDatesMessage);
-                            return;
-                        }
+                    return;
+                }
+                await admin.firestore().collection(util.FunctionsConstants.Users)
+                .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
+                .where(util.FunctionsConstants.Age, '>=', doc.data()?.ageMin)
+                .where(util.FunctionsConstants.Age, '<=', doc.data()?.ageMax)
+                .where(util.FunctionsConstants.Location, '==', doc.data()?.location)
+                .orderBy(util.FunctionsConstants.Age, 'asc')
+                .orderBy(util.FunctionsConstants.Points, 'desc')
+                .startAt(doc.data()?.currentIndex)
+                .limit(20)
+                .get()
+                .then(async (docs) => {
+                    if (docs.empty) {
+                        doc.ref.update({currentIndex: 0});
+                        res.status(500).send(util.ErrorMessages.NoDatesMessage);
+                        return;
+                    }
 
-                        const usersList: any = [];
+                    const usersList: any = [];
 
-                        for (const doc of docs.docs) {
-                            const item = {
-                                item: [
-                                    {
-                                        _attr: {
-                                            style: '',
-                                            href: `http://localhost:5001/umtuwam/us-central1/getUserProfileXML?uid=${doc.id}`,
-                                            layout: 'relative',
-                                        },
-                                    },
-                                    {
-                                        img: {
-                                            _attr: {
-                                                url: doc.data().images.length > 0 ? doc.data().images[0] : util.FunctionsConstants.DefualtImage,
-                                            },
-                                        },
-                                    },
-                                    {
-                                        md: [
-                                            {
-                                                _attr: {
-                                                    style: '',
-                                                },
-                                            },
-                                            {
-                                                description: {
-                                                    _cdata: doc.data().name,
-                                                },
-                                            },
-                                            {
-                                                description: {
-                                                    _cdata: doc.data().age,
-                                                },
-                                            },
-                                            {
-                                                description: {
-                                                    _cdata: doc.data().location,
-                                                },
-                                            },
-                                        ],
-                                    },
-                                    {
-                                        item: [
-                                            {
-                                                _attr: {
-                                                    style: '',
-                                                    href: `http://localhost:5001/umtuwam/us-central1/likeUser?uid=${doc.id}`,
-                                                    layout: 'relative',
-                                                },
-                                            },
-                                        ],
-                                    },
-                                ],
-                            };
-                            usersList.push(item);
-                        }
-
-                        const newUsersList = addNextButtonItemXML(usersList);
-
-                        const doc = [{
-                            doc: [
+                    for (const doc of docs.docs) {
+                        const item = {
+                            item: [
                                 {
                                     _attr: {
-                                        title: util.FunctionsConstants.Binu,
+                                        style: '',
+                                        href: `http://localhost:5001/umtuwam/us-central1/getUserProfileXML?uid=${doc.id}`,
+                                        layout: 'relative',
                                     },
                                 },
                                 {
-                                    list: [
-                                        ...newUsersList,
+                                    img: {
+                                        _attr: {
+                                            url: doc.data().images.length > 0 ? doc.data().images[0] : util.FunctionsConstants.DefualtImage,
+                                        },
+                                    },
+                                },
+                                {
+                                    md: [
+                                        {
+                                            _attr: {
+                                                style: '',
+                                            },
+                                        },
+                                        {
+                                            p: {
+                                                _cdata: doc.data().name,
+                                            },
+                                        },
+                                        {
+                                            p: {
+                                                _cdata: doc.data().age,
+                                            },
+                                        },
+                                        {
+                                            p: {
+                                                _cdata: doc.data().location,
+                                            },
+                                        },
+                                    ],
+                                },
+                                {
+                                    item: [
+                                        {
+                                            _attr: {
+                                                style: '',
+                                                href: `http://localhost:5001/umtuwam/us-central1/likeUser?uid=${doc.id}`,
+                                                layout: 'relative',
+                                            },
+                                        },
                                     ],
                                 },
                             ],
-                        }];
+                        };
+                        usersList.push(item);
+                    }
 
-                        res.status(200).send(xml(doc, true));
-                        return;
+                    const currentIndex = doc.data()?.currentIndex + docs.docs.length;
+
+                    await doc.ref.update({
+                        currentIndex: currentIndex,
                     });
-                }
+
+                    const newUsersList = addNextButtonItemXML(usersList);
+
+                    const docXML = [{
+                        doc: [
+                            {
+                                _attr: {
+                                    title: util.FunctionsConstants.Binu,
+                                },
+                            },
+                            {
+                                list: [
+                                    ...newUsersList,
+                                ],
+                            },
+                        ],
+                    }];
+
+                    res.status(200).send(xml(docXML, true));
+                    return;
+                });
             });
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
@@ -448,12 +419,12 @@ const getUserProfileXML = async (req:functions.https.Request, res: functions.Res
                                     },
                                 },
                                 {
-                                    description: {
+                                    p: {
                                         _cdata: docs.data()?.name,
                                     },
                                 },
                                 {
-                                    description: {
+                                    p: {
                                         _cdata: docs.data()?.age,
                                     },
                                 },
@@ -467,7 +438,7 @@ const getUserProfileXML = async (req:functions.https.Request, res: functions.Res
                                     },
                                 },
                                 {
-                                    description: {
+                                    p: {
                                         _cdata: docs.data()?.location,
                                     },
                                 },
@@ -481,7 +452,7 @@ const getUserProfileXML = async (req:functions.https.Request, res: functions.Res
                                     },
                                 },
                                 {
-                                    description: {
+                                    p: {
                                         _cdata: docs.data()?.bio,
                                     },
                                 },
@@ -526,7 +497,7 @@ function addNextButtonItemXML(itemsArray:any [] ) {
                         },
                     },
                     {
-                        description: {
+                        p: {
                             _cdata: util.FunctionsConstants.Next,
                         },
                     },

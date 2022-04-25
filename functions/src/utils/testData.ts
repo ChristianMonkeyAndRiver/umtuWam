@@ -80,7 +80,7 @@ const addTestChatsUsers = async (req:functions.https.Request, res: functions.Res
 
 const createDB = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 10; i++) {
             const name = faker.name.findName();
             const rand = Math.floor(Math.random()*locationsData.length);
             const location = locationsData[rand];
@@ -255,7 +255,7 @@ async function getPotentialMatches(id: string): Promise<any[]> {
                 .orderBy(util.FunctionsConstants.Age, 'asc')
                 .orderBy(util.FunctionsConstants.Points, 'desc')
                 .startAt(doc.data()?.currentIndex)
-                .limit(20)
+                .limit(1)
                 .get()
                 .then(async (docs) => {
                     if (docs.empty) {
@@ -405,15 +405,15 @@ async function payForImage(user1: any, user2: any) {
 
 const locationsData = [
     'Bloemfontein',
-    'Cape Town',
-    'Durban',
-    'Johannesburg',
-    'Kimberley',
-    'Nelspruit',
-    'PE',
-    'Polokwane',
-    'Pretoria',
-    'Soweto',
+    // 'Cape Town',
+    // 'Durban',
+    // 'Johannesburg',
+    // 'Kimberley',
+    // 'Nelspruit',
+    // 'PE',
+    // 'Polokwane',
+    // 'Pretoria',
+    // 'Soweto',
 ];
 
 const userTestData = [

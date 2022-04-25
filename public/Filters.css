@@ -1,0 +1,31 @@
+button {
+    height: 40px;
+    font-size: large;
+    width: 80%;
+    margin: 10px auto;
+    display: block;
+    border: solid black 2px;
+    border-radius: 5px;
+}
+
+.container {
+    padding-left: 10%;
+}
+
+h2 {
+    text-align: center;
+}
+
+select {
+    height: 35px;
+}
+
+.age {
+    text-align: center;
+    height: 30px;
+    width: 10%;
+}
+
+body {
+    padding-bottom: 150px;
+}

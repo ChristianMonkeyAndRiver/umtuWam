@@ -9,6 +9,13 @@ import * as functions from 'firebase-functions';
 import * as cors from 'cors';
 const corsHandler = cors({origin: true});
 
+function sleep(miliseconds:number) {
+    const currentTime = new Date().getTime();
+
+    // eslint-disable-next-line no-empty
+    while (currentTime + miliseconds >= new Date().getTime()) {}
+ }
+
 const createMySubscription = async (req:functions.https.Request, res: functions.Response<any>) => {
     corsHandler(req, res, async () => {
         try {
@@ -27,28 +34,27 @@ const createMySubscription = async (req:functions.https.Request, res: functions.
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${config.MOYA_PAY_DEVELOPER_KEY}`,
                 },
-                json: JSON.stringify({
+                body: JSON.stringify({
                     amount: 1,
                     redirectUrl: '',
                     username: phoneNumber,
-                    webhookUrl: config.TEST_CALL_BACK,
+                    webhookUrl: config.CALLBACK_URL,
                 }),
             };
 
-            fetch(config.TEST_URL, options)
+            fetch(config.MOYA_PAY_URL, options)
             .then((result) => result.json())
             .then(async (json) => {
-                console.log(json);
                 if (req.query.productId == util.Products.Chats) {
                     const queryUid = req.query.uid ?? '';
                     const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
                     const uidString = formattedUid.toString();
 
-                    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+                    await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
                         purchaserId: uid,
                         matchId: uidString,
                         paymentId: json.paymentID,
-                        product: req.query.productId,
+                        productId: req.query.productId,
                     });
                 } else if (req.query.productId == util.Products.Photos) {
                     const queryUid = req.query.uid ?? '';
@@ -56,16 +62,16 @@ const createMySubscription = async (req:functions.https.Request, res: functions.
                     const uidString = formattedUid.toString();
                     const id = uid.concat('_').concat(uidString);
 
-                    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc(id).set({
+                    await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc(id).set({
                         purchaserId: uid,
                         paymentId: json.paymentID,
-                        product: req.query.productId,
+                        productId: req.query.productId,
                     });
                 } else {
-                    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+                    await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
                         purchaserId: uid,
                         paymentId: json.paymentID,
-                        product: req.query.productId,
+                        productId: req.query.productId,
                     });
                 }
 
@@ -104,11 +110,11 @@ const createOtherSubscription = async (req:functions.https.Request, res: functio
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${config.MOYA_PAY_DEVELOPER_KEY}`,
                 },
-                json: JSON.stringify({
+                body: JSON.stringify({
                     amount: 1,
                     redirectUrl: '',
                     username: phoneNumber,
-                    webhookUrl: config.TEST_CALL_BACK,
+                    webhookUrl: config.CALLBACK_URL,
                 }),
             };
 
@@ -120,11 +126,11 @@ const createOtherSubscription = async (req:functions.https.Request, res: functio
                    return;
                 }
 
-                admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+                await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
                    purchaserId: uidString,
                    matchId: uid,
                    paymentId: json.paymentID,
-                   product: req.query.productId,
+                   productId: req.query.productId,
                });
 
 
@@ -153,17 +159,18 @@ const subscriptionCallBackUrl = async (req:functions.https.Request, res: functio
                 },
             };
 
-            // `${config.MOYA_PAY_URL}/payments/${data.paymentID}`
-            fetch(`${config.MOYA_PAY_URL}/payments/${data.paymentID}`, options)
+            sleep(3000);
+
+            fetch(`${config.MOYA_PAY_URL}${data.paymentID}`, options)
             .then((result) => result.json())
             .then(async (json) => {
-                if (json.state != util.PaymentState.Accepted) {
+                if (json.state != util.PaymentState.Approved) {
                     admin.firestore().collection(util.FunctionsConstants.Subscriptions).where(util.FunctionsConstants.PaymentId, '==', json.paymentID)
                     .get()
                     .then(async (docs) => {
-                        docs.docs[0].ref.delete();
+                        await docs.docs[0].ref.delete();
                     });
-                    res.status(200).send(util.ErrorMessages.PaymentFailureError);
+                    res.status(500).send(util.ErrorMessages.PaymentFailureError);
                     return;
                 }
 
@@ -174,17 +181,14 @@ const subscriptionCallBackUrl = async (req:functions.https.Request, res: functio
                         res.status(500).send(util.ErrorMessages.SubscritionNotFound);
                         return;
                     }
-
                     const promises = [];
-
-
                     if (docs.docs[0].data().productId == util.Products.Chats) {
                         const chatId = docs.docs[0].data().purchaserId.concat('_').concat(docs.docs[0].data().matchId);
 
                         const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().purchaserId).collection(util.FunctionsConstants.Chats).doc(chatId)
-                        .update({
+                        .set({
                             chatsPaymentID: json.paymentID,
-                        });
+                        }, {merge: true});
 
                         promises.push(promise1);
 
@@ -226,14 +230,12 @@ const subscriptionCallBackUrl = async (req:functions.https.Request, res: functio
                     }
 
                     await Promise.all(promises);
-
                     res.status(200).send(util.SuccessMessages.SuccessMessage);
                     return;
                 });
             });
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
-
             res.status(404).send(util.ErrorMessages.UnexpectedExrror);
             return;
         }

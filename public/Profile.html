@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>UmtuWam</title>
+    <link rel="stylesheet" href="./Profile.css" type="text/css">
+</head>
+
+<body>
+    <script>
+        window.onload = function () {
+            var params = location.search.substring(1);
+            var temp = params.split("=");
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${temp[1]}`)
+                .then(res => res.json())
+                .then((out) => {
+                    var name = document.getElementById("name");
+                    name.setAttribute("value", out.name);
+
+                    var age = document.getElementById("age");
+                    age.setAttribute("value", out.age);
+
+                    var location = document.getElementById("location").children[2];
+                    location.setAttribute("selected", out.location);
+
+                    var bio = document.getElementById("bio");
+                    bio.setAttribute("value", out.bio);
+                }).catch(err => console.error(err));
+        }
+        function stop() {
+            event.preventDefault();
+            var name = document.getElementById("name").value;
+
+            var bio = document.getElementById("bio").value;
+
+            var age = document.getElementById("age").value;
+
+            var location = document.getElementById("location").value;
+
+            var id = document.getElementById("id").value;
+
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/signUp?name=${name}&age=${age}&location=${location}&bio=${bio}&id=${id}`;
+
+            fetch(url).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                console.log(data);
+            });
+        }
+    </script>
+    <div>
+        <hr>
+        <h2>Your profile - make it complete!</h2>
+        <hr>
+    </div>
+    <form id="form" action="https://us-central1-umtuwam.cloudfunctions.net/updateUserInformation" method="get">
+        <div class="container">
+            <p>
+                <label>Name:
+                    <br />
+                    <input type="text" id="name" name="name" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$" maxlength="50" required>
+                </label>
+            </p>
+            <p>
+                <label>Age:
+                    <br />
+                    <input type="text" id="age" name="age" pattern="[0-9]+" maxlength="3" required>
+                </label>
+            </p>
+            <p>
+                <label>Location:
+                    <select name="location" id="location" required>
+                        <option value="" disabled selected>Select your location</option>
+                        <option value="Bloemfontein">Bloemfontein</option>
+                        <option value="Cape Town">Cape Town</option>
+                        <option value="Durban">Durban</option>
+                        <option value="Johannesburg">Johannesburg</option>
+                        <option value="Kimberley">Kimberley</option>
+                        <option value="Nelspruit">Nelspruit</option>
+                        <option value="PE">PE</option>
+                        <option value="Polokwane">Polokwane</option>
+                        <option value="Pretoria">Pretoria</option>
+                        <option value="Soweto">Soweto</option>
+                    </select>
+                </label>
+            </p>
+            <p>
+                <label>About me:
+                    <br />
+                    <textarea class="bio" id="bio" maxlength="255" name="bio" rows="5"></textarea>
+                </label>
+            </p>
+            <input type="text" id="id" name="id" hidden value= />
+        </div>
+
+        <button type="button">Add your photos</button>
+        <a href="https://us-central1-umtuwam.cloudfunctions.net/getMembershipPageXML?id=0727888675"
+            class="membership">Membership
+            (chat and
+            more)</a>
+        <button type="submit" id="checkBtn">Save changes</button>
+    </form>
+</body>
+
+</html>

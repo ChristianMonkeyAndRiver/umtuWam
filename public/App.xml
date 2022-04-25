@@ -1,0 +1,23 @@
+<app title="MoyaLaid"  showfree="false">
+    <drawer>
+        <menuItem img="http://localhost:5500/Moya/logo.png" >UmtuWam</menuItem>
+        <menuItem action="share">Share App</menuItem>
+        <menuItem action="rate">Rate App</menuItem>
+    </drawer>
+    <bottom_nav>
+        <menuItem img="http://localhost:5500/Moya/logo.png" href="http://localhost:5500/Moya/Startup.xml" default="true">Startup</menuItem>
+        <menuItem img="http://localhost:5500/Moya/chat_logo.png" href="http://localhost:5500/Moya/Chats.xml">Chat</menuItem>
+        <menuItem img="http://localhost:5500/Moya/profile_logo.png" href="http://localhost:5500/Moya/Profile.xml">Profile</menuItem>
+        
+        <!-- <menuItem img="http://localhost:5500/Moya/logo.png" href="http://localhost:5500/Moya/test.xml"></menuItem> -->
+        <!-- <menuItem href="http://localhost:5001/umtuwam/us-central1/getPropectiveDatesXML">test</menuItem> -->
+        <!-- <menuItem href="https://us-central1-umtuwam.cloudfunctions.net/getChat">test</menuItem> -->
+        
+    </bottom_nav>
+    <Menu>
+        <menuItem action="usage">About</menuItem>
+        <menuitem action="share">Share Moya</menuitem>
+        <menuitem action="rate">Rate Moya</menuitem>
+    </Menu>
+    <share action="send" title="Moya" text="Check out the Moya #datafree super-app! I use it for #datafree chat and many other services. Even better, it works when you have no airtime or data balance. Get it from https://moya.app/dl/" subject="Moya #datafree app"/>
+</app>
