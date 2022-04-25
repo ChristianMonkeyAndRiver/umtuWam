@@ -1,7 +1,9 @@
 import * as admin from 'firebase-admin';
+import * as formidable from 'formidable';
 import * as functions from 'firebase-functions';
 import * as appController from './controllers/app';
 import * as testController from './utils/testData';
+import * as util from './utils/constans';
 import * as userController from './controllers/user';
 import * as chatsController from './controllers/chats';
 import * as paymentsController from './controllers/payments';
@@ -56,6 +58,50 @@ exports.createMySubscription = functions.https.onRequest(paymentsController.crea
 exports.createOtherSubscription = functions.https.onRequest(paymentsController.createOtherSubscription);
 
 exports.subscriptionCallBackUrl = functions.https.onRequest(paymentsController.subscriptionCallBackUrl);
+
+
+exports.uploadImages = functions.https.onRequest(async (req, res) => {
+  const data = req.body;
+
+  await admin.firestore().collection(util.FunctionsConstants.Users).doc(data.userId).get()
+  .then(async (doc) => {
+      if (!doc.exists) return res.status(500).send(util.ErrorMessages.NoUserError);
+
+      if (doc.data()?.images.length == 5) return res.status(500).send(util.ErrorMessages.TooManyimagesError);
+
+      const imageArrayLength = (doc.data()?.images.length + 1);
+
+      const form = formidable({multiples: true});
+      form.parse(req, async (err, files) => {
+          const file = files.fileToUpload;
+          if (err || !file) {
+            res.status(500).send(err);
+            return;
+          }
+          const filePath = file[0];
+          const filename = `profile_photo_${imageArrayLength}.jpg`;
+          const bucket = admin.storage().bucket();
+
+          const options = {
+            destination: `images/users/${data.userId}/` + filename,
+            contentType: 'image/jpeg',
+          };
+
+          await bucket
+            .upload(filePath, options)
+            .then((output) => {
+              return res.status(200).send(output);
+            });
+        });
+  })
+  .catch((error) => {
+    console.error(util.ErrorMessages.ErrorText, error);
+    res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+  });
+
+  // return res.status(500).send('Unexpected Error');
+});
+
 
 // =====================================================================================================================
 
@@ -131,47 +177,4 @@ exports.addTestChatsUsers = functions.https.onRequest(testController.addTestChat
 // })
 // .catch((error) => {
 //     return res.status(500).send(error);
-// });
-
-
-// exports.uploadImages = functions.https.onRequest(async (req, res) => {
-//     const data = req.body;
-
-//     await admin.firestore().collection(util.FunctionsConstants.Users).doc(data.userId).get()
-//     .then(async (doc) => {
-//         if (!doc.exists) return res.status(500).send(util.ErrorMessages.NoUserError);
-
-//         if (doc.data()?.images.length == 5) return res.status(500).send(util.ErrorMessages.TooManyimagesError);
-
-//         const imageArrayLength = (doc.data()?.images.length + 1);
-
-//         const form = formidable({multiples: true});
-//         form.parse(req, async (err, files) => {
-//             const file = files.fileToUpload;
-//             if (err || !file) {
-//               res.status(500).send(err);
-//               return;
-//             }
-//             const filePath = file[0];
-//             const filename = `profile_photo_${imageArrayLength}.jpg`;
-//             const bucket = admin.storage().bucket();
-
-//             const options = {
-//               destination: `images/users/${data.userId}/` + filename,
-//               contentType: 'image/jpeg',
-//             };
-
-//             await bucket
-//               .upload(filePath, options)
-//               .then((output) => {
-//                 return res.status(200).send(output);
-//               })
-//               .catch((error) => res.status(500).send(error));
-//           });
-//     })
-//     .catch((error) => {
-//         return res.status(500).send(error);
-//     });
-
-//     // return res.status(500).send('Unexpected Error');
 // });
