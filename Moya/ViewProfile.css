@@ -1,0 +1,23 @@
+.heart {
+    font-size: 500%;
+}
+
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    border: 2px black;
+}
+.icon {
+    text-align: right;
+}
+
+.container {
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+body {
+    padding-bottom: 150px;
+}
