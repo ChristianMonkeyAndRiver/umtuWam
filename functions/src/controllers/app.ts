@@ -10,12 +10,16 @@ const corsHandler = cors({origin: true});
 
 
 const getAppXML = async (req:functions.https.Request, res: functions.Response) => {
+    // const queryId = req.
+    // const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+    // const uid = formattedId.toString();
     const app = [{
         app: [
             {
                 _attr: {
-                    // logo: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Flogo.png?alt=media&token=4fc9ed08-3832-4727-a2aa-717cda834193',
                     styleurl: '',
+                    showfree: false,
+                    title: util.FunctionsConstants.UmtuWam,
                 },
             },
             {
@@ -24,33 +28,45 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
                         menuItem: [
                             {
                                 _attr: {
-                                    // img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Flogo.png?alt=media&token=4fc9ed08-3832-4727-a2aa-717cda834193',
-                                    href: '',
+                                    defualt: true,
+                                    img: 'https://umtuwam.web.app/logo.png',
+                                    href: 'https://us-central1-umtuwam.cloudfunctions.net/getStartup',
                                 },
                             },
-                            util.FunctionsConstants.UmtuWam,
+                            util.FunctionsConstants.Home,
                         ],
                     },
                     {
                         menuItem: [
                             {
                                 _attr: {
-                                    // img: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fchat_logo.png?alt=media&token=55adfc03-d2b8-4b65-bf26-707f4cd5cd16',
-                                    href: '',
+                                    img: 'https://umtuwam.web.app/chat_logo.png',
+                                    href: 'https://umtuwam.web.app/Chats.xml',
                                 },
                             },
-                            util.Products.Chats,
+                            util.FunctionsConstants.Chats,
                         ],
                     },
                     {
                         menuItem: [
                             {
                                 _attr: {
-                                    // img: util.FunctionsConstants.DefualtImage,
-                                    href: '',
+                                    img: 'https://umtuwam.web.app/settings.png',
+                                    href: 'https://umtuwam.web.app/Filters.xml',
                                 },
                             },
-                            'Profile',
+                            util.FunctionsConstants.PreferencesCapital,
+                        ],
+                    },
+                    {
+                        menuItem: [
+                            {
+                                _attr: {
+                                    img: 'https://umtuwam.web.app/profile_logo.png',
+                                    href: 'https://umtuwam.web.app/Profile.xml',
+                                },
+                            },
+                            util.FunctionsConstants.Profile,
                         ],
                     },
                 ],
@@ -103,9 +119,41 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
     }];
 
     corsHandler(req, res, async () => {
-        res.send(xml(app, true));
+        res.status(200).send(xml(app, true));
         return;
     });
+};
+
+const getStartup = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const doc = [{
+            doc: [
+                {
+                    _attr: {
+                        title: util.FunctionsConstants.UmtuWam,
+                    },
+                },
+                {
+                    webview: [
+                        {
+                            _attr: {
+                                style: '',
+                                layout: 'relative',
+                                href: 'https://umtuwam.web.app/Startup.html',
+                            },
+                        },
+                    ],
+                },
+            ],
+        }];
+
+        res.send(xml(doc, true));
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
 };
 
 const getMembershipPageXML = async (req:functions.https.Request, res: functions.Response) => {
@@ -511,6 +559,7 @@ function addNextButtonItemXML(itemsArray:any [] ) {
 
 export {
     getAppXML,
+    getStartup,
     getUserProfileXML,
     getProspectiveDates,
     getMembershipPageXML,

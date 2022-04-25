@@ -1,17 +1,18 @@
-<app title="MoyaLaid"  showfree="false">
+<app title="UmtuWam"  showfree="false">
     <drawer>
-        <menuItem img="http://localhost:5500/Moya/logo.png" >UmtuWam</menuItem>
+        <menuItem img="https://umtuwam.web.app/logo.png" >UmtuWam</menuItem>
         <menuItem action="share">Share App</menuItem>
         <menuItem action="rate">Rate App</menuItem>
     </drawer>
     <bottom_nav>
-        <menuItem img="http://localhost:5500/Moya/logo.png" href="http://localhost:5500/Moya/Startup.xml" default="true">Startup</menuItem>
-        <menuItem img="http://localhost:5500/Moya/chat_logo.png" href="http://localhost:5500/Moya/Chats.xml">Chat</menuItem>
-        <menuItem img="http://localhost:5500/Moya/profile_logo.png" href="http://localhost:5500/Moya/Profile.xml">Profile</menuItem>
+        <menuItem img="https://umtuwam.web.app/logo.png" href="https://umtuwam.web.app/Startup.xml" default="true">Startup</menuItem>
+        <menuItem img="https://umtuwam.web.app/chat_logo.png" href="https://umtuwam.web.app/Chats.xml">Chat</menuItem>
+        <menuItem img="https://umtuwam.web.app/profile_logo.png" href="https://umtuwam.web.app/Profile.xml">Profile</menuItem>
+        <menuItem img="https://umtuwam.web.app/logo.png" href="https://umtuwam.web.app/Filters.xml">Preferences</menuItem> -->
+        <!-- <menuItem img="https://umtuwam.web.app/logo.png" href="https://umtuwam.web.app/ViewProfile.xml">test</menuItem> -->
         
-        <!-- <menuItem img="http://localhost:5500/Moya/logo.png" href="http://localhost:5500/Moya/test.xml"></menuItem> -->
-        <!-- <menuItem href="http://localhost:5001/umtuwam/us-central1/getPropectiveDatesXML">test</menuItem> -->
-        <!-- <menuItem href="https://us-central1-umtuwam.cloudfunctions.net/getChat">test</menuItem> -->
+        <!-- <menuItem href="https://us-central1-umtuwam.cloudfunctions.net/getPropectiveDatesXML?id=0727888675">test</menuItem> -->
+        
         
     </bottom_nav>
     <Menu>

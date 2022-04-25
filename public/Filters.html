@@ -29,30 +29,30 @@
             }
         }
 
-        window.onload = function () {
-            var params = location.search.substring(1);
-            var temp = params.split("=");
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserPreferences?id=${temp[1]}`)
-                .then(res => res.json())
-                .then((out) => {
-                    if (out.gender == "female") {
-                        var gender = document.getElementById("female")
-                        gender.setAttribute("checked", true)
-                    } else {
-                        var gender = document.getElementById("male")
-                        gender.setAttribute("checked", true)
-                    }
+        // window.onload = function () {
+        //     var params = location.search.substring(1);
+        //     var temp = params.split("=");
+        //     fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserPreferences?id=${temp[1]}`)
+        //         .then(res => res.json())
+        //         .then((out) => {
+        //             if (out.gender == "female") {
+        //                 var gender = document.getElementById("female")
+        //                 gender.setAttribute("checked", true)
+        //             } else {
+        //                 var gender = document.getElementById("male")
+        //                 gender.setAttribute("checked", true)
+        //             }
 
-                    var ageMin = document.getElementById("ageFrom");
-                    ageMin.setAttribute("value", out.ageMin);
+        //             var ageMin = document.getElementById("ageFrom");
+        //             ageMin.setAttribute("value", out.ageMin);
 
-                    var ageMax = document.getElementById("ageTo");
-                    ageMax.setAttribute("value", out.ageMax);
+        //             var ageMax = document.getElementById("ageTo");
+        //             ageMax.setAttribute("value", out.ageMax);
 
-                    var location = document.getElementById("location").children[2];
-                    location.setAttribute("selected", out.location);
-                }).catch(err => console.error(err));
-        }
+        //             var location = document.getElementById("location").children[2];
+        //             location.setAttribute("selected", out.location);
+        //         }).catch(err => console.error(err));
+        // }
 
         function stop() {
             event.preventDefault();
@@ -73,7 +73,7 @@
 
                 var location = document.getElementById("location").value;
 
-                var url = `https://us-central1-umtuwam.cloudfunctions.net/signUp?ageFrom=${ageFrom}&ageTo=${ageTo}&location=${location}&lookingFor=${lookingFor}&id=${id}`;
+                var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserPreferences?ageFrom=${ageFrom}&ageTo=${ageTo}&location=${location}&lookingFor=${lookingFor}&id=${id}`;
 
                 fetch(url).then(function (response) {
                     return response.json();
@@ -84,10 +84,11 @@
         }
 
     </script>
-    <form action="https://us-central1-umtuwam.cloudfunctions.net/updateUserPreferences" method="get">
-        <hr>
+    <form onsubmit="stop();" method="get">
+        <img class="logo" src="./logo.png" alt="UmtuWam">
+        <!-- <hr>
         <h2>Preferences:</h2>
-        <hr>
+        <hr> -->
         <div class="container">
             <p>
                 <label>Ages:

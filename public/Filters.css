@@ -23,9 +23,19 @@ select {
 .age {
     text-align: center;
     height: 30px;
-    width: 10%;
+    width: 30%;
 }
 
 body {
     padding-bottom: 150px;
+}
+
+.logo {
+    width: 40%;
+    padding-left: 30%;
+    border: 2px black;
+}
+
+p {
+    margin-bottom: 30px;
 }

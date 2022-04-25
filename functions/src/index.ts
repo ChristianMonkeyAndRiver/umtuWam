@@ -27,6 +27,8 @@ exports.updateUserPreferences = functions.https.onRequest(userController.updateU
 
 exports.getApp = functions.https.onRequest(appController.getAppXML);
 
+exports.getStartup = functions.https.onRequest(appController.getStartup);
+
 exports.getUserProfileXML = functions.https.onRequest(appController.getUserProfileXML);
 
 exports.getProspectiveDates = functions.https.onRequest(appController.getProspectiveDates);
