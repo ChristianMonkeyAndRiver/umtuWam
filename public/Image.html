@@ -2,13 +2,159 @@
 <html>
 
 <head>
-
+    <link rel="stylesheet" href="./Image.css" type="text/css">
 </head>
 
 <body>
+    <div>
+        <form onsubmit="upload();" method="post" enctype="multipart/form-data" id="form">
+            <div class="container">
+                <label class="custom-file-upload">
+                    Upload an image
+                    <input id="imgInp" name="imgInp" type="file" accept="image/*" style="display:block" />
+                </label>
+            </div>
+            <div class="container" id="card">
+                <img id="blah" src="#" alt="your image" hidden />
+            </div>
+            <input type="submit" value="Upload Image" name="submit">
+        </form>
+    </div>
+
     <script>
         function upload() {
+            event.preventDefault();
+            var f = imgInp.files[0];
+            var fileName = f.name.split('.')[0];
+            const form = document.getElementById('form');
+            let data = new FormData();
+            data.append('image', form.imgInp.value);
+            for (var value of data.values()) {
+                console.log(value);
+            }
+            var image = f;
+            console.log(f);
+
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/uploadImages?image=${image}&&id=97618f4b0cec4667`;
+
+            fetch(url).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                console.log(data);
+            }).catch(console.error);
+
+            // fetch('https://us-central1-umtuwam.cloudfunctions.net/uploadImages', {
+            //     method: 'POST',
+            //     body: data,
+            // }).then(response => {
+            //     if (!response.ok) {
+            //         throw new Error('Network response was not ok.')
+            //     }
+            // }).catch(console.error)
+        }
+
+
+        imgInp.onchange = evt => {
+            const [file] = imgInp.files
+            if (file) {
+                blah.src = URL.createObjectURL(file)
+            }
+        }
+
+        const MAX_WIDTH = 320;
+        const MAX_HEIGHT = 180;
+        const MIME_TYPE = "image/jpeg";
+        const QUALITY = 0.7;
+
+        const input = document.getElementById("imgInp");
+        input.onchange = function (ev) {
+            const file = ev.target.files[0]; // get the file
+            const blobURL = URL.createObjectURL(file);
+            const img = new Image();
+            img.src = blobURL;
+            img.onerror = function () {
+                URL.revokeObjectURL(this.src);
+                // Handle the failure properly
+                console.log("Cannot load image");
+            };
+            img.onload = function () {
+                URL.revokeObjectURL(this.src);
+                const [newWidth, newHeight] = calculateSize(img, MAX_WIDTH, MAX_HEIGHT);
+                const canvas = document.createElement("canvas");
+                var doc = document.getElementById("main");
+                if (doc) {
+                    doc.remove();
+                }
+                canvas.id = "main";
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                canvas.toBlob(
+                    (blob) => {
+                        // Handle the compressed image. es. upload or save in local state
+                        var image = blob;
+                        console.log(blob);
+
+                        // var url = `https://us-central1-umtuwam.cloudfunctions.net/uploadImages?image=${image}&&id=97618f4b0cec4667`;
+
+                        // fetch(url).then(function (response) {
+                        //     return response.json();
+                        // }).then(function (data) {
+                        //     console.log(data);
+                        // });
+                        // displayInfo('Original file', file);
+                        // displayInfo('Compressed file', blob);
+                    },
+                    MIME_TYPE,
+                    QUALITY
+                );
+                document.getElementById("card").append(canvas);
+            };
+        };
+
+        function calculateSize(img, maxWidth, maxHeight) {
+            let width = img.width;
+            let height = img.height;
+
+            // calculate the width and height, constraining the proportions
+            if (width > height) {
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width = Math.round((width * maxHeight) / height);
+                    height = maxHeight;
+                }
+            }
+            return [width, height];
+        }
+
+        // Utility functions for demo purpose
+
+        function displayInfo(label, file) {
+            const p = document.createElement('p');
+            document.getElementById("main").remove();
+            p.id = "main";
+            p.innerText = `${label} - ${readableBytes(file.size)}`;
+            document.getElementById('card').append(p);
+        }
+
+        function readableBytes(bytes) {
+            const i = Math.floor(Math.log(bytes) / Math.log(1024)),
+                sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+            return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
+        }
+    </script>
+
+    <!-- <script>
+        function upload() {
+            event.preventDefault();
             var f = fileToUpload.files[0];
+            console.log(f)
             var fileName = f.name.split('.')[0];
             var img = new Image();
             img.src = URL.createObjectURL(f);
@@ -20,12 +166,30 @@
                 ctx.drawImage(img, 0, 0);
                 canvas.toBlob(function (blob) {
                     console.info(blob.size);
-                    var f2 = new File([blob], fileName + ".jpeg");
-                    var xhr = new XMLHttpRequest();
+                    var f2 = new File([blob], fileName + ".png");
                     var form = new FormData();
-                    form.append("fileToUpload", f2);
-                    xhr.open("POST", "upload.php");
-                    xhr.send(form);
+                    form.append("fileToUpload", f);
+                    // form.append("userId", "97618f4b0cec4667")
+                    for (var value of form.values()) {
+                        console.log(value);
+                    }
+                    var image = fileToUpload.files[0];
+
+                    var url = `https://us-central1-umtuwam.cloudfunctions.net/uploadImages?image=${image}&&id=97618f4b0cec4667`;
+
+                    fetch(url).then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        console.log(data);
+                    });
+                    // fetch('https://us-central1-umtuwam.cloudfunctions.net/uploadImages?id=97618f4b0cec4667', {
+                    //     method: 'POST',
+                    //     body: form,
+                    // }).then(response => {
+                    //     if (!response.ok) {
+                    //         throw new Error('Network response was not ok.')
+                    //     }
+                    // }).catch(console.error)
                 }, 'image/jpeg', 0.5);
             }
         }
@@ -34,7 +198,7 @@
         Select image to upload:
         <input type="file" name="fileToUpload" id="fileToUpload" multiple>
         <input type="submit" value="Upload Image" name="submit">
-    </form>
+    </form> -->
 </body>
 
 </html>
