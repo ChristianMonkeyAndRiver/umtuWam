@@ -80,13 +80,13 @@ const addTestChatsUsers = async (req:functions.https.Request, res: functions.Res
 
 const createDB = async (req:functions.https.Request, res: functions.Response) => {
     try {
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 20; i++) {
             const name = faker.name.findName();
             const rand = Math.floor(Math.random()*locationsData.length);
             const location = locationsData[rand];
 
-            const low = 18;
-            const high = 40;
+            const low = 20;
+            const high = 30;
             let age = (Math.random()*(high - low)) + low;
 
             age = Math.ceil(age);
@@ -113,7 +113,7 @@ const createDB = async (req:functions.https.Request, res: functions.Response) =>
                 location: location,
                 ageMin: (age-5).toString(),
                 ageMax: (age+5).toString(),
-                currentIndex: 0,
+                currentIndex: '',
             });
         }
 
@@ -260,7 +260,7 @@ async function getPotentialMatches(id: string): Promise<any[]> {
                 .then(async (docs) => {
                     if (docs.empty) {
                         await doc.ref.update({currentIndex: 0});
-                        // throw new Error(util.ErrorMessages.NoDatesMessage);
+                        return [];
                     } else {
                         for (const doc of docs.docs) {
                             docsArray.push(doc.data());

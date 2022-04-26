@@ -10,9 +10,20 @@ const corsHandler = cors({origin: true});
 
 
 const getAppXML = async (req:functions.https.Request, res: functions.Response) => {
-    // const queryId = req.
-    // const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
-    // const uid = formattedId.toString();
+    const header = req.headers;
+    const xBinu = header['x-binu'] ?? '';
+
+    let indexOfDid = xBinu.indexOf('did');
+    indexOfDid = indexOfDid + 4;
+    let indexOfAppId = xBinu.indexOf('appId');
+    indexOfAppId = indexOfAppId - 2;
+    const uid = xBinu.toString().substring(indexOfDid, indexOfAppId);
+
+    const doc = await admin.firestore()
+        .collection(util.FunctionsConstants.Users)
+        .doc(uid)
+        .get();
+
     const app = [{
         app: [
             {
@@ -28,9 +39,9 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
                         menuItem: [
                             {
                                 _attr: {
-                                    defualt: true,
+                                    default: true,
                                     img: 'https://umtuwam.web.app/logo.png',
-                                    href: 'https://us-central1-umtuwam.cloudfunctions.net/getStartup',
+                                    href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getProspectiveDatesXML?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
                                 },
                             },
                             util.FunctionsConstants.Home,
@@ -41,7 +52,7 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
                             {
                                 _attr: {
                                     img: 'https://umtuwam.web.app/chat_logo.png',
-                                    href: 'https://umtuwam.web.app/Chats.xml',
+                                    href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getChatsView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
                                 },
                             },
                             util.FunctionsConstants.Chats,
@@ -52,7 +63,7 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
                             {
                                 _attr: {
                                     img: 'https://umtuwam.web.app/settings.png',
-                                    href: 'https://umtuwam.web.app/Filters.xml',
+                                    href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getPreferencesView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
                                 },
                             },
                             util.FunctionsConstants.PreferencesCapital,
@@ -63,7 +74,7 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
                             {
                                 _attr: {
                                     img: 'https://umtuwam.web.app/profile_logo.png',
-                                    href: 'https://umtuwam.web.app/Profile.xml',
+                                    href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getProfileView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
                                 },
                             },
                             util.FunctionsConstants.Profile,
@@ -126,6 +137,9 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
 
 const getStartup = async (req:functions.https.Request, res: functions.Response) => {
     try {
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
         const doc = [{
             doc: [
                 {
@@ -139,7 +153,147 @@ const getStartup = async (req:functions.https.Request, res: functions.Response) 
                             _attr: {
                                 style: '',
                                 layout: 'relative',
-                                href: 'https://umtuwam.web.app/Startup.html',
+                                href: `https://umtuwam.web.app/Startup.html?did=${uid}`,
+                            },
+                        },
+                    ],
+                },
+            ],
+        }];
+
+        res.send(xml(doc, true));
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
+const getChatsView = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
+        const doc = [{
+            doc: [
+                {
+                    _attr: {
+                        title: util.FunctionsConstants.UmtuWam,
+                    },
+                },
+                {
+                    webview: [
+                        {
+                            _attr: {
+                                style: '',
+                                layout: 'relative',
+                                href: `https://umtuwam.web.app/Chats.html?did=${uid}`,
+                            },
+                        },
+                    ],
+                },
+            ],
+        }];
+
+        res.send(xml(doc, true));
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
+const getPreferencesView = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
+        const doc = [{
+            doc: [
+                {
+                    _attr: {
+                        title: util.FunctionsConstants.UmtuWam,
+                    },
+                },
+                {
+                    webview: [
+                        {
+                            _attr: {
+                                style: '',
+                                layout: 'relative',
+                                href: `https://umtuwam.web.app/Filters.html?did=${uid}`,
+                            },
+                        },
+                    ],
+                },
+            ],
+        }];
+
+        res.send(xml(doc, true));
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
+const getProfileView = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
+        const doc = [{
+            doc: [
+                {
+                    _attr: {
+                        title: util.FunctionsConstants.UmtuWam,
+                    },
+                },
+                {
+                    webview: [
+                        {
+                            _attr: {
+                                style: '',
+                                layout: 'relative',
+                                href: `https://umtuwam.web.app/Profile.html?did=${uid}`,
+                            },
+                        },
+                    ],
+                },
+            ],
+        }];
+
+        res.send(xml(doc, true));
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
+const viewUserProfile = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
+        const doc = [{
+            doc: [
+                {
+                    _attr: {
+                        title: util.FunctionsConstants.UmtuWam,
+                    },
+                },
+                {
+                    webview: [
+                        {
+                            _attr: {
+                                style: '',
+                                layout: 'relative',
+                                href: `https://umtuwam.web.app/ViewProfile.html?did=${uid}`,
                             },
                         },
                     ],
@@ -317,114 +471,108 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
             const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
             const uid = formattedId.toString();
 
+            console.log(uid);
+
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get()
-            .then(async (doc) => {
-                if (!doc.exists) {
+            .then(async (document) => {
+                if (!document.exists) {
                     res.status(500).send(util.ErrorMessages.NoUserError);
                     return;
                 }
-                await admin.firestore().collection(util.FunctionsConstants.Users)
-                .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
-                .where(util.FunctionsConstants.Age, '>=', doc.data()?.ageMin)
-                .where(util.FunctionsConstants.Age, '<=', doc.data()?.ageMax)
-                .where(util.FunctionsConstants.Location, '==', doc.data()?.location)
-                .orderBy(util.FunctionsConstants.Age, 'asc')
-                .orderBy(util.FunctionsConstants.Points, 'desc')
-                .startAt(doc.data()?.currentIndex)
-                .limit(20)
-                .get()
-                .then(async (docs) => {
-                    if (docs.empty) {
-                        doc.ref.update({currentIndex: 0});
-                        res.status(500).send(util.ErrorMessages.NoDatesMessage);
+
+                let docs;
+                if (document.data()?.currentIndex == '') {
+                    docs = await admin.firestore().collection(util.FunctionsConstants.Users)
+                    .where(util.FunctionsConstants.Gender, '==', document.data()?.gender)
+                    .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
+                    .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
+                    .where(util.FunctionsConstants.Location, '==', document.data()?.location)
+                    .orderBy(util.FunctionsConstants.Age, 'asc')
+                    .orderBy(util.FunctionsConstants.Points, 'desc')
+                    .limit(2)
+                    .get();
+                } else {
+                    const lastVisible = await admin.firestore().collection(util.FunctionsConstants.Users).doc(document.data()?.currentIndex).get();
+
+                    if (!lastVisible.exists) {
+                        res.status(500).send(util.ErrorMessages.NoUserError);
                         return;
                     }
 
-                    const usersList: any = [];
+                    docs = await admin.firestore().collection(util.FunctionsConstants.Users)
+                    .where(util.FunctionsConstants.Gender, '==', document.data()?.gender)
+                    .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
+                    .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
+                    .where(util.FunctionsConstants.Location, '==', document.data()?.location)
+                    .orderBy(util.FunctionsConstants.Age, 'asc')
+                    .orderBy(util.FunctionsConstants.Points, 'desc')
+                    .startAfter(lastVisible)
+                    .limit(2)
+                    .get();
+                }
 
-                    for (const doc of docs.docs) {
-                        const item = {
-                            item: [
-                                {
-                                    _attr: {
-                                        style: '',
-                                        href: `http://localhost:5001/umtuwam/us-central1/getUserProfileXML?uid=${doc.id}`,
-                                        layout: 'relative',
-                                    },
-                                },
-                                {
-                                    img: {
-                                        _attr: {
-                                            url: doc.data().images.length > 0 ? doc.data().images[0] : util.FunctionsConstants.DefualtImage,
-                                        },
-                                    },
-                                },
-                                {
-                                    md: [
-                                        {
-                                            _attr: {
-                                                style: '',
-                                            },
-                                        },
-                                        {
-                                            p: {
-                                                _cdata: doc.data().name,
-                                            },
-                                        },
-                                        {
-                                            p: {
-                                                _cdata: doc.data().age,
-                                            },
-                                        },
-                                        {
-                                            p: {
-                                                _cdata: doc.data().location,
-                                            },
-                                        },
-                                    ],
-                                },
-                                {
-                                    item: [
-                                        {
-                                            _attr: {
-                                                style: '',
-                                                href: `http://localhost:5001/umtuwam/us-central1/likeUser?uid=${doc.id}`,
-                                                layout: 'relative',
-                                            },
-                                        },
-                                    ],
-                                },
-                            ],
-                        };
-                        usersList.push(item);
-                    }
+                const usersList: any = [];
 
-                    const currentIndex = doc.data()?.currentIndex + docs.docs.length;
-
-                    await doc.ref.update({
-                        currentIndex: currentIndex,
-                    });
-
-                    const newUsersList = addNextButtonItemXML(usersList);
-
-                    const docXML = [{
-                        doc: [
+                for (const doc of docs.docs) {
+                    const item = {
+                        item: [
                             {
                                 _attr: {
-                                    title: util.FunctionsConstants.Binu,
+                                    style: '',
+                                    href: `https://us-central1-umtuwam.cloudfunctions.net/viewUserProfile?id=${doc.id}`,
+                                    layout: 'relative',
                                 },
                             },
                             {
-                                list: [
-                                    ...newUsersList,
+                                img: {
+                                    _attr: {
+                                        url: doc.data().images.length > 0 ? doc.data().images[0] : util.FunctionsConstants.DefualtImage,
+                                    },
+                                },
+                            },
+                            {
+                                md: [
+                                    {
+                                        _attr: {
+                                            style: '',
+                                        },
+                                    },
+                                   `${doc.data().name} ${doc.data().age}
+                                    ${doc.data().location}
+                                   `,
                                 ],
                             },
                         ],
-                    }];
+                    };
+                    usersList.push(item);
+                }
 
-                    res.status(200).send(xml(docXML, true));
-                    return;
-                });
+                if (docs.docs.length == 2) {
+                    const currentIndex = docs.docs[docs.docs.length - 1].id;
+                    await document.ref.update({currentIndex: currentIndex});
+                } else {
+                    await document.ref.update({currentIndex: ''});
+                }
+
+                const newUsersList = addNextButtonItemXML(usersList, uid);
+
+                const docXML = [{
+                    doc: [
+                        {
+                            _attr: {
+                                title: util.FunctionsConstants.Binu,
+                            },
+                        },
+                        {
+                            list: [
+                                ...newUsersList,
+                            ],
+                        },
+                    ],
+                }];
+
+                res.status(200).send(xml(docXML, true));
+                return;
             });
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
@@ -434,107 +582,21 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
     });
 };
 
-const getUserProfileXML = async (req:functions.https.Request, res: functions.Response) => {
-    corsHandler(req, res, async () => {
-        const queryUid = req.query.uid ?? '';
-        const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
-        const uidString = formattedUid.toString();
-
-
-        await admin.firestore().collection(util.FunctionsConstants.Users).doc(uidString).get()
-         .then((docs) =>{
-            if (!docs.exists) return res.status(500).send(util.ErrorMessages.NoUserError);
-
-                const doc = [{
-                    doc: [
-                        {
-                            _attr: {
-                                title: util.FunctionsConstants.Binu,
-                            },
-                        },
-                        {
-                            img: {
-                                _attr: {
-                                    url: docs.data()?.images.length > 0 ? docs.data()?.images[0] : util.FunctionsConstants.DefualtImage,
-                                },
-                            },
-                        },
-                        {
-                            md: [
-                                {
-                                    _attr: {
-                                        style: '',
-                                    },
-                                },
-                                {
-                                    p: {
-                                        _cdata: docs.data()?.name,
-                                    },
-                                },
-                                {
-                                    p: {
-                                        _cdata: docs.data()?.age,
-                                    },
-                                },
-                            ],
-                        },
-                        {
-                            md: [
-                                {
-                                    _attr: {
-                                        style: '',
-                                    },
-                                },
-                                {
-                                    p: {
-                                        _cdata: docs.data()?.location,
-                                    },
-                                },
-                            ],
-                        },
-                        {
-                            md: [
-                                {
-                                    _attr: {
-                                        style: '',
-                                    },
-                                },
-                                {
-                                    p: {
-                                        _cdata: docs.data()?.bio,
-                                    },
-                                },
-                            ],
-                        },
-                    ],
-                }];
-
-            res.send(xml(doc, true));
-            return;
-        })
-        .catch((error) => {
-            console.error(util.ErrorMessages.ErrorText, error);
-            res.status(404).send(util.ErrorMessages.UnexpectedExrror);
-            return;
-        });
-    });
-};
-
-function addNextButtonItemXML(itemsArray:any [] ) {
+function addNextButtonItemXML(itemsArray:any [], uid: string) {
     const item = {
         item: [
             {
-                _attr: {
-                    style: '',
-                    href: 'http://localhost:5001/umtuwam/us-central1/getProspectiveDatesXML&start_index=40',
-                    layout: 'relative',
+                img: {
+                    _attr: {
+                        url: 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fnext_button.png?alt=media&token=cc78d78b-dac0-4d58-b1a4-f8173ab6846a',
+                    },
                 },
             },
             {
-                img: {
-                    _attr: {
-                        url: util.FunctionsConstants.NextImage,
-                    },
+                _attr: {
+                    style: '',
+                    href: `http://localhost:5001/umtuwam/us-central1/getProspectiveDatesXML?id=${uid}`,
+                    layout: 'relative',
                 },
             },
             {
@@ -544,11 +606,7 @@ function addNextButtonItemXML(itemsArray:any [] ) {
                             style: '',
                         },
                     },
-                    {
-                        p: {
-                            _cdata: util.FunctionsConstants.Next,
-                        },
-                    },
+                    util.FunctionsConstants.Next,
                 ],
             },
         ],
@@ -560,8 +618,23 @@ function addNextButtonItemXML(itemsArray:any [] ) {
 export {
     getAppXML,
     getStartup,
-    getUserProfileXML,
+    getChatsView,
+    getProfileView,
+    viewUserProfile,
+    getPreferencesView,
     getProspectiveDates,
     getMembershipPageXML,
     getProspectiveDatesXML,
 };
+
+                                // {
+                                //     item: [
+                                //         {
+                                //             _attr: {
+                                //                 style: '',
+                                //                 href: `https://us-central1-umtuwam.cloudfunctions.net/likeUser?uid=${doc.id}`,
+                                //                 layout: 'relative',
+                                //             },
+                                //         },
+                                //     ],
+                                // },

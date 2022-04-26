@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as admin from 'firebase-admin';
-import * as formidable from 'formidable';
+// import * as formidable from 'formidable';
 import * as functions from 'firebase-functions';
 import * as appController from './controllers/app';
 import * as testController from './utils/testData';
 import * as util from './utils/constans';
 import * as userController from './controllers/user';
 import * as chatsController from './controllers/chats';
+import * as reportController from './controllers/report';
 import * as paymentsController from './controllers/payments';
 
 admin.initializeApp();
@@ -29,7 +31,13 @@ exports.getApp = functions.https.onRequest(appController.getAppXML);
 
 exports.getStartup = functions.https.onRequest(appController.getStartup);
 
-exports.getUserProfileXML = functions.https.onRequest(appController.getUserProfileXML);
+exports.getChatsView = functions.https.onRequest(appController.getChatsView);
+
+exports.getProfileView = functions.https.onRequest(appController.getProfileView);
+
+exports.viewUserProfile = functions.https.onRequest(appController.viewUserProfile);
+
+exports.getPreferencesView = functions.https.onRequest(appController.getPreferencesView);
 
 exports.getProspectiveDates = functions.https.onRequest(appController.getProspectiveDates);
 
@@ -61,49 +69,61 @@ exports.createOtherSubscription = functions.https.onRequest(paymentsController.c
 
 exports.subscriptionCallBackUrl = functions.https.onRequest(paymentsController.subscriptionCallBackUrl);
 
+// =====================================================================================================================
+
+exports.reportUser = functions.https.onRequest(reportController.reportUser);
+
+// =====================================================================================================================
 
 exports.uploadImages = functions.https.onRequest(async (req, res) => {
   const data = req.body;
+  const queryId = req.query.id ?? '';
+  const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+  const uid = formattedId.toString();
 
-  await admin.firestore().collection(util.FunctionsConstants.Users).doc(data.userId).get()
+  const buffer = Buffer.from( data );
+
+  await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get()
   .then(async (doc) => {
-      if (!doc.exists) return res.status(500).send(util.ErrorMessages.NoUserError);
-
-      if (doc.data()?.images.length == 5) return res.status(500).send(util.ErrorMessages.TooManyimagesError);
+      if (!doc.exists) {
+         res.status(500).send(util.ErrorMessages.NoUserError);
+         return;
+      }
+      if (doc.data()?.images.length == 5) {
+        res.status(500).send(util.ErrorMessages.TooManyimagesError);
+        return;
+      }
 
       const imageArrayLength = (doc.data()?.images.length + 1);
 
-      const form = formidable({multiples: true});
-      form.parse(req, async (err, files) => {
-          const file = files.fileToUpload;
-          if (err || !file) {
-            res.status(500).send(err);
-            return;
-          }
-          const filePath = file[0];
-          const filename = `profile_photo_${imageArrayLength}.jpg`;
-          const bucket = admin.storage().bucket();
+      const filename = `images/users/${uid}/profile_photo_${imageArrayLength}.jpeg`;
+      const bucket = admin.storage().bucket();
+      const file = bucket.file(filename);
 
-          const options = {
-            destination: `images/users/${data.userId}/` + filename,
-            contentType: 'image/jpeg',
-          };
+      const options = {resumable: false, metadata: {contentType: 'image/jpeg'}};
 
-          await bucket
-            .upload(filePath, options)
-            .then((output) => {
-              return res.status(200).send(output);
+      return file.save(buffer, options)
+      .then(() => {
+          return file.getSignedUrl({
+              action: 'read',
+              expires: '03-09-2500',
             });
-        });
+      })
+      .then((urls) => {
+          const url = urls[0];
+          doc.ref.update({
+            images: admin.firestore.FieldValue.arrayUnion(url),
+          });
+          res.send(util.SuccessMessages.SuccessMessage);
+          return;
+      });
   })
   .catch((error) => {
     console.error(util.ErrorMessages.ErrorText, error);
     res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+    return;
   });
-
-  // return res.status(500).send('Unexpected Error');
 });
-
 
 // =====================================================================================================================
 

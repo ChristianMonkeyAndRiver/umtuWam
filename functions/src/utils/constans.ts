@@ -49,6 +49,7 @@ enum FunctionsConstants {
     Rate = 'rate',
     Likes = 'likes',
     Users = 'users',
+    Reports = 'reports',
     Usage = 'usage',
     Xbinu = 'x-binu',
     Gender = 'gender',
