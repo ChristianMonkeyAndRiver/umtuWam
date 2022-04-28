@@ -151,9 +151,8 @@ const getStartup = async (req:functions.https.Request, res: functions.Response) 
                     webview: [
                         {
                             _attr: {
-                                style: '',
-                                layout: 'relative',
                                 href: `https://umtuwam.web.app/Startup.html?did=${uid}`,
+                                internal: 'true',
                             },
                         },
                     ],
@@ -186,9 +185,8 @@ const getChatsView = async (req:functions.https.Request, res: functions.Response
                     webview: [
                         {
                             _attr: {
-                                style: '',
-                                layout: 'relative',
                                 href: `https://umtuwam.web.app/Chats.html?did=${uid}`,
+                                internal: 'true',
                             },
                         },
                     ],
@@ -221,9 +219,8 @@ const getPreferencesView = async (req:functions.https.Request, res: functions.Re
                     webview: [
                         {
                             _attr: {
-                                style: '',
-                                layout: 'relative',
                                 href: `https://umtuwam.web.app/Filters.html?did=${uid}`,
+                                internal: 'true',
                             },
                         },
                     ],
@@ -256,9 +253,8 @@ const getProfileView = async (req:functions.https.Request, res: functions.Respon
                     webview: [
                         {
                             _attr: {
-                                style: '',
-                                layout: 'relative',
                                 href: `https://umtuwam.web.app/Profile.html?did=${uid}`,
+                                internal: 'true',
                             },
                         },
                     ],
@@ -291,9 +287,8 @@ const viewUserProfile = async (req:functions.https.Request, res: functions.Respo
                     webview: [
                         {
                             _attr: {
-                                style: '',
-                                layout: 'relative',
                                 href: `https://umtuwam.web.app/ViewProfile.html?did=${uid}`,
+                                internal: 'true',
                             },
                         },
                     ],
