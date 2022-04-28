@@ -21,7 +21,7 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
             const ageMin = ageNumber - 5;
             const ageMax = ageNumber + 5;
 
-            admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).set({
+            await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).set({
                 age: req.query.age,
                 name: req.query.name,
                 bio: '',
@@ -32,15 +32,13 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
                 location: req.query.location,
             });
 
-            admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).set({
+            await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).set({
                 gender: req.query.lookingFor,
                 location: req.query.location,
                 ageMin: ageMin.toString(),
                 ageMax: ageMax.toString(),
                 currentIndex: 0,
             });
-            // corsHandler(req, res, () => {});
-
 
             res.status(200).send(util.SuccessMessages.SuccessMessage);
             return;
