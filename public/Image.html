@@ -35,7 +35,7 @@
             var image = f;
             console.log(f);
 
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/uploadImages?image=${image}&&id=97618f4b0cec4667`;
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/uploadImages?image=${encodeURIComponent(JSON.stringify(image))}&&id=97618f4b0cec4667`;
 
             fetch(url).then(function (response) {
                 return response.json();
@@ -61,14 +61,15 @@
             }
         }
 
-        const MAX_WIDTH = 320;
-        const MAX_HEIGHT = 180;
+        const MAX_WIDTH = 480;
+        const MAX_HEIGHT = 480;
         const MIME_TYPE = "image/jpeg";
         const QUALITY = 0.7;
 
         const input = document.getElementById("imgInp");
         input.onchange = function (ev) {
             const file = ev.target.files[0]; // get the file
+            console.log(JSON.stringify(file))
             const blobURL = URL.createObjectURL(file);
             const img = new Image();
             img.src = blobURL;
@@ -95,8 +96,18 @@
                         // Handle the compressed image. es. upload or save in local state
                         var image = blob;
                         console.log(blob);
+                        console.log(image);
 
-                        // var url = `https://us-central1-umtuwam.cloudfunctions.net/uploadImages?image=${image}&&id=97618f4b0cec4667`;
+                        fetch('https://us-central1-umtuwam.cloudfunctions.net/uploadImages?id=97618f4b0cec4667', {
+                            method: 'POST',
+                            body: blob,
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok.')
+                            }
+                        }).catch(console.error)
+
+                        // var url = `https://us-central1-umtuwam.cloudfunctions.net/uploadImages?image=${encodeURIComponent(JSON.stringify(image))}&&id=97618f4b0cec4667`;
 
                         // fetch(url).then(function (response) {
                         //     return response.json();
@@ -136,7 +147,6 @@
 
         function displayInfo(label, file) {
             const p = document.createElement('p');
-            document.getElementById("main").remove();
             p.id = "main";
             p.innerText = `${label} - ${readableBytes(file.size)}`;
             document.getElementById('card').append(p);
