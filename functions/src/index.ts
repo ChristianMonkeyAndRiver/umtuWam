@@ -12,7 +12,6 @@ import * as paymentsController from './controllers/payments';
 
 admin.initializeApp();
 
-
 // =====================================================================================================================
 
 exports.signUp = functions.https.onRequest(userController.signUp);
@@ -30,8 +29,6 @@ exports.updateUserPreferences = functions.https.onRequest(userController.updateU
 exports.getApp = functions.https.onRequest(appController.getAppXML);
 
 exports.getStartup = functions.https.onRequest(appController.getStartup);
-
-exports.getChatsView = functions.https.onRequest(appController.getChatsView);
 
 exports.getProfileView = functions.https.onRequest(appController.getProfileView);
 
@@ -59,10 +56,6 @@ exports.sendMessage = functions.https.onRequest(chatsController.sendMessage);
 
 // =====================================================================================================================
 
-exports.getPaymentAPI = functions.https.onRequest(paymentsController.getPaymentAPI);
-
-exports.testPaymentsAPI = functions.https.onRequest(paymentsController.testPaymentsAPI);
-
 exports.createMySubscription = functions.https.onRequest(paymentsController.createMySubscription);
 
 exports.createOtherSubscription = functions.https.onRequest(paymentsController.createOtherSubscription);
@@ -80,6 +73,12 @@ exports.uploadImages = functions.https.onRequest(async (req, res) => {
   const queryId = req.query.id ?? '';
   const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
   const uid = formattedId.toString();
+
+  console.log('============================');
+  console.log(uid);
+  console.log('============================');
+  console.log(data);
+  console.log('============================');
 
   const buffer = Buffer.from( data );
 
@@ -126,6 +125,8 @@ exports.uploadImages = functions.https.onRequest(async (req, res) => {
 });
 
 // =====================================================================================================================
+exports.testFindUser = functions.https.onRequest(paymentsController.testFindUser);
+// =====================================================================================================================
 
 exports.createDB = functions.runWith({
     timeoutSeconds: 540,
@@ -146,10 +147,6 @@ exports.verifyFunction = functions.runWith({
     timeoutSeconds: 540,
     memory: '512MB',
   }).https.onRequest(testController.verifyFunction);
-
-exports.addTestUsers = functions.https.onRequest(testController.addTestUsers);
-
-exports.addTestChatsUsers = functions.https.onRequest(testController.addTestChatsUsers);
 
 // =====================================================================================================================
 

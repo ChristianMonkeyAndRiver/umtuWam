@@ -7,7 +7,6 @@ import * as functions from 'firebase-functions';
 import * as cors from 'cors';
 const corsHandler = cors({origin: true});
 
-
 const signUp = async (req:functions.https.Request, res: functions.Response) => {
     corsHandler(req, res, async () => {
         try {
@@ -22,22 +21,22 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
             const ageMax = ageNumber + 5;
 
             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).set({
+                bio: '',
+                images: [],
+                points: 0,
+                isVerified: false,
                 age: req.query.age,
                 name: req.query.name,
-                bio: '',
                 gender: req.query.gender,
-                images: [],
-                isVerified: false,
-                points: 0,
                 location: req.query.location,
             });
 
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).set({
-                gender: req.query.lookingFor,
-                location: req.query.location,
+                currentIndex: '',
                 ageMin: ageMin.toString(),
                 ageMax: ageMax.toString(),
-                currentIndex: 0,
+                gender: req.query.lookingFor,
+                location: req.query.location,
             });
 
             res.status(200).send(util.SuccessMessages.SuccessMessage);

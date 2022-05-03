@@ -242,24 +242,33 @@ const subscriptionCallBackUrl = async (req:functions.https.Request, res: functio
     });
 };
 
-const testPaymentsAPI = async (req:functions.https.Request, res: functions.Response<any>) => {
-    res.status(200).send({
-        'paymentID': '99955-87bb-4eaa-8eb5-a6c4a5006a88',
-    });
-    return;
-};
+const testFindUser = async (req:functions.https.Request, res: functions.Response<any>) => {
+    try {
+        const options = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer kPzzGQ-zipQ-V-m_7uwLpgwfLiY40xap_LJnG8EF5TwwEG--ixj5A_fohjgqmoGd',
+          },
+        };
 
-const getPaymentAPI = async (req:functions.https.Request, res: functions.Response<any>) => {
-    res.status(200).send({
-        'state': 'ACCPETED',
-        'paymentID': '99955-87bb-4eaa-8eb5-a6c4a5006a88',
-    });
-    return;
+        fetch('https://api.moya.app/v1/users/27794614755', options)
+        .then((result) => result.json())
+        .then((json) => {
+            console.log(json.user_profile.did);
+          res.status(200).send(json);
+          return;
+        });
+      } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+      }
 };
 
 export {
-    getPaymentAPI,
-    testPaymentsAPI,
+    testFindUser,
     createMySubscription,
     createOtherSubscription,
     subscriptionCallBackUrl,

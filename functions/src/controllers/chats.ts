@@ -313,7 +313,7 @@ const getMatchesXML = async (req:functions.https.Request, res: functions.Respons
                         {
                             _attr: {
                                 style: '',
-                                href: `http://localhost:5001/umtuwam/us-central1/getChat?uid=${doc.data().id}`,
+                                href: `https://umtuwam.web.app/ViewChatProfile.html?did=${doc.id}&uid=${uid}`,
                                 layout: 'relative',
                             },
                         },

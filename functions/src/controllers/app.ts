@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import * as xml from 'xml';
+import fetch from 'cross-fetch';
+import * as config from '../config/config';
 import * as admin from 'firebase-admin';
 import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
 
 import * as cors from 'cors';
 const corsHandler = cors({origin: true});
-
 
 const getAppXML = async (req:functions.https.Request, res: functions.Response) => {
     const header = req.headers;
@@ -17,122 +18,150 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
     indexOfDid = indexOfDid + 4;
     let indexOfAppId = xBinu.indexOf('appId');
     indexOfAppId = indexOfAppId - 2;
-    const uid = xBinu.toString().substring(indexOfDid, indexOfAppId);
+    const id = xBinu.toString().substring(indexOfDid, indexOfAppId);
 
-    const doc = await admin.firestore()
+
+    try {
+        let uid = '';
+
+        if (id == '97618f4b0cec4667' || id == ':"0727779845"') {
+            uid = 'dca14d6a-dc5a-4d8d-b2b4-6f57fda43c9f';
+        } else {
+            uid = '3c3a544e-4008-4a19-96e1-38ff7afc67e1';
+        }
+        const options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${config.MOYA_API_KEY}`,
+            },
+        };
+
+        const result = await fetch(`${config.MOYA_API_URL}${uid}`, options);
+        const json = await result.json();
+
+        uid = json.user_profile.number;
+
+        const doc = await admin.firestore()
         .collection(util.FunctionsConstants.Users)
         .doc(uid)
         .get();
 
-    const app = [{
-        app: [
-            {
-                _attr: {
-                    styleurl: '',
-                    showfree: false,
-                    title: util.FunctionsConstants.UmtuWam,
-                },
-            },
-            {
-                bottom_nav: [
-                    {
-                        menuItem: [
-                            {
-                                _attr: {
-                                    default: true,
-                                    img: 'https://umtuwam.web.app/logo.png',
-                                    href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getProspectiveDatesXML?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
-                                },
-                            },
-                            util.FunctionsConstants.Home,
-                        ],
-                    },
-                    {
-                        menuItem: [
-                            {
-                                _attr: {
-                                    img: 'https://umtuwam.web.app/chat_logo.png',
-                                    href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getChatsView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
-                                },
-                            },
-                            util.FunctionsConstants.Chats,
-                        ],
-                    },
-                    {
-                        menuItem: [
-                            {
-                                _attr: {
-                                    img: 'https://umtuwam.web.app/settings.png',
-                                    href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getPreferencesView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
-                                },
-                            },
-                            util.FunctionsConstants.PreferencesCapital,
-                        ],
-                    },
-                    {
-                        menuItem: [
-                            {
-                                _attr: {
-                                    img: 'https://umtuwam.web.app/profile_logo.png',
-                                    href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getProfileView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
-                                },
-                            },
-                            util.FunctionsConstants.Profile,
-                        ],
-                    },
-                ],
-            },
-            {
-                menu: [
-                    {
-                        menuItem: [
-                            {
-                                _attr: {
-                                    action: util.FunctionsConstants.Usage,
-                                },
-                            },
-                            util.FunctionsConstants.About,
-                        ],
-                    },
-                    {
-                        menuItem: [
-                            {
-                                _attr: {
-                                    action: util.FunctionsConstants.Share,
-                                },
-                            },
-                            util.FunctionsConstants.ShareMoya,
-                        ],
-                    },
-                    {
-                        menuItem: [
-                            {
-                                _attr: {
-                                    action: util.FunctionsConstants.Rate,
-                                },
-                            },
-                            util.FunctionsConstants.RateMoya,
-                        ],
-                    },
-                ],
-            },
-            {
-                share: {
+        const app = [{
+            app: [
+                {
                     _attr: {
-                        action: util.FunctionsConstants.Send,
-                        title: util.FunctionsConstants.Moya,
-                        text: util.FunctionsConstants.MoyaShareText,
-                        subject: util.FunctionsConstants.MoyaSubjectText,
+                        styleurl: '',
+                        showfree: false,
+                        title: util.FunctionsConstants.UmtuWam,
                     },
                 },
-            },
-        ],
-    }];
+                {
+                    bottom_nav: [
+                        {
+                            menuItem: [
+                                {
+                                    _attr: {
+                                        default: true,
+                                        img: 'https://umtuwam.web.app/logo.png',
+                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getProspectiveDatesXML?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
+                                    },
+                                },
+                                util.FunctionsConstants.Home,
+                            ],
+                        },
+                        {
+                            menuItem: [
+                                {
+                                    _attr: {
+                                        img: 'https://umtuwam.web.app/chat_logo.png',
+                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getMatchesXML?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
+                                    },
+                                },
+                                util.FunctionsConstants.Chats,
+                            ],
+                        },
+                        {
+                            menuItem: [
+                                {
+                                    _attr: {
+                                        img: 'https://umtuwam.web.app/profile_logo.png',
+                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getPreferencesView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
+                                    },
+                                },
+                                util.FunctionsConstants.PreferencesCapital,
+                            ],
+                        },
+                        {
+                            menuItem: [
+                                {
+                                    _attr: {
+                                        img: 'https://umtuwam.web.app/profile_logo.png',
+                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getProfileView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
+                                    },
+                                },
+                                util.FunctionsConstants.Profile,
+                            ],
+                        },
+                    ],
+                },
+                {
+                    menu: [
+                        {
+                            menuItem: [
+                                {
+                                    _attr: {
+                                        action: util.FunctionsConstants.Usage,
+                                    },
+                                },
+                                util.FunctionsConstants.About,
+                            ],
+                        },
+                        {
+                            menuItem: [
+                                {
+                                    _attr: {
+                                        action: util.FunctionsConstants.Share,
+                                    },
+                                },
+                                util.FunctionsConstants.ShareMoya,
+                            ],
+                        },
+                        {
+                            menuItem: [
+                                {
+                                    _attr: {
+                                        action: util.FunctionsConstants.Rate,
+                                    },
+                                },
+                                util.FunctionsConstants.RateMoya,
+                            ],
+                        },
+                    ],
+                },
+                {
+                    share: {
+                        _attr: {
+                            action: util.FunctionsConstants.Send,
+                            title: util.FunctionsConstants.Moya,
+                            text: util.FunctionsConstants.MoyaShareText,
+                            subject: util.FunctionsConstants.MoyaSubjectText,
+                        },
+                    },
+                },
+            ],
+        }];
 
-    corsHandler(req, res, async () => {
-        res.status(200).send(xml(app, true));
+        corsHandler(req, res, async () => {
+            res.status(200).send(xml(app, true));
+            return;
+        });
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
         return;
-    });
+    }
 };
 
 const getStartup = async (req:functions.https.Request, res: functions.Response) => {
@@ -152,40 +181,6 @@ const getStartup = async (req:functions.https.Request, res: functions.Response) 
                         {
                             _attr: {
                                 href: `https://umtuwam.web.app/Startup.html?did=${uid}`,
-                                internal: 'true',
-                            },
-                        },
-                    ],
-                },
-            ],
-        }];
-
-        res.send(xml(doc, true));
-        return;
-    } catch (error) {
-        console.error(util.ErrorMessages.ErrorText, error);
-        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
-        return;
-    }
-};
-
-const getChatsView = async (req:functions.https.Request, res: functions.Response) => {
-    try {
-        const queryId = req.query.id ?? '';
-        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
-        const uid = formattedId.toString();
-        const doc = [{
-            doc: [
-                {
-                    _attr: {
-                        title: util.FunctionsConstants.UmtuWam,
-                    },
-                },
-                {
-                    webview: [
-                        {
-                            _attr: {
-                                href: `https://umtuwam.web.app/Chats.html?did=${uid}`,
                                 internal: 'true',
                             },
                         },
@@ -275,7 +270,11 @@ const viewUserProfile = async (req:functions.https.Request, res: functions.Respo
     try {
         const queryId = req.query.id ?? '';
         const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
-        const uid = formattedId.toString();
+        const did = formattedId.toString();
+
+        const queryUid = req.query.uid ?? '';
+        const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
+        const uid = formattedUid.toString();
         const doc = [{
             doc: [
                 {
@@ -287,7 +286,7 @@ const viewUserProfile = async (req:functions.https.Request, res: functions.Respo
                     webview: [
                         {
                             _attr: {
-                                href: `https://umtuwam.web.app/ViewProfile.html?did=${uid}`,
+                                href: `https://umtuwam.web.app/ViewProfile.html?did=${did}&uid=${uid}`,
                                 internal: 'true',
                             },
                         },
@@ -343,7 +342,7 @@ const getMembershipPageXML = async (req:functions.https.Request, res: functions.
                                 {
                                     _attr: {
                                         style: '',
-                                        href: '',
+                                        href: `https://us-central1-umtuwam.cloudfunctions.net/createMySubscription?id=${userDocument.id}&productId=${util.Products.Chats}`,
                                         layout: 'relative',
                                     },
                                 },
@@ -357,12 +356,12 @@ const getMembershipPageXML = async (req:functions.https.Request, res: functions.
                                 {
                                     _attr: {
                                         style: '',
-                                        href: '',
+                                        href: `https://us-central1-umtuwam.cloudfunctions.net/createMySubscription?id=${userDocument.id}&productId=${util.Products.Featured}`,
                                         layout: 'relative',
                                     },
                                 },
                                 {
-                                    md: `${util.FunctionsConstants.Featured} ${util.FunctionsConstants.ClickToPayFeatured}`,
+                                    md: `${util.FunctionsConstants.Featured}: ${util.FunctionsConstants.ClickToPayFeatured}`,
                                 },
                             ],
                         },
@@ -371,12 +370,12 @@ const getMembershipPageXML = async (req:functions.https.Request, res: functions.
                                 {
                                     _attr: {
                                         style: '',
-                                        href: '',
+                                        href: `https://us-central1-umtuwam.cloudfunctions.net/createMySubscription?id=${userDocument.id}&productId=${util.Products.Photos}`,
                                         layout: 'relative',
                                     },
                                 },
                                 {
-                                    md: `${util.FunctionsConstants.SeeAllPhotos} ${util.FunctionsConstants.ClickToPayPhotos}`,
+                                    md: `${util.FunctionsConstants.SeeAllPhotos}: ${util.FunctionsConstants.ClickToPayPhotos}`,
                                 },
                             ],
                         },
@@ -385,12 +384,12 @@ const getMembershipPageXML = async (req:functions.https.Request, res: functions.
                                 {
                                     _attr: {
                                         style: '',
-                                        href: '',
+                                        href: `https://us-central1-umtuwam.cloudfunctions.net/createMySubscription?id=${userDocument.id}&productId=${util.Products.Verified}`,
                                         layout: 'relative',
                                     },
                                 },
                                 {
-                                    md: `${util.FunctionsConstants.Verified} ${util.FunctionsConstants.ClickToPayVerified}`,
+                                    md: `${util.FunctionsConstants.Verified}: ${util.FunctionsConstants.ClickToPayVerified}`,
                                 },
                             ],
                         },
@@ -484,7 +483,7 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
                     .where(util.FunctionsConstants.Location, '==', document.data()?.location)
                     .orderBy(util.FunctionsConstants.Age, 'asc')
                     .orderBy(util.FunctionsConstants.Points, 'desc')
-                    .limit(2)
+                    .limit(20)
                     .get();
                 } else {
                     const lastVisible = await admin.firestore().collection(util.FunctionsConstants.Users).doc(document.data()?.currentIndex).get();
@@ -502,7 +501,7 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
                     .orderBy(util.FunctionsConstants.Age, 'asc')
                     .orderBy(util.FunctionsConstants.Points, 'desc')
                     .startAfter(lastVisible)
-                    .limit(2)
+                    .limit(20)
                     .get();
                 }
 
@@ -514,7 +513,7 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
                             {
                                 _attr: {
                                     style: '',
-                                    href: `https://us-central1-umtuwam.cloudfunctions.net/viewUserProfile?id=${doc.id}`,
+                                    href: `https://us-central1-umtuwam.cloudfunctions.net/viewUserProfile?id=${doc.id}&uid=${uid}`,
                                     layout: 'relative',
                                 },
                             },
@@ -590,7 +589,7 @@ function addNextButtonItemXML(itemsArray:any [], uid: string) {
             {
                 _attr: {
                     style: '',
-                    href: `http://localhost:5001/umtuwam/us-central1/getProspectiveDatesXML?id=${uid}`,
+                    href: `https://us-central1-umtuwam.cloudfunctions.net/getProspectiveDatesXML?id=${uid}`,
                     layout: 'relative',
                 },
             },
@@ -613,7 +612,6 @@ function addNextButtonItemXML(itemsArray:any [], uid: string) {
 export {
     getAppXML,
     getStartup,
-    getChatsView,
     getProfileView,
     viewUserProfile,
     getPreferencesView,
@@ -621,15 +619,3 @@ export {
     getMembershipPageXML,
     getProspectiveDatesXML,
 };
-
-                                // {
-                                //     item: [
-                                //         {
-                                //             _attr: {
-                                //                 style: '',
-                                //                 href: `https://us-central1-umtuwam.cloudfunctions.net/likeUser?uid=${doc.id}`,
-                                //                 layout: 'relative',
-                                //             },
-                                //         },
-                                //     ],
-                                // },

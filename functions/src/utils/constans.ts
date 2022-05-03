@@ -61,7 +61,7 @@ enum FunctionsConstants {
     Chatting = 'Chatting',
     Featured = 'Featured',
     Location = 'location',
-    UmtuWam = 'UmuntuWam',
+    UmtuWam = 'UmtuWam',
     RateMoya = 'Rate Moya',
     ProductId = 'productId',
     Timestamp = 'timestamp',
