@@ -12,10 +12,12 @@
         window.onload = function () {
             var params = location.search.substring(1);
             var temp = params.split("=");
+            var id = document.getElementById("id");
+            id.setAttribute("value", temp[1]);
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserPreferences?id=${temp[1]}`)
                 .then(res => res.json())
                 .then((out) => {
-                    if (out.gender == "female") {
+                    if (out.gender == "Female") {
                         var gender = document.getElementById("female")
                         gender.setAttribute("checked", true)
                     } else {
@@ -29,8 +31,14 @@
                     var ageMax = document.getElementById("ageTo");
                     ageMax.setAttribute("value", out.ageMax);
 
-                    var location = document.getElementById("location").children[2];
-                    location.setAttribute("selected", out.location);
+                    var location = document.getElementById("location").children;
+                    for (var i = 0; i < location.length; i++) {
+                        console.log(location[i]);
+                        if (location[i].value == out.location) {
+                            location[i].selected = true;
+                            break;
+                        }
+                    }
                 }).catch(err => console.error(err));
         }
 
@@ -41,10 +49,11 @@
             var ageTo = document.getElementById("ageTo").value;
 
             var lookingFor = "";
-            if (document.getElementById("UFemale")) {
-                lookingFor = "female";
-            } else {
-                lookingFor = "male";
+            var inputs = document.getElementsByName("lookingFor");
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].checked) {
+                    lookingFor = inputs[i].value;
+                }
             }
 
             var id = document.getElementById("id").value;
@@ -76,9 +85,9 @@
             </p>
             <p>
                 <label>Looking for:
-                    <input id="female" type="radio" name="gender" value="Woman" required>
+                    <input id="female" type="radio" name="lookingFor" value="Female" required>
                     <label for="female">Woman</label>
-                    <input id="male" type="radio" name="gender" value="Woman">
+                    <input id="male" type="radio" name="lookingFor" value="Male">
                     <label for="male">Man</label>
                 </label>
             <p id="error" hidden style="color: red;">Please select at least one checkbox</p>

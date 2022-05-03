@@ -21,17 +21,19 @@
             var name = document.getElementById("name").value;
 
             var gender = "";
-            if (document.getElementById("IFemale")) {
-                gender = "female";
-            } else {
-                gender = "male";
+            var inputs = document.getElementsByName("gender");
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].checked) {
+                    gender = inputs[i].value;
+                }
             }
 
             var lookingFor = "";
-            if (document.getElementById("UFemale")) {
-                lookingFor = "female";
-            } else {
-                lookingFor = "male";
+            inputs = document.getElementsByName("lookingFor");
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].checked) {
+                    lookingFor = inputs[i].value;
+                }
             }
 
             var age = document.getElementById("age").value;
@@ -66,18 +68,18 @@
                 <p>
                     <label>I am a:
                         <br />
-                        <input id="Ifemale" type="radio" name="gender" value="Woman" required>
+                        <input id="Ifemale" type="radio" name="gender" value="Female" required>
                         <label for="Ifemale">Woman</label>
-                        <input id="Imale" type="radio" name="gender" value="Man">
+                        <input id="Imale" type="radio" name="gender" value="Male">
                         <label for="Imale">Man</label>
                     </label>
                 </p>
                 <p>
                     <label>Looking for a:
                         <br />
-                        <input id="Ufemale" type="radio" name="lookingFor" value="Woman" required>
+                        <input id="Ufemale" type="radio" name="lookingFor" value="Female" required>
                         <label for="Ufemale">Woman</label>
-                        <input id="Umale" type="radio" name="lookingFor" value="Man">
+                        <input id="Umale" type="radio" name="lookingFor" value="Male">
                         <label for="Umale">Man</label>
                     </label>
                 <p id="error" hidden style="color: red;">Please select at least one checkbox</p>

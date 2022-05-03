@@ -23,8 +23,14 @@
                     var age = document.getElementById("age");
                     age.setAttribute("value", out.age);
 
-                    var location = document.getElementById("location").children[2];
-                    location.setAttribute("selected", out.location);
+                    var location = document.getElementById("location").children;
+                    for (var i = 0; i < location.length; i++) {
+                        console.log(location[i]);
+                        if (location[i].value == out.location) {
+                            location[i].selected = true;
+                            break;
+                        }
+                    }
 
                     var bio = document.getElementById("bio");
                     bio.setAttribute("value", out.bio);

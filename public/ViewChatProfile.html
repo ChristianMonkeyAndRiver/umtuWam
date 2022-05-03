@@ -30,6 +30,10 @@
 
                     var img = document.getElementById("images");
                     img.src = out.images[0];
+
+                    var chats = document.getElementById("chat");
+                    chats.setAttribute('href', `https://umtuwam.web.app/Chats.html?did=${myId.value}&uid=${theirId.value}`)
+
                 }).catch(err => console.error(err));
         }
         function like() {
@@ -49,6 +53,8 @@
         </div>
         <a href="" class="heart">View more images</a>
         <button id="like" onclick="like()" class="heart">Like</button>
+        <a href="" id="chat">Chat</a>
+
         <input type="text" id="myId" name="id" hidden value="" />
         <input type="text" id="theirId" name="id" hidden value="" />
 
