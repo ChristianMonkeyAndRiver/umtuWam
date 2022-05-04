@@ -30,9 +30,13 @@ exports.getApp = functions.https.onRequest(appController.getAppXML);
 
 exports.getStartup = functions.https.onRequest(appController.getStartup);
 
+exports.getImageView = functions.https.onRequest(appController.getImageView);
+
 exports.getProfileView = functions.https.onRequest(appController.getProfileView);
 
 exports.viewUserProfile = functions.https.onRequest(appController.viewUserProfile);
+
+exports.viewChatProfile = functions.https.onRequest(appController.viewChatProfile);
 
 exports.getPreferencesView = functions.https.onRequest(appController.getPreferencesView);
 

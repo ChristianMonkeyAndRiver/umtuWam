@@ -304,6 +304,79 @@ const viewUserProfile = async (req:functions.https.Request, res: functions.Respo
     }
 };
 
+const viewChatProfile = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const queryId = req.query.did ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const did = formattedId.toString();
+
+        const queryUid = req.query.uid ?? '';
+        const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
+        const uid = formattedUid.toString();
+
+        const doc = [{
+            doc: [
+                {
+                    _attr: {
+                        title: util.FunctionsConstants.UmtuWam,
+                    },
+                },
+                {
+                    webview: [
+                        {
+                            _attr: {
+                                href: `https://umtuwam.web.app/ViewChatProfile.html?did=${did}&uid=${uid}`,
+                                internal: 'true',
+                            },
+                        },
+                    ],
+                },
+            ],
+        }];
+
+        res.send(xml(doc, true));
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
+const getImageView = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const uid = formattedId.toString();
+        const doc = [{
+            doc: [
+                {
+                    _attr: {
+                        title: util.FunctionsConstants.UmtuWam,
+                    },
+                },
+                {
+                    webview: [
+                        {
+                            _attr: {
+                                href: `https://umtuwam.web.app/Image.html?id=${uid}`,
+                                internal: 'true',
+                            },
+                        },
+                    ],
+                },
+            ],
+        }];
+
+        res.send(xml(doc, true));
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
 const getMembershipPageXML = async (req:functions.https.Request, res: functions.Response) => {
     corsHandler(req, res, async () => {
         const queryId = req.query.id ?? '';
@@ -612,8 +685,10 @@ function addNextButtonItemXML(itemsArray:any [], uid: string) {
 export {
     getAppXML,
     getStartup,
+    getImageView,
     getProfileView,
     viewUserProfile,
+    viewChatProfile,
     getPreferencesView,
     getProspectiveDates,
     getMembershipPageXML,
