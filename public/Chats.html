@@ -14,30 +14,35 @@
         </form>
 
         <main class="msger-chat">
-            
+
         </main>
 
-        
+
     </section>
 
     <script>
+        var myId = "";
+        var matchId = "";
+        window.onload = function () {
+            var params = location.search.substring(1);
+            theirId = new URL(location.href).searchParams.get("uid");
+            myId = new URL(location.href).searchParams.get("id");
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getChat?id=${myId}&uid=${theirId}`)
+                .then(res => res.json())
+                .then((out) => {
+                    for (var i = 0; i < out.length; i++) {
+                        if (out[i].idTo == theirId) {
+                            appendMessage("right", out[i].content, new Date())
+                        } else {
+                            appendMessage("left", out[i].content, new Date())
+                        }
+                    }
+                }).catch(err => console.error(err));
+        }
+
         const msgerForm = get(".msger-inputarea");
         const msgerInput = get(".msger-input");
         const msgerChat = get(".msger-chat");
-
-        const BOT_MSGS = [
-            "Hi, how are you?",
-            "Ohh... I can't understand what you trying to say. Sorry!",
-            "I like to play games... But I don't know how to play!",
-            "Sorry if my answers are not relevant. :))",
-            "I feel sleepy! :("
-        ];
-
-        // Icons made by Freepik from www.flaticon.com
-        const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
-        const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
-        const BOT_NAME = "BOT";
-        const PERSON_NAME = "TestUser";
 
         msgerForm.addEventListener("submit", event => {
             event.preventDefault();
@@ -45,21 +50,21 @@
             const msgText = msgerInput.value;
             if (!msgText) return;
 
-            appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
+            appendMessage("right", msgText, new Date());
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/sendMessage?id=${myId}&uid=${theirId}&content=${msgText}`)
+                .catch(err => console.error(err));
             msgerInput.value = "";
-
-            botResponse();
         });
 
-        function appendMessage(name, img, side, text) {
+        function appendMessage(side, text, date) {
+
             //   Simple solution for small apps
             const msgHTML = `
     <div class="msg ${side}-msg">
 
       <div class="msg-bubble">
         <div class="msg-info">
-          <div class="msg-info-name">${name}</div>
-          <div class="msg-info-time">${formatDate(new Date())}</div>
+          <div class="msg-info-time">${formatDate(date)}</div>
         </div>
 
         <div class="msg-text">${text}</div>
@@ -70,26 +75,16 @@
             msgerChat.insertAdjacentHTML("afterbegin", msgHTML);
         }
 
-        function botResponse() {
-            const r = random(0, BOT_MSGS.length - 1);
-            const msgText = BOT_MSGS[r];
-            const delay = msgText.split(" ").length * 100;
-
-            setTimeout(() => {
-                appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
-            }, delay);
-        }
-
         // Utils
         function get(selector, root = document) {
             return root.querySelector(selector);
         }
 
         function formatDate(date) {
-            const h = "0" + date.getHours();
-            const m = "0" + date.getMinutes();
+            const h = date.getHours();
+            const m = date.getMinutes();
 
-            return `${h.slice(-2)}:${m.slice(-2)}`;
+            return `${date.toDateString()} ${h}:${m}`;
         }
 
         function random(min, max) {

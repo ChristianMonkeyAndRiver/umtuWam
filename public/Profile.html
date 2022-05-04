@@ -35,6 +35,8 @@
                     var bio = document.getElementById("bio");
                     bio.setAttribute("value", out.bio);
 
+                    var member = document.getElementById("membership");
+                    member.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/getMembershipPageXML?id=${temp[1]}`)
                 }).catch(err => console.error(err));
         }
         function stop() {
@@ -104,11 +106,8 @@
             <input type="text" id="id" name="id" hidden value="" />
         </div>
 
-        <a href="https://umtuwam.web.app/Image.xml" class="btn">Add your photos</a>
-        <a href="https://us-central1-umtuwam.cloudfunctions.net/getMembershipPageXML?id=Alyssa Hammes"
-            class="btn membership">Membership
-            (chat and
-            more)</a>
+        <a href="https://us-central1-umtuwam.cloudfunctions.net/getImageView" class="btn">Add your photos</a>
+        <a href="" id="membership" class="btn membership">Membership (chat and more)</a>
         <button type="submit" id="checkBtn">Save changes</button>
     </form>
 </body>

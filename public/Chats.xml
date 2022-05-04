@@ -1,4 +1,4 @@
 <doc title="Chats">
-    <webview href="https://umtuwam.web.app/Chats.html">
+    <webview href="https://umtuwam.web.app/Chats.html" internal="true">
     </webview>
 </doc>

@@ -16,7 +16,7 @@
             var theirId = document.getElementById("theirId");
             theirId.setAttribute("value", new URL(location.href).searchParams.get("did"));
             myId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${temp[1]}`)
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${theirId.value}`)
                 .then(res => res.json())
                 .then((out) => {
                     var name = document.getElementById("name");
@@ -32,7 +32,8 @@
                     img.src = out.images[0];
 
                     var chats = document.getElementById("chat");
-                    chats.setAttribute('href', `https://umtuwam.web.app/Chats.html?did=${myId.value}&uid=${theirId.value}`)
+                    chats.setAttribute('href', `https://umtuwam.web.app/Chats.html?id=${myId.value}&uid=${theirId.value}`)
+                    chats.style.backgroundColor = '#00FF00'
 
                 }).catch(err => console.error(err));
         }
@@ -53,7 +54,7 @@
         </div>
         <a href="" class="heart">View more images</a>
         <button id="like" onclick="like()" class="heart">Like</button>
-        <a href="" id="chat">Chat</a>
+        <a href="" class="heart" id="chat">Chat</a>
 
         <input type="text" id="myId" name="id" hidden value="" />
         <input type="text" id="theirId" name="id" hidden value="" />

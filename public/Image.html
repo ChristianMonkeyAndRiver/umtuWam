@@ -8,6 +8,7 @@
 <body>
     <div>
         <form onsubmit="upload();" method="post" enctype="multipart/form-data" id="form">
+            <input type="text" id="id" name="id" hidden value="" />
             <div class="container">
                 <label class="custom-file-upload">
                     Upload an image
@@ -22,37 +23,36 @@
     </div>
 
     <script>
-        function upload() {
-            event.preventDefault();
-            var f = imgInp.files[0];
-            var fileName = f.name.split('.')[0];
-            const form = document.getElementById('form');
-            let data = new FormData();
-            data.append('image', form.imgInp.value);
-            for (var value of data.values()) {
-                console.log(value);
-            }
-            var image = f;
-            console.log(f);
-
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/uploadImages?image=${encodeURIComponent(JSON.stringify(image))}&&id=97618f4b0cec4667`;
-
-            fetch(url).then(function (response) {
-                return response.json();
-            }).then(function (data) {
-                console.log(data);
-            }).catch(console.error);
-
-            // fetch('https://us-central1-umtuwam.cloudfunctions.net/uploadImages', {
-            //     method: 'POST',
-            //     body: data,
-            // }).then(response => {
-            //     if (!response.ok) {
-            //         throw new Error('Network response was not ok.')
-            //     }
-            // }).catch(console.error)
+        window.onload = function () {
+            var id = document.getElementById("id");
+            id.setAttribute("value", new URL(location.href).searchParams.get("id"));
         }
 
+        function upload() {
+            event.preventDefault();
+            var id = document.getElementById("id").value
+
+            var canvas = document.getElementById("preview");
+            canvas.toBlob(
+                (blob) => {
+                    // Handle the compressed image. es. upload or save in local state
+                    var image = blob;
+                    console.log(blob);
+                    console.log(image);
+
+                    fetch(`https://us-central1-umtuwam.cloudfunctions.net/uploadImages?id=${id}`, {
+                        method: 'POST',
+                        body: blob,
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok.')
+                        }
+                    }).catch(console.error)
+                },
+                MIME_TYPE,
+                QUALITY
+            );
+        }
 
         imgInp.onchange = evt => {
             const [file] = imgInp.files
@@ -63,7 +63,7 @@
 
         const MAX_WIDTH = 480;
         const MAX_HEIGHT = 480;
-        const MIME_TYPE = "image/jpeg";
+        const MIME_TYPE = "image/png";
         const QUALITY = 0.7;
 
         const input = document.getElementById("imgInp");
@@ -82,44 +82,15 @@
                 URL.revokeObjectURL(this.src);
                 const [newWidth, newHeight] = calculateSize(img, MAX_WIDTH, MAX_HEIGHT);
                 const canvas = document.createElement("canvas");
-                var doc = document.getElementById("main");
+                var doc = document.getElementById("preview");
                 if (doc) {
                     doc.remove();
                 }
-                canvas.id = "main";
+                canvas.id = "preview";
                 canvas.width = newWidth;
                 canvas.height = newHeight;
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, newWidth, newHeight);
-                canvas.toBlob(
-                    (blob) => {
-                        // Handle the compressed image. es. upload or save in local state
-                        var image = blob;
-                        console.log(blob);
-                        console.log(image);
-
-                        fetch('https://us-central1-umtuwam.cloudfunctions.net/uploadImages?id=97618f4b0cec4667', {
-                            method: 'POST',
-                            body: blob,
-                        }).then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok.')
-                            }
-                        }).catch(console.error)
-
-                        // var url = `https://us-central1-umtuwam.cloudfunctions.net/uploadImages?image=${encodeURIComponent(JSON.stringify(image))}&&id=97618f4b0cec4667`;
-
-                        // fetch(url).then(function (response) {
-                        //     return response.json();
-                        // }).then(function (data) {
-                        //     console.log(data);
-                        // });
-                        // displayInfo('Original file', file);
-                        // displayInfo('Compressed file', blob);
-                    },
-                    MIME_TYPE,
-                    QUALITY
-                );
                 document.getElementById("card").append(canvas);
             };
         };
@@ -146,6 +117,7 @@
         // Utility functions for demo purpose
 
         function displayInfo(label, file) {
+            document.getElementById("main").remove();
             const p = document.createElement('p');
             p.id = "main";
             p.innerText = `${label} - ${readableBytes(file.size)}`;
@@ -159,56 +131,6 @@
             return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
         }
     </script>
-
-    <!-- <script>
-        function upload() {
-            event.preventDefault();
-            var f = fileToUpload.files[0];
-            console.log(f)
-            var fileName = f.name.split('.')[0];
-            var img = new Image();
-            img.src = URL.createObjectURL(f);
-            img.onload = function () {
-                var canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                var ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                canvas.toBlob(function (blob) {
-                    console.info(blob.size);
-                    var f2 = new File([blob], fileName + ".png");
-                    var form = new FormData();
-                    form.append("fileToUpload", f);
-                    // form.append("userId", "97618f4b0cec4667")
-                    for (var value of form.values()) {
-                        console.log(value);
-                    }
-                    var image = fileToUpload.files[0];
-
-                    var url = `https://us-central1-umtuwam.cloudfunctions.net/uploadImages?image=${image}&&id=97618f4b0cec4667`;
-
-                    fetch(url).then(function (response) {
-                        return response.json();
-                    }).then(function (data) {
-                        console.log(data);
-                    });
-                    // fetch('https://us-central1-umtuwam.cloudfunctions.net/uploadImages?id=97618f4b0cec4667', {
-                    //     method: 'POST',
-                    //     body: form,
-                    // }).then(response => {
-                    //     if (!response.ok) {
-                    //         throw new Error('Network response was not ok.')
-                    //     }
-                    // }).catch(console.error)
-                }, 'image/jpeg', 0.5);
-            }
-        }
-    </script>
-    <form onsubmit="upload();" method="post" enctype="multipart/form-data">
-        Select image to upload:
-        <input type="file" name="fileToUpload" id="fileToUpload" multiple>
-        <input type="submit" value="Upload Image" name="submit">
-    </form> -->
 </body>
 
 </html>
