@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>UmtuWam</title>
+    <link rel="stylesheet" href="./Report.css" type="text/css">
+</head>
+
+<body>
+    <script>
+        window.onload = function () {
+            var name = new URL(location.href).searchParams.get("name");
+
+            id.setAttribute("value", new URL(location.href).searchParams.get("id"));
+            uid.setAttribute("vale", new URL(location.href).searchParams.get("uid"));
+            head.innerText = `Report ${name}`;
+        }
+
+        function report() {
+            event.preventDefault();
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/reportUser?id=${id.value}&uid=${uid.value}&title=${title.value}&content=${content.value}`);
+        }
+    </script>
+    <div class="container">
+        <h2 id="head"></h2>
+        <p>
+            <label>Reason for report
+                <br>
+                <input type="text" id="title">
+            </label>
+        </p>
+        <p>
+            <label>Please elaborate:
+                <br>
+                <textarea class="content" id="content" maxlength="255" name="content" rows="5"></textarea>
+            </label>
+        </p>
+        <input type="text" id="id" name="id" hidden value="" />
+        <input type="text" id="uid" name="uid" hidden value="" />
+        <button id="report" class="report" onclick="report()">Report</button>
+    </div>
+</body>
+
+</html>
