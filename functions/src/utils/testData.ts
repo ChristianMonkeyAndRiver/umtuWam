@@ -18,13 +18,25 @@ const createDB = async (req:functions.https.Request, res: functions.Response) =>
 
             age = Math.ceil(age);
 
+            const randomNumber = Math.floor(Math.random()*2);
+
+            const gender = faker.name.gender(true);
+
+            const preference = randomNumber == 0 ? [faker.name.gender(true)] : ['Male', 'Female'];
+
+            let genderPreference = 'Straight';
+
+            if (preference.length == 1 && preference[0] == gender) {
+                genderPreference = 'Gay';
+            }
+
             await admin.firestore().collection(util.FunctionsConstants.Users).doc(name).set({
                 age: age.toString(),
                 name: name,
                 points: 0,
-                isVerified: false,
                 bio: faker.lorem.paragraph(),
-                gender: faker.name.gender(true),
+                genderPreference: genderPreference,
+                gender: gender,
                 images: [
                     faker.image.people(480, 480, true),
                     faker.image.people(480, 480, true),
@@ -33,10 +45,16 @@ const createDB = async (req:functions.https.Request, res: functions.Response) =>
                     faker.image.people(480, 480, true),
                 ],
                 location: location,
+                isBanned: false,
+                isVerified: false,
+                hasPaidForChats: false,
+                hasPaidForFeatured: false,
             });
 
+
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(name).set({
-                gender: faker.name.gender(true),
+                gender: preference,
+                genderPreference: genderPreference,
                 location: location,
                 ageMin: (age-5).toString(),
                 ageMax: (age+5).toString(),
@@ -136,7 +154,7 @@ const boostFunction = async (req:functions.https.Request, res: functions.Respons
 
 // const createChats
 const createChats = async (req:functions.https.Request, res: functions.Response) => {
-    await admin.firestore().collection(util.FunctionsConstants.Users).limit(20).get()
+    await admin.firestore().collection(util.FunctionsConstants.Users).limit(30).get()
     .then(async (users) => {
         for (const doc of users.docs) {
             const potentialMatches = await getPotentialMatches(doc.id);
@@ -175,7 +193,9 @@ async function getPotentialMatches(id: string): Promise<any[]> {
             }
 
             await admin.firestore().collection(util.FunctionsConstants.Users)
-                .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
+                .where(util.FunctionsConstants.IsBanned, '==', false)
+                .where(util.FunctionsConstants.Gender, 'in', doc.data()?.gender)
+                .where(util.FunctionsConstants.GenderPreference, '==', doc.data()?.genderPreference)
                 .where(util.FunctionsConstants.Age, '>=', doc.data()?.ageMin)
                 .where(util.FunctionsConstants.Age, '<=', doc.data()?.ageMax)
                 .where(util.FunctionsConstants.Location, '==', doc.data()?.location)
@@ -185,14 +205,16 @@ async function getPotentialMatches(id: string): Promise<any[]> {
                 .get()
                 .then(async (docs) => {
                     if (docs.empty) {
-                        await doc.ref.update({currentIndex: 0});
+                        await doc.ref.update({currentIndex: ''});
                         return [];
                     } else {
-                        for (const doc of docs.docs) {
+                        for (const document of docs.docs) {
+                           if (document.id != doc.id) {
                             docsArray.push({
-                                id: doc.id,
-                                ...doc.data(),
+                                id: document.id,
+                                ...document.data(),
                             });
+                           }
                         }
                         // const currentIndex = doc.data()?.currentIndex + docs.docs.length;
 
@@ -213,15 +235,11 @@ async function likeUser(user1: any, user2: any) {
 
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.id).collection(util.FunctionsConstants.Chats).doc(docId).set({
         id: user2.id,
-        chatsPaymentID: '',
-        imagesPaymentID: '',
         name: user2.name,
         imageUrl: user2.images[0] ?? util.FunctionsConstants.DefualtImage,
     });
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.id).collection(util.FunctionsConstants.Chats).doc(docId2).set({
         id: user1.id,
-        chatsPaymentID: '',
-        imagesPaymentID: '',
         name: user1.name,
         imageUrl: user1.images[0] ?? util.FunctionsConstants.DefualtImage,
     });
@@ -235,15 +253,12 @@ async function paidChat(user1: any, user2: any) {
 
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.id).collection(util.FunctionsConstants.Chats).doc(docId).set({
         id: user2.id,
-        chatsPaymentID: paymentId,
-        imagesPaymentID: '',
         name: user2.name,
         imageUrl: user2.images[0] ?? util.FunctionsConstants.DefualtImage,
     });
+
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.id).collection(util.FunctionsConstants.Chats).doc(docId2).set({
         id: user1.id,
-        chatsPaymentID: paymentId2,
-        imagesPaymentID: '',
         name: user1.name,
         imageUrl: user1.images[0] ?? util.FunctionsConstants.DefualtImage,
     });
@@ -270,20 +285,29 @@ async function paidChat(user1: any, user2: any) {
         });
         counter++;
     }
+
     const now = admin.firestore.Timestamp.now();
     const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60, now.nanoseconds);
-    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+
+    await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
         purchaserId: user1.id,
         paymentId: paymentId,
         expiresAt: expiresAt,
+        isPaymentApproved: true,
         product: util.Products.Chats,
     });
-    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+
+    await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
         purchaserId: user2.id,
         paymentId: paymentId2,
         expiresAt: expiresAt,
+        isPaymentApproved: true,
         product: util.Products.Chats,
     });
+
+    await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.id).update({chatsExpiryDate: expiresAt, hasPaidForChats: true});
+
+    await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.id).update({chatsExpiryDate: expiresAt, hasPaidForChats: true});
 }
 
 async function halfPaidChat(user1: any, user2: any) {
@@ -293,27 +317,27 @@ async function halfPaidChat(user1: any, user2: any) {
 
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.id).collection(util.FunctionsConstants.Chats).doc(docId).set({
         id: user2.id,
-        chatsPaymentID: paymentId,
-        imagesPaymentID: '',
         name: user2.name,
         imageUrl: user2.images[0] ?? util.FunctionsConstants.DefualtImage,
     });
+
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.id).collection(util.FunctionsConstants.Chats).doc(docId2).set({
         id: user1.id,
-        chatsPaymentID: '',
-        imagesPaymentID: '',
         name: user1.name,
         imageUrl: user1.images[0] ?? util.FunctionsConstants.DefualtImage,
     });
 
     const now = admin.firestore.Timestamp.now();
     const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60, now.nanoseconds);
-    admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
+    await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc().set({
         purchaserId: user1.id,
         paymentId: paymentId,
         expiresAt: expiresAt,
+        isPaymentApproved: true,
         product: util.Products.Chats,
     });
+
+    await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.id).update({chatsExpiryDate: expiresAt, hasPaidForChats: true});
 }
 
 async function payForImage(user1: any, user2: any) {
@@ -321,12 +345,13 @@ async function payForImage(user1: any, user2: any) {
 
     const paymentId = faker.datatype.uuid();
     const now = admin.firestore.Timestamp.now();
-    const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60, now.nanoseconds);
+    const expiresAt = new admin.firestore.Timestamp(now.seconds + 24*60*60*100000, now.nanoseconds);
 
     admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc(docId).set({
         purchaserId: user1.id,
         paymentId: paymentId,
         expiresAt: expiresAt,
+        isPaymentApproved: true,
         product: util.Products.Photos,
     });
 }

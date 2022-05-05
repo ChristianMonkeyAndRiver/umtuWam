@@ -34,6 +34,7 @@ enum SuccessMessages {
 enum FunctionsConstants {
     Bio = 'bio',
     Uid = 'uid',
+    Id = 'id',
     Age = 'age',
     Binu = 'biNu',
     Moya = 'Moya',
@@ -53,6 +54,7 @@ enum FunctionsConstants {
     Usage = 'usage',
     Xbinu = 'x-binu',
     Gender = 'gender',
+    GenderPreference = 'genderPreference',
     Points = 'points',
     Profile = 'Profile',
     Content = 'content',
@@ -64,6 +66,7 @@ enum FunctionsConstants {
     UmtuWam = 'UmtuWam',
     RateMoya = 'Rate Moya',
     ProductId = 'productId',
+    IsBanned = 'isBanned',
     Timestamp = 'timestamp',
     ShareMoya = 'Share Moya',
     SpaceParsedValue = '%20',

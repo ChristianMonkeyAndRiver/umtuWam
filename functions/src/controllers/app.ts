@@ -345,6 +345,92 @@ const viewChatProfile = async (req:functions.https.Request, res: functions.Respo
     }
 };
 
+const reportsView = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const id = formattedId.toString();
+
+        const queryUid = req.query.uid ?? '';
+        const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
+        const uid = formattedUid.toString();
+
+        const doc = [{
+            doc: [
+                {
+                    _attr: {
+                        title: util.FunctionsConstants.UmtuWam,
+                    },
+                },
+                {
+                    webview: [
+                        {
+                            _attr: {
+                                href: `https://umtuwam.web.app/Report.html?did=${id}&uid=${uid}`,
+                                internal: 'true',
+                            },
+                        },
+                    ],
+                },
+            ],
+        }];
+
+        res.send(xml(doc, true));
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
+const paymentsView = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const queryId = req.query.id ?? '';
+        const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
+        const id = formattedId.toString();
+
+        const queryUid = req.query.uid ?? '';
+        const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
+        const uid = formattedUid.toString();
+
+        const queryProduct = req.query.product ?? '';
+        const formattedProduct = Array.isArray(queryProduct) ? queryProduct[0] : queryProduct;
+        const productId = formattedProduct.toString();
+
+        const queryIsMine = req.query.isMine ?? '';
+        const formattedIsMine = Array.isArray(queryIsMine) ? queryIsMine[0] : queryIsMine;
+        const isMine = formattedIsMine.toString();
+
+        const doc = [{
+            doc: [
+                {
+                    _attr: {
+                        title: util.FunctionsConstants.UmtuWam,
+                    },
+                },
+                {
+                    webview: [
+                        {
+                            _attr: {
+                                href: `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=${productId}&isMine=${isMine}`,
+                                internal: 'true',
+                            },
+                        },
+                    ],
+                },
+            ],
+        }];
+
+        res.send(xml(doc, true));
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
 const getImageView = async (req:functions.https.Request, res: functions.Response) => {
     try {
         const queryId = req.query.id ?? '';
@@ -493,13 +579,14 @@ const getProspectiveDates = async (req:functions.https.Request, res: functions.R
                 }
 
                 await admin.firestore().collection(util.FunctionsConstants.Users)
-                    .where(util.FunctionsConstants.Gender, '==', doc.data()?.gender)
+                    .where(util.FunctionsConstants.IsBanned, '==', false)
+                    .where(util.FunctionsConstants.Gender, 'in', doc.data()?.gender)
+                    .where(util.FunctionsConstants.GenderPreference, '==', doc.data()?.genderPreference)
                     .where(util.FunctionsConstants.Age, '>=', doc.data()?.ageMin)
                     .where(util.FunctionsConstants.Age, '<=', doc.data()?.ageMax)
                     .where(util.FunctionsConstants.Location, '==', doc.data()?.location)
                     .orderBy(util.FunctionsConstants.Age, 'asc')
                     .orderBy(util.FunctionsConstants.Points, 'desc')
-                    .startAt(doc.data()?.currentIndex)
                     .limit(20)
                     .get()
                     .then(async (docs) => {
@@ -552,7 +639,9 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
                 let docs;
                 if (document.data()?.currentIndex == '') {
                     docs = await admin.firestore().collection(util.FunctionsConstants.Users)
-                    .where(util.FunctionsConstants.Gender, '==', document.data()?.gender)
+                    .where(util.FunctionsConstants.IsBanned, '==', false)
+                    .where(util.FunctionsConstants.Gender, 'in', document.data()?.gender)
+                    .where(util.FunctionsConstants.GenderPreference, '==', document.data()?.genderPreference)
                     .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
                     .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
                     .where(util.FunctionsConstants.Location, '==', document.data()?.location)
@@ -569,7 +658,9 @@ const getProspectiveDatesXML = async (req:functions.https.Request, res: function
                     }
 
                     docs = await admin.firestore().collection(util.FunctionsConstants.Users)
-                    .where(util.FunctionsConstants.Gender, '==', document.data()?.gender)
+                    .where(util.FunctionsConstants.IsBanned, '==', false)
+                    .where(util.FunctionsConstants.Gender, 'in', document.data()?.gender)
+                    .where(util.FunctionsConstants.GenderPreference, '==', document.data()?.genderPreference)
                     .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
                     .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
                     .where(util.FunctionsConstants.Location, '==', document.data()?.location)
@@ -687,6 +778,8 @@ function addNextButtonItemXML(itemsArray:any [], uid: string) {
 export {
     getAppXML,
     getStartup,
+    reportsView,
+    paymentsView,
     getImageView,
     getProfileView,
     viewUserProfile,

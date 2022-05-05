@@ -20,23 +20,31 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
             const ageMin = ageNumber - 5;
             const ageMax = ageNumber + 5;
 
+            const gender = req.query.gender;
+
+            const genderPreference = 'Straight';
+
             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).set({
+                id: uid,
                 bio: '',
                 images: [],
                 points: 0,
-                age: req.query.age,
+                age: ageNumber,
                 name: req.query.name,
-                gender: req.query.gender,
+                gender: gender,
                 location: req.query.location,
+                isBanned: false,
                 isVerified: false,
                 hasPaidForChats: false,
                 hasPaidForFeatured: false,
+                genderPreference: genderPreference,
             });
 
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).set({
                 currentIndex: '',
                 ageMin: ageMin.toString(),
                 ageMax: ageMax.toString(),
+                genderPreference: genderPreference,
                 gender: req.query.lookingFor,
                 location: req.query.location,
             });

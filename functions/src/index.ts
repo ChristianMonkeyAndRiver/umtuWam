@@ -30,6 +30,10 @@ exports.getApp = functions.https.onRequest(appController.getAppXML);
 
 exports.getStartup = functions.https.onRequest(appController.getStartup);
 
+exports.reportsView = functions.https.onRequest(appController.reportsView);
+
+exports.paymentsView = functions.https.onRequest(appController.paymentsView);
+
 exports.getImageView = functions.https.onRequest(appController.getImageView);
 
 exports.getProfileView = functions.https.onRequest(appController.getProfileView);
