@@ -120,7 +120,7 @@ const boostFunction = async (req:functions.https.Request, res: functions.Respons
                     purchaserId: doc.id,
                     paymentId: paymentId,
                     expiresAt: expiresAt,
-                    product: util.Products.Featured,
+                    product: util.Products.Boost,
                 });
             }
         }

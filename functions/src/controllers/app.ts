@@ -87,7 +87,7 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
                             menuItem: [
                                 {
                                     _attr: {
-                                        img: 'https://umtuwam.web.app/settings.png',
+                                        img: 'https://umtuwam.web.app/filter_1.png',
                                         href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getPreferencesView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
                                     },
                                 },
@@ -431,12 +431,12 @@ const getMembershipPageXML = async (req:functions.https.Request, res: functions.
                                 {
                                     _attr: {
                                         style: '',
-                                        href: `https://us-central1-umtuwam.cloudfunctions.net/createMySubscription?id=${userDocument.id}&productId=${util.Products.Featured}`,
+                                        href: `https://us-central1-umtuwam.cloudfunctions.net/createMySubscription?id=${userDocument.id}&productId=${util.Products.Boost}`,
                                         layout: 'relative',
                                     },
                                 },
                                 {
-                                    md: `${util.FunctionsConstants.Featured}: ${util.FunctionsConstants.ClickToPayFeatured}`,
+                                    md: `${util.FunctionsConstants.Boost}: ${util.FunctionsConstants.ClickToPayFeatured}`,
                                 },
                             ],
                         },

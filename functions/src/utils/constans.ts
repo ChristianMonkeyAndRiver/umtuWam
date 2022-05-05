@@ -2,7 +2,7 @@ enum Products {
     Chats = 'Chats',
     Photos = 'Photos',
     Verified = 'Verified',
-    Featured = 'Featured',
+    Boost = 'Boost',
 }
 
 enum PaymentState {
@@ -59,7 +59,7 @@ enum FunctionsConstants {
     Product = 'product',
     Messages = 'messages',
     Chatting = 'Chatting',
-    Featured = 'Featured',
+    Boost = 'Boost',
     Location = 'location',
     UmtuWam = 'UmtuWam',
     RateMoya = 'Rate Moya',

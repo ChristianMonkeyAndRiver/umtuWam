@@ -24,11 +24,13 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
                 bio: '',
                 images: [],
                 points: 0,
-                isVerified: false,
                 age: req.query.age,
                 name: req.query.name,
                 gender: req.query.gender,
                 location: req.query.location,
+                isVerified: false,
+                hasPaidForChats: false,
+                hasPaidForFeatured: false,
             });
 
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).set({
