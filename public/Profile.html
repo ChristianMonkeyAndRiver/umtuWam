@@ -10,54 +10,33 @@
 <body>
     <script>
         window.onload = function () {
-            var params = location.search.substring(1);
-            var temp = params.split("=");
-            var id = document.getElementById("id");
-            id.setAttribute("value", temp[1]);
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${temp[1]}`)
+            var did = new URL(location.href).searchParams.get("did");
+            id.setAttribute("value", did);
+            image.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/getImageView?id=${did}`)
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${did}`)
                 .then(res => res.json())
                 .then((out) => {
-                    var name = document.getElementById("name");
-                    name.setAttribute("value", out.name);
-
-                    var age = document.getElementById("age");
+                    myName.setAttribute("value", out.name);
                     age.setAttribute("value", out.age);
+                    bio.setAttribute("value", out.bio);
+                    membership.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/getMembershipPageXML?id=${did}`);
 
                     var location = document.getElementById("location").children;
                     for (var i = 0; i < location.length; i++) {
-                        console.log(location[i]);
                         if (location[i].value == out.location) {
                             location[i].selected = true;
                             break;
                         }
                     }
-
-                    var bio = document.getElementById("bio");
-                    bio.setAttribute("value", out.bio);
-
-                    var member = document.getElementById("membership");
-                    member.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/getMembershipPageXML?id=${temp[1]}`)
                 }).catch(err => console.error(err));
         }
         function stop() {
             event.preventDefault();
-            var name = document.getElementById("name").value;
-
-            var bio = document.getElementById("bio").value;
-
-            var age = document.getElementById("age").value;
-
-            var location = document.getElementById("location").value;
-
-            var id = document.getElementById("id").value;
-
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserInformation?name=${name}&age=${age}&location=${location}&bio=${bio}&id=${id}`;
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserInformation?name=${myName.value}&age=${age.value}&location=${location.value}&bio=${bio.value}&id=${id.value}`;
 
             fetch(url).then(function (response) {
                 return response.json();
-            }).then(function (data) {
-                console.log(data);
-            });
+            }).catch(err => console.error(err));
         }
     </script>
     <div>
@@ -70,7 +49,7 @@
             <p>
                 <label>Name:
                     <br />
-                    <input type="text" id="name" name="name" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$"
+                    <input type="text" id="myName" name="myName" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$"
                         maxlength="50" required>
                 </label>
             </p>
@@ -106,7 +85,7 @@
             <input type="text" id="id" name="id" hidden value="" />
         </div>
 
-        <a href="https://us-central1-umtuwam.cloudfunctions.net/getImageView" class="btn">Add your photos</a>
+        <a href="" id="image" class="btn">Add your photos</a>
         <a href="" id="membership" class="btn membership">Membership (chat and more)</a>
         <button type="submit" id="checkBtn">Save changes</button>
     </form>

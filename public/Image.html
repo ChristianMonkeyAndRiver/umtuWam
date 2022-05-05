@@ -24,23 +24,17 @@
 
     <script>
         window.onload = function () {
-            var id = document.getElementById("id");
             id.setAttribute("value", new URL(location.href).searchParams.get("id"));
         }
 
         function upload() {
             event.preventDefault();
-            var id = document.getElementById("id").value
 
-            var canvas = document.getElementById("preview");
-            canvas.toBlob(
+            preview.toBlob(
                 (blob) => {
-                    // Handle the compressed image. es. upload or save in local state
                     var image = blob;
-                    console.log(blob);
-                    console.log(image);
 
-                    fetch(`https://us-central1-umtuwam.cloudfunctions.net/uploadImages?id=${id}`, {
+                    fetch(`https://us-central1-umtuwam.cloudfunctions.net/uploadImages?id=${id.value}`, {
                         method: 'POST',
                         body: blob,
                     }).then(response => {
@@ -68,8 +62,7 @@
 
         const input = document.getElementById("imgInp");
         input.onchange = function (ev) {
-            const file = ev.target.files[0]; // get the file
-            console.log(JSON.stringify(file))
+            const file = ev.target.files[0];
             const blobURL = URL.createObjectURL(file);
             const img = new Image();
             img.src = blobURL;

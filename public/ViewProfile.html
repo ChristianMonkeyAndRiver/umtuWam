@@ -10,36 +10,22 @@
 <body>
     <script>
         window.onload = function () {
-            var params = location.search.substring(1);
-            var temp = params.split("=");
-            var myId = document.getElementById("myId");
-            var theirId = document.getElementById("theirId");
             theirId.setAttribute("value", new URL(location.href).searchParams.get("did"));
             myId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${temp[1]}`)
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${theirId.value}`)
                 .then(res => res.json())
                 .then((out) => {
-                    var name = document.getElementById("name");
                     name.innerText = out.name + ", " + out.age;
-
-                    var location = document.getElementById("location");
                     location.innerText = out.location;
-
-                    var bio = document.getElementById("bio");
                     bio.innerText = out.bio;
-
-                    var img = document.getElementById("images");
-                    img.src = out.images[0];
+                    images.src = out.images[0];
                 }).catch(err => console.error(err));
         }
         function like() {
-            var myId = document.getElementById("myId").value;
-            var theirId = document.getElementById("theirId").value;
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/likeUser?id=${myId}&uid=${theirId}`
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/likeUser?id=${myId.value}&uid=${theirId.value}`
             fetch(url)
                 .then((out) => {
-                    var button = document.getElementById("like");
-                    button.style.backgroundColor = '#FFC0CB';
+                    btnLike.style.backgroundColor = '#FFC0CB';
                 }).catch(err => console.error(err));
         }
     </script>
@@ -48,7 +34,7 @@
             <img id="images" src="" alt="Error loading images">
         </div>
         <a href="" class="heart">View more images</a>
-        <button id="like" onclick="like()" class="heart">Like</button>
+        <button id="btnLike" onclick="like()" class="heart">Like</button>
         <input type="text" id="myId" name="id" hidden value="" />
         <input type="text" id="theirId" name="id" hidden value="" />
 

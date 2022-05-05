@@ -10,30 +10,21 @@
 <body>
     <script>
         window.onload = function () {
-            var params = location.search.substring(1);
-            var temp = params.split("=");
-            var id = document.getElementById("id");
-            id.setAttribute("value", temp[1]);
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserPreferences?id=${temp[1]}`)
+            id.setAttribute("value", new URL(location.href).searchParams.get("did"));
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserPreferences?id=${id.value}`)
                 .then(res => res.json())
                 .then((out) => {
                     if (out.gender == "Female") {
-                        var gender = document.getElementById("female")
-                        gender.setAttribute("checked", true)
+                        female.setAttribute("checked", true)
                     } else {
-                        var gender = document.getElementById("male")
-                        gender.setAttribute("checked", true)
+                        male.setAttribute("checked", true)
                     }
 
-                    var ageMin = document.getElementById("ageFrom");
-                    ageMin.setAttribute("value", out.ageMin);
-
-                    var ageMax = document.getElementById("ageTo");
-                    ageMax.setAttribute("value", out.ageMax);
+                    ageFrom.setAttribute("value", out.ageMin);
+                    ageTo.setAttribute("value", out.ageMax);
 
                     var location = document.getElementById("location").children;
                     for (var i = 0; i < location.length; i++) {
-                        console.log(location[i]);
                         if (location[i].value == out.location) {
                             location[i].selected = true;
                             break;
@@ -44,9 +35,6 @@
 
         function stop() {
             event.preventDefault();
-            var ageFrom = document.getElementById("ageFrom").value;
-
-            var ageTo = document.getElementById("ageTo").value;
 
             var lookingFor = "";
             var inputs = document.getElementsByName("lookingFor");
@@ -56,17 +44,11 @@
                 }
             }
 
-            var id = document.getElementById("id").value;
-
-            var location = document.getElementById("location").value;
-
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserPreferences?ageFrom=${ageFrom}&ageTo=${ageTo}&location=${location}&lookingFor=${lookingFor}&id=${id}`;
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserPreferences?ageFrom=${ageFrom.value}&ageTo=${ageTo.value}&location=${location.value}&lookingFor=${lookingFor}&id=${id.value}`;
 
             fetch(url).then(function (response) {
                 return response.json();
-            }).then(function (data) {
-                console.log(data);
-            });
+            }).catch(err => console.error(err));
         }
 
     </script>

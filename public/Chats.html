@@ -24,7 +24,6 @@
         var myId = "";
         var matchId = "";
         window.onload = function () {
-            var params = location.search.substring(1);
             theirId = new URL(location.href).searchParams.get("uid");
             myId = new URL(location.href).searchParams.get("id");
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/getChat?id=${myId}&uid=${theirId}`)
@@ -86,11 +85,6 @@
 
             return `${date.toDateString()} ${h}:${m}`;
         }
-
-        function random(min, max) {
-            return Math.floor(Math.random() * (max - min) + min);
-        }
-
     </script>
 </body>
 

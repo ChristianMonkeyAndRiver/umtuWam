@@ -10,41 +10,29 @@
 <body>
     <script>
         window.onload = function () {
-            var params = location.search.substring(1);
-            var temp = params.split("=");
-            var myId = document.getElementById("myId");
-            var theirId = document.getElementById("theirId");
             theirId.setAttribute("value", new URL(location.href).searchParams.get("did"));
             myId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${theirId.value}`)
                 .then(res => res.json())
                 .then((out) => {
-                    var name = document.getElementById("name");
-                    name.innerText = out.name + ", " + out.age;
+                    myName.innerText = out.name + ", " + out.age;
 
-                    var location = document.getElementById("location");
                     location.innerText = out.location;
 
-                    var bio = document.getElementById("bio");
                     bio.innerText = out.bio;
 
-                    var img = document.getElementById("images");
-                    img.src = out.images[0];
+                    images.src = out.images[0];
 
-                    var chats = document.getElementById("chat");
-                    chats.setAttribute('href', `https://umtuwam.web.app/Chats.html?id=${myId.value}&uid=${theirId.value}`)
-                    chats.style.backgroundColor = '#00FF00'
+                    chat.setAttribute('href', `https://umtuwam.web.app/Chats.html?id=${myId.value}&uid=${theirId.value}`)
+                    chat.style.backgroundColor = '#00FF00'
 
                 }).catch(err => console.error(err));
         }
-        function like() {
-            var myId = document.getElementById("myId").value;
-            var theirId = document.getElementById("theirId").value;
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/likeUser?id=${myId}&uid=${theirId}`
+        function unlike() {
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/unlikeUser?id=${myId.value}&uid=${theirId.value}`
             fetch(url)
                 .then((out) => {
-                    var button = document.getElementById("like");
-                    button.style.backgroundColor = '#FFC0CB';
+                    btnUnlike.style.backgroundColor = '#FFC0CB';
                 }).catch(err => console.error(err));
         }
     </script>
@@ -53,13 +41,13 @@
             <img id="images" src="" alt="Error loading images">
         </div>
         <a href="" class="heart">View more images</a>
-        <button id="like" onclick="like()" class="heart">Like</button>
+        <button id="btnUnlike" onclick="unlike()" class="heart">Unlike</button>
         <a href="" class="heart" id="chat">Chat</a>
 
         <input type="text" id="myId" name="id" hidden value="" />
         <input type="text" id="theirId" name="id" hidden value="" />
 
-        <h3 id="name"></h3>
+        <h3 id="myName"></h3>
         <h3 id="location"></h3>
         <h3 id="bio"></h3>
     </div>
