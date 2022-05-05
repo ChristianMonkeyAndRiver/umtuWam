@@ -25,10 +25,12 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
         let uid = '';
 
         if (id == '97618f4b0cec4667' || id == ':"0727779845"') {
-            uid = 'dca14d6a-dc5a-4d8d-b2b4-6f57fda43c9f';
+            uid = '3790bf43-5193-4232-b4cd-3e7b30d1a128';
         } else {
             uid = '3c3a544e-4008-4a19-96e1-38ff7afc67e1';
         }
+
+        console.log(uid);
         const options = {
             method: 'GET',
             headers: {
@@ -85,7 +87,7 @@ const getAppXML = async (req:functions.https.Request, res: functions.Response) =
                             menuItem: [
                                 {
                                     _attr: {
-                                        img: 'https://umtuwam.web.app/profile_logo.png',
+                                        img: 'https://umtuwam.web.app/settings.png',
                                         href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getPreferencesView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
                                     },
                                 },

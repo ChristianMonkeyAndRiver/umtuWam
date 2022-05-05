@@ -252,7 +252,7 @@ const testFindUser = async (req:functions.https.Request, res: functions.Response
           },
         };
 
-        fetch('https://api.moya.app/v1/users/27794614755', options)
+        fetch('https://api.moya.app/v1/users/27727888675', options)
         .then((result) => result.json())
         .then((json) => {
             console.log(json.user_profile.did);
