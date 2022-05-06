@@ -9,6 +9,7 @@
 
 <body>
     <script>
+        var imageArr = [];
         window.onload = function () {
             theirId.setAttribute("value", new URL(location.href).searchParams.get("did"));
             myId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
@@ -26,6 +27,8 @@
                     chat.setAttribute('href', `https://umtuwam.web.app/Chats.html?id=${myId.value}&uid=${theirId.value}`)
                     chat.style.backgroundColor = '#00FF00'
 
+                    report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/reportsView?id=${myId.value}&uid=${theirId.value}`);
+                    imageArr = out.images;
                 }).catch(err => console.error(err));
         }
         function unlike() {
@@ -40,9 +43,10 @@
         <div>
             <img id="images" src="" alt="Error loading images">
         </div>
-        <a href="" class="heart">View more images</a>
+        <button href="" class="heart">View more images</button>
         <button id="btnUnlike" onclick="unlike()" class="heart">Unlike</button>
         <a href="" class="heart" id="chat">Chat</a>
+        <a id="report" class="report" href="">Report</a>
 
         <input type="text" id="myId" name="id" hidden value="" />
         <input type="text" id="theirId" name="id" hidden value="" />

@@ -13,33 +13,67 @@
             id.setAttribute("value", new URL(location.href).searchParams.get("id"));
         }
 
+        function validateThis() {
+            var checkboxes = document.getElementsByName("lookingFor");
+            var okay = false;
+            for (var i = 0, l = checkboxes.length; i < l; i++) {
+                if (checkboxes[i].checked) {
+                    okay = true;
+                    break;
+                }
+            }
+            if (!okay) {
+                lookingForError.removeAttribute("hidden");
+                return false;
+            } else {
+                lookingForError.setAttribute("hidden", true);
+                return true;
+            }
+        }
+
         function stop() {
             event.preventDefault();
+            var test = validateThis();
 
-            var gender = "";
-            var inputs = document.getElementsByName("gender");
-            for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].checked) {
-                    gender = inputs[i].value;
+            if (test) {
+                var gender = "";
+                var inputs = document.getElementsByName("gender");
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].checked) {
+                        gender = inputs[i].value;
+                    }
                 }
-            }
 
-            var lookingFor = "";
-            inputs = document.getElementsByName("lookingFor");
-            for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].checked) {
-                    lookingFor = inputs[i].value;
+                var lookingForMale = false;
+                var lookingForFemale = false;
+                inputs = document.getElementsByName("lookingFor");
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].checked) {
+                        if (inputs[i].value == "Female") {
+                            lookingForFemale = true;
+                        }
+                        if (inputs[i].value == "Male") {
+                            lookingForMale = true;
+                        }
+                    }
                 }
+
+                var url = `https://us-central1-umtuwam.cloudfunctions.net/signUp?
+                name=${myName.value}
+                &gender=${gender}
+                &lookingFOrFemale=${lookingForFemale}
+                &lookingForMale=${lookingForMale}
+                &age=${age.value}
+                &location=${location.value}
+                &id=${id.value}`;
+
+                fetch(url).then(function (response) {
+                    return response.json();
+                    // TODO: add redirect
+                }).catch((error) => {
+                    console.error('Error:', error);
+                });;
             }
-
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/signUp?name=${myName.value}&gender=${gender}&lookingFor=${lookingFor}&age=${age.value}&location=${location.value}&id=${id.value}`;
-
-            fetch(url).then(function (response) {
-                return response.json();
-                // TODO: add redirect
-            }).catch((error) => {
-                console.error('Error:', error);
-            });;
         }
     </script>
     <form onsubmit="stop();" method="get">
@@ -66,12 +100,12 @@
                 <p>
                     <label>Looking for a:
                         <br />
-                        <input id="Ufemale" type="radio" name="lookingFor" value="Female" required>
+                        <input id="Ufemale" type="checkbox" name="lookingFor" value="Female">
                         <label for="Ufemale">Woman</label>
-                        <input id="Umale" type="radio" name="lookingFor" value="Male">
+                        <input id="Umale" type="checkbox" name="lookingFor" value="Male">
                         <label for="Umale">Man</label>
                     </label>
-                <p id="error" hidden style="color: red;">Please select at least one checkbox</p>
+                <p id="lookingForError" hidden style="color: red;">Please select at least one checkbox</p>
                 </p>
                 <p>
                     <label>My age:

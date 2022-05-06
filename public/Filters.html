@@ -33,22 +33,54 @@
                 }).catch(err => console.error(err));
         }
 
-        function stop() {
-            event.preventDefault();
-
-            var lookingFor = "";
-            var inputs = document.getElementsByName("lookingFor");
-            for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].checked) {
-                    lookingFor = inputs[i].value;
+        function validateThis() {
+            var checkboxes = document.getElementsByName("lookingFor");
+            var okay = false;
+            for (var i = 0, l = checkboxes.length; i < l; i++) {
+                if (checkboxes[i].checked) {
+                    okay = true;
+                    break;
                 }
             }
+            if (!okay) {
+                lookingForError.removeAttribute("hidden");
+                return false;
+            } else {
+                lookingForError.setAttribute("hidden", true);
+                return true;
+            }
+        }
 
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserPreferences?ageFrom=${ageFrom.value}&ageTo=${ageTo.value}&location=${location.value}&lookingFor=${lookingFor}&id=${id.value}`;
+        function stop() {
+            event.preventDefault();
+            var test = validateThis();
+            if (test) {
+                var lookingForMale = false;
+                var lookingForFemale = false;
+                var inputs = document.getElementsByName("lookingFor");
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].checked) {
+                        if (inputs[i].value == "Female") {
+                            lookingForFemale = true;
+                        }
+                        if (inputs[i].value == "Male") {
+                            lookingForMale = true;
+                        }
+                    }
+                }
 
-            fetch(url).then(function (response) {
-                return response.json();
-            }).catch(err => console.error(err));
+                var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserPreferences?
+                ageFrom=${ageFrom.value}
+                &ageTo=${ageTo.value}
+                &location=${location.value}
+                &lookingForFemale=${lookingForFemale}
+                &lookingForMale=${lookingForMale}
+                &id=${id.value}`;
+
+                fetch(url).then(function (response) {
+                    return response.json();
+                }).catch(err => console.error(err));
+            }
         }
 
     </script>
@@ -67,12 +99,12 @@
             </p>
             <p>
                 <label>Looking for:
-                    <input id="female" type="radio" name="lookingFor" value="Female" required>
+                    <input id="female" type="radio" name="lookingFor" value="Female">
                     <label for="female">Woman</label>
                     <input id="male" type="radio" name="lookingFor" value="Male">
                     <label for="male">Man</label>
                 </label>
-            <p id="error" hidden style="color: red;">Please select at least one checkbox</p>
+            <p id="lookingForError" hidden style="color: red;">Please select at least one checkbox</p>
             </p>
             <p>
                 <label>Location:
