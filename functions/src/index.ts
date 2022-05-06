@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as admin from 'firebase-admin';
-// import * as formidable from 'formidable';
 import * as functions from 'firebase-functions';
 import * as appController from './controllers/app';
 import * as testController from './utils/testData';
@@ -34,7 +33,11 @@ exports.reportsView = functions.https.onRequest(appController.reportsView);
 
 exports.paymentsView = functions.https.onRequest(appController.paymentsView);
 
+exports.getChatsView = functions.https.onRequest(appController.getChatsView);
+
 exports.getImageView = functions.https.onRequest(appController.getImageView);
+
+exports.getGalleryView = functions.https.onRequest(appController.getGalleryView);
 
 exports.getProfileView = functions.https.onRequest(appController.getProfileView);
 
@@ -55,6 +58,8 @@ exports.getProspectiveDatesXML = functions.https.onRequest(appController.getPros
 exports.getChat = functions.https.onRequest(chatsController.getChat);
 
 exports.likeUser = functions.https.onRequest(chatsController.likeUser);
+
+exports.unlikeUser = functions.https.onRequest(chatsController.unlikeUser);
 
 exports.getMatches = functions.https.onRequest(chatsController.getMatches);
 
@@ -134,7 +139,8 @@ exports.uploadImages = functions.https.onRequest(async (req, res) => {
 
 // =====================================================================================================================
 exports.testFindUser = functions.https.onRequest(paymentsController.testFindUser);
-// =====================================================================================================================
+
+ // =====================================================================================================================
 
 exports.createDB = functions.runWith({
     timeoutSeconds: 540,

@@ -22,7 +22,19 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
 
             const gender = req.query.gender;
 
-            const genderPreference = 'Straight';
+            const preference = [];
+
+            if (req.query.lookingForMale) {
+                preference.push('Male');
+            }
+
+            if (req.query.lookingForFemale) {
+                preference.push('Female');
+            }
+            let genderPreference = 'Straight';
+
+            if (preference.length == 1 && preference[0] == gender) genderPreference = 'Gay';
+
 
             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).set({
                 id: uid,
@@ -45,7 +57,7 @@ const signUp = async (req:functions.https.Request, res: functions.Response) => {
                 ageMin: ageMin.toString(),
                 ageMax: ageMax.toString(),
                 genderPreference: genderPreference,
-                gender: req.query.lookingFor,
+                gender: preference,
                 location: req.query.location,
             });
 
