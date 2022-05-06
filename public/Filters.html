@@ -69,13 +69,13 @@
                     }
                 }
 
-                var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserPreferences?
-                ageFrom=${ageFrom.value}
-                &ageTo=${ageTo.value}
-                &location=${location.value}
-                &lookingForFemale=${lookingForFemale}
-                &lookingForMale=${lookingForMale}
-                &id=${id.value}`;
+                var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserPreferences?` +
+                `ageFrom=${ageFrom.value}` +
+                `&ageTo=${ageTo.value}` +
+                `&location=${location.value}` +
+                `&lookingForFemale=${lookingForFemale}` +
+                `&lookingForMale=${lookingForMale}` +
+                `&id=${id.value}`;
 
                 fetch(url).then(function (response) {
                     return response.json();

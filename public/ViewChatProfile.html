@@ -24,7 +24,7 @@
 
                     images.src = out.images[0];
 
-                    chat.setAttribute('href', `https://umtuwam.web.app/Chats.html?id=${myId.value}&uid=${theirId.value}`)
+                    chat.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/getChatsView?id=${myId.value}&uid=${theirId.value}`)
                     chat.style.backgroundColor = '#00FF00'
 
                     report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/reportsView?id=${myId.value}&uid=${theirId.value}`);

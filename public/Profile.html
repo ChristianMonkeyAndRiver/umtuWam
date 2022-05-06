@@ -32,7 +32,12 @@
         }
         function stop() {
             event.preventDefault();
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserInformation?name=${myName.value}&age=${age.value}&location=${location.value}&bio=${bio.value}&id=${id.value}`;
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserInformation?` +
+            `name=${myName.value}` +
+            `&age=${age.value}` +
+            `&location=${location.value}` +
+            `&bio=${bio.value}` +
+            `&id=${id.value}`;
 
             fetch(url).then(function (response) {
                 return response.json();

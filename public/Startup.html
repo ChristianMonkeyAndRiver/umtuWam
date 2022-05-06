@@ -10,7 +10,7 @@
 <body>
     <script>
         window.onload = function () {
-            id.setAttribute("value", new URL(location.href).searchParams.get("id"));
+            id.setAttribute("value", new URL(location.href).searchParams.get("did"));
         }
 
         function validateThis() {
@@ -58,14 +58,14 @@
                     }
                 }
 
-                var url = `https://us-central1-umtuwam.cloudfunctions.net/signUp?
-                name=${myName.value}
-                &gender=${gender}
-                &lookingFOrFemale=${lookingForFemale}
-                &lookingForMale=${lookingForMale}
-                &age=${age.value}
-                &location=${location.value}
-                &id=${id.value}`;
+                var url = `https://us-central1-umtuwam.cloudfunctions.net/signUp?` +
+                `name=${myName.value}` +
+                `&gender=${gender}` +
+                `&lookingFOrFemale=${lookingForFemale}` +
+                `&lookingForMale=${lookingForMale}` +
+                `&age=${age.value}` +
+                `&location=${location.value}` +
+                `&id=${id.value}`;
 
                 fetch(url).then(function (response) {
                     return response.json();

@@ -19,7 +19,11 @@
 
         function report() {
             event.preventDefault();
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/reportUser?id=${id.value}&uid=${uid.value}&title=${title.value}&content=${content.value}`);
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/reportUser?` +
+            `id=${id.value}` +
+            `&uid=${uid.value}` +
+            `&title=${title.value}` +
+            `&content=${content.value}`);
         }
     </script>
     <div class="container">
