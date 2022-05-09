@@ -12,14 +12,14 @@
         window.onload = function () {
             var did = new URL(location.href).searchParams.get("did");
             id.setAttribute("value", did);
-            image.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/getImageView?id=${did}`)
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${did}`)
+            image.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/http-getImageView?id=${did}`)
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${did}`)
                 .then(res => res.json())
                 .then((out) => {
                     myName.setAttribute("value", out.name);
                     age.setAttribute("value", out.age);
                     bio.setAttribute("value", out.bio);
-                    membership.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/getMembershipPageXML?id=${did}`);
+                    membership.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${did}`);
 
                     var location = document.getElementById("location").children;
                     for (var i = 0; i < location.length; i++) {
@@ -32,7 +32,7 @@
         }
         function stop() {
             event.preventDefault();
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserInformation?` +
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/http-updateUserInformation?` +
             `name=${myName.value}` +
             `&age=${age.value}` +
             `&location=${location.value}` +

@@ -26,7 +26,7 @@
         window.onload = function () {
             theirId = new URL(location.href).searchParams.get("uid");
             myId = new URL(location.href).searchParams.get("id");
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getChat?id=${myId}&uid=${theirId}`)
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getChat?id=${myId}&uid=${theirId}`)
                 .then(res => res.json())
                 .then((out) => {
                     for (var i = 0; i < out.length; i++) {
@@ -50,7 +50,7 @@
             if (!msgText) return;
 
             appendMessage("right", msgText, new Date());
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/sendMessage?id=${myId}&uid=${theirId}&content=${msgText}`)
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-sendMessage?id=${myId}&uid=${theirId}&content=${msgText}`)
                 .catch(err => console.error(err));
             msgerInput.value = "";
         });

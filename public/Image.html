@@ -34,7 +34,7 @@
                 (blob) => {
                     var image = blob;
 
-                    fetch(`https://us-central1-umtuwam.cloudfunctions.net/uploadImages?id=${id.value}`, {
+                    fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-uploadImage?id=${id.value}`, {
                         method: 'POST',
                         body: blob,
                     }).then(response => {

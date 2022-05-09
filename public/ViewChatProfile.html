@@ -13,7 +13,7 @@
         window.onload = function () {
             theirId.setAttribute("value", new URL(location.href).searchParams.get("did"));
             myId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserInformation?id=${theirId.value}`)
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${theirId.value}`)
                 .then(res => res.json())
                 .then((out) => {
                     myName.innerText = out.name + ", " + out.age;
@@ -24,15 +24,15 @@
 
                     images.src = out.images[0];
 
-                    chat.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/getChatsView?id=${myId.value}&uid=${theirId.value}`)
+                    chat.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-getChatsView?id=${myId.value}&uid=${theirId.value}`)
                     chat.style.backgroundColor = '#00FF00'
 
-                    report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/reportsView?id=${myId.value}&uid=${theirId.value}`);
+                    report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-reportsView?id=${myId.value}&uid=${theirId.value}`);
                     imageArr = out.images;
                 }).catch(err => console.error(err));
         }
         function unlike() {
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/unlikeUser?id=${myId.value}&uid=${theirId.value}`
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/http-unlikeUser?id=${myId.value}&uid=${theirId.value}`
             fetch(url)
                 .then((out) => {
                     btnUnlike.style.backgroundColor = '#FFC0CB';

@@ -11,7 +11,7 @@
     <script>
         window.onload = function () {
             id.setAttribute("value", new URL(location.href).searchParams.get("did"));
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/getUserPreferences?id=${id.value}`)
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserPreferences?id=${id.value}`)
                 .then(res => res.json())
                 .then((out) => {
                     if (out.gender == "Female") {
@@ -69,7 +69,7 @@
                     }
                 }
 
-                var url = `https://us-central1-umtuwam.cloudfunctions.net/updateUserPreferences?` +
+                var url = `https://us-central1-umtuwam.cloudfunctions.net/http-updateUserPreferences?` +
                 `ageFrom=${ageFrom.value}` +
                 `&ageTo=${ageTo.value}` +
                 `&location=${location.value}` +
