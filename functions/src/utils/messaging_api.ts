@@ -14,7 +14,7 @@ async function sendMoyaMessageAfterBeingLiked(number: string) {
             recipient_type: 'individual',
             type: 'text',
             text: {
-                  body: 'Hello World',
+                  body: 'Someone has Liked you back on UmtuWam - click to see who it is.',
             },
         }),
     };
@@ -39,7 +39,7 @@ async function sendMoyaMessageAfterMessageHasBeenSent(number: string) {
             recipient_type: 'individual',
             type: 'text',
             text: {
-                  body: 'Hello World',
+                  body: 'Someone has sent you a message on UmtuWam - click to read it',
             },
         }),
     };
@@ -64,7 +64,7 @@ async function sendMoyaMessageAfterSubscriptionHasBeenBought(number: string) {
             recipient_type: 'individual',
             type: 'text',
             text: {
-                  body: 'Hello World',
+                  body: 'Your subscription on UmtuWam has started and will end in 24 hours.',
             },
         }),
     };
@@ -89,7 +89,7 @@ async function sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse(numbe
             recipient_type: 'individual',
             type: 'text',
             text: {
-                  body: 'Hello World',
+                  body: 'Someone has gifted you a subscription to UmtuWam Dating! Click to go and chat to them!',
             },
         }),
     };

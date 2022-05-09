@@ -5,7 +5,7 @@ import * as functions from 'firebase-functions';
 import * as cors from 'cors';
 const corsHandler = cors({origin: true});
 
-const reportUser = async (req:functions.https.Request, res: functions.Response) => {
+export default functions.https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
         try {
             const queryId = req.query.id ?? '';
@@ -40,8 +40,4 @@ const reportUser = async (req:functions.https.Request, res: functions.Response) 
             return;
         }
     });
-};
-
-export {
-    reportUser,
-};
+});
