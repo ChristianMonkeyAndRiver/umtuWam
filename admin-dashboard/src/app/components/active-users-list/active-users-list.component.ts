@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { map } from 'rxjs/operators';
-import { ReportsListComponent } from '../reports-list/reports-list.component';
 
 @Component({
   selector: 'app-active-users-list',
@@ -14,12 +13,10 @@ export class ActiveUsersListComponent implements OnInit {
   user: any;
   showDetails: boolean;
   public searchText = '';
-  private firestoreIndex: number;
 
   
-  constructor(private userService: UsersService, public reportComp: ReportsListComponent) { 
+  constructor(private userService: UsersService) { 
     this.showDetails = false;
-    this.firestoreIndex = 0;
   }
 
   ngOnInit(): void {
@@ -32,9 +29,8 @@ export class ActiveUsersListComponent implements OnInit {
   }
 
   retrieveUsers(): void {
-    this.userService.getAll(this.firestoreIndex).snapshotChanges().pipe(
+    this.userService.getAll(0).snapshotChanges().pipe(
       map(changes => {
-        // this.firestoreIndex = this.firestoreIndex + changes.length;
         return changes.map(c =>
           ({ id: c.payload.doc.id, ...c.payload.doc.data() })
         );
@@ -44,13 +40,5 @@ export class ActiveUsersListComponent implements OnInit {
     ).subscribe(data => {
       this.activeUsers = data;
     });
-  }
-
-  getPrevBatchedUsers(): void {
-    if (this.firestoreIndex <= 30) return;
-
-    if ((this.firestoreIndex - 30) < 30 ) this.firestoreIndex = 30;
-
-    this.firestoreIndex = this.firestoreIndex - 30;
   }
 }

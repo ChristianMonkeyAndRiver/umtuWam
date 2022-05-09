@@ -10,11 +10,11 @@
     </div>
     <div class="list-tile-container">
         <mat-card  class="list-tile-item" *ngFor="let user of activeUsers;" (click)="setShowDetails(true, user)">
-            <img id="avatarimage" mat-card-avatar src="{{user.images[0] ?? 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53'}}">
+            <img mat-card-avatar src="{{user.images[0] ?? 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53'}}">
             <mat-card-title> {{user.name}} </mat-card-title>
             <div class="card-div">
                 Abuse Reports: {{user.age}}     
-                <button mat-icon-button (click)="reportComp.openDialog(user.id)">
+                <button mat-icon-button>
                     <mat-icon>more_vert</mat-icon>
                 </button>
             </div>
