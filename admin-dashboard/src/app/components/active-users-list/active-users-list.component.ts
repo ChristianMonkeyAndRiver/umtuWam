@@ -11,24 +11,46 @@ import { ReportsListComponent } from '../reports-list/reports-list.component';
 export class ActiveUsersListComponent implements OnInit {
   
   activeUsers: any;
+  user: any;
+  showDetails: boolean;
   public searchText = '';
+  private firestoreIndex: number;
 
   
-  constructor(private userService: UsersService, public reportComp: ReportsListComponent) { }
+  constructor(private userService: UsersService, public reportComp: ReportsListComponent) { 
+    this.showDetails = false;
+    this.firestoreIndex = 0;
+  }
 
   ngOnInit(): void {
     this.retrieveUsers();
   }
 
+  setShowDetails(showDetails: boolean, user: any): void {
+    this.user = user;
+    this.showDetails = showDetails;
+  }
+
   retrieveUsers(): void {
-    this.userService.getAll().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
+    this.userService.getAll(this.firestoreIndex).snapshotChanges().pipe(
+      map(changes => {
+        // this.firestoreIndex = this.firestoreIndex + changes.length;
+        return changes.map(c =>
           ({ id: c.payload.doc.id, ...c.payload.doc.data() })
-        )
+        );
+      }
+        
       )
     ).subscribe(data => {
       this.activeUsers = data;
     });
+  }
+
+  getPrevBatchedUsers(): void {
+    if (this.firestoreIndex <= 30) return;
+
+    if ((this.firestoreIndex - 30) < 30 ) this.firestoreIndex = 30;
+
+    this.firestoreIndex = this.firestoreIndex - 30;
   }
 }

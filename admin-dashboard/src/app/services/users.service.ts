@@ -15,18 +15,23 @@ export class UsersService {
     this.bannedUserRef = db.collection(this.dbPath);
   }
 
-  getAll(): AngularFirestoreCollection<UserModel> {
-    return this.db.collection<UserModel>(this.dbPath, ref => 
+  getAll(index: number): AngularFirestoreCollection<UserModel> {
+    const response = this.db.collection<UserModel>(this.dbPath, ref => 
       ref
-        .limit(7)
+        .orderBy('name')
+        .startAt(index)
+        .limit(30)
         .where('isBanned', '==', false)
     );
+    return response;
   }
 
-  getAllBanned(): AngularFirestoreCollection<UserModel> {
+  getAllBanned(index: number): AngularFirestoreCollection<UserModel> {
     return this.db.collection<UserModel>(this.dbPath, ref => 
       ref
-        .limit(7)
+        .orderBy('name')
+        .startAt(index)
+        .limit(30)
         .where('isBanned', '==', true)
     );
   }

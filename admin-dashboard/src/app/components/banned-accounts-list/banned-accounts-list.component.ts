@@ -15,19 +15,22 @@ export interface DialogData {
 export class BannedAccountsListComponent implements OnInit {
 
   bannedUsers: any;
+  private firestoreIndex: number;
   public searchText = '';
 
   constructor(
     public dialog: MatDialog,
     private userService: UsersService
-  ) { }
+  ) {
+    this.firestoreIndex = 0;
+   }
 
   ngOnInit(): void {
     this.retrieveUsers();
   }
 
   retrieveUsers(): void {
-    this.userService.getAllBanned().snapshotChanges().pipe(
+    this.userService.getAllBanned(this.firestoreIndex).snapshotChanges().pipe(
       map(changes =>
         changes.map(c =>
           ({ id: c.payload.doc.id, ...c.payload.doc.data() })

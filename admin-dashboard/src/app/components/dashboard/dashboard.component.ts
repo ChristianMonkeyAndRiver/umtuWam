@@ -7,7 +7,7 @@ import { AuthService } from '../../shared/services/auth.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  public currentIndex:number = 0;
+  public currentIndex:number = 1;
 
   constructor(public authService: AuthService) {}
 
