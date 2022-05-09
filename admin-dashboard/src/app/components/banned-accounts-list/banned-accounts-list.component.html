@@ -1,0 +1,17 @@
+<div class="search-bar-container">
+    <mat-form-field appearance="standard">
+        <input class="search-bar" matInput type="search" placeholder="Search Name or Phone Number" [(ngModel)]="searchText" name="searchText" required>
+    </mat-form-field>
+</div>
+<div class="list-tile-container">
+    <mat-card  class="list-tile-item" *ngFor="let user of bannedUsers;">
+        <img mat-card-avatar src="{{user.images[0] ?? 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53'}}">
+        <mat-card-title> {{user.name}} </mat-card-title>
+        <div class="card-div">
+            Abuse Reports: {{user.age}}     
+            <button mat-icon-button (click)="openDialog(user.id)">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+        </div>
+    </mat-card>
+</div>

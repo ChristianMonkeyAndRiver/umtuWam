@@ -41,6 +41,7 @@ const reportUser = async (req:functions.https.Request, res: functions.Response) 
         }
     });
 };
+
 export {
     reportUser,
 };

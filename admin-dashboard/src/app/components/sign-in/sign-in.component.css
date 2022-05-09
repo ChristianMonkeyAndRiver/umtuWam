@@ -1,0 +1,26 @@
+.login-div{
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+mat-card {
+  width: 25%;
+  margin: 2em auto;
+  text-align: center;
+}
+  
+mat-form-field {
+  display: block;
+}
+
+.login-button{
+  width: 100%;
+  color: white;
+  font-size: 14px;
+  padding: 5px 24px;
+  text-align: center;
+  border-radius: 100px;
+  background-color: #B02060;
+}

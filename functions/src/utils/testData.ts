@@ -183,6 +183,31 @@ const createChats = async (req:functions.https.Request, res: functions.Response)
     });
 };
 
+const createDummyReports = async (req:functions.https.Request, res: functions.Response) => {
+    try {
+        const userDocs = await admin.firestore().collection(util.FunctionsConstants.Users).limit(20).get();
+
+        for (const doc of userDocs.docs) {
+            for (const innerDoc of userDocs.docs) {
+                const now = admin.firestore.Timestamp.now();
+                await admin.firestore().collection(util.FunctionsConstants.Reports).doc().set({
+                    reporterId: doc.id,
+                    transgressorId: innerDoc.id,
+                    title: faker.lorem.text(),
+                    content: faker.lorem.paragraph(),
+                    timestamp: now,
+                });
+            }
+        }
+        res.status(200).send(util.SuccessMessages.SuccessMessage);
+        return;
+    } catch (error) {
+        console.error(util.ErrorMessages.ErrorText, error);
+        res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+        return;
+    }
+};
+
 async function getPotentialMatches(id: string): Promise<any[]> {
         const docsArray: any[] | PromiseLike<any[]> = [];
 
@@ -436,4 +461,5 @@ export {
     createChats,
     boostFunction,
     verifyFunction,
+    createDummyReports,
 };

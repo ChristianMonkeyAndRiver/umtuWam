@@ -79,6 +79,22 @@ exports.subscriptionCallBackUrl = functions.https.onRequest(paymentsController.s
 
 exports.reportUser = functions.https.onRequest(reportController.reportUser);
 
+
+exports.reportCreation = functions.firestore.document(`${util.FunctionsConstants.Reports}/{docId}`)
+  .onCreate(async (snap) => {
+    const newDoc = snap.data();
+
+    const userDoc = await admin.firestore().collection(util.FunctionsConstants.Users).doc(newDoc.transgressorId).get();
+
+    snap.ref.set({
+      name: userDoc.data()?.name,
+      gender: userDoc.data()?.gender,
+      bio: userDoc.data()?.bio,
+      images: userDoc.data()?.images,
+      location: userDoc.data()?.location,
+    }, {merge: true});
+  });
+
 // =====================================================================================================================
 
 exports.uploadImages = functions.https.onRequest(async (req, res) => {
@@ -161,6 +177,11 @@ exports.verifyFunction = functions.runWith({
     timeoutSeconds: 540,
     memory: '512MB',
   }).https.onRequest(testController.verifyFunction);
+
+  exports.createDummyReports = functions.runWith({
+    timeoutSeconds: 540,
+    memory: '512MB',
+  }).https.onRequest(testController.createDummyReports);
 
 // =====================================================================================================================
 

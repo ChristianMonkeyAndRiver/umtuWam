@@ -1,0 +1,49 @@
+<mat-toolbar class="navbar">
+  <button mat-icon-button class="example-icon" (click)="drawer.toggle()">
+    <mat-icon matSuffix>menu</mat-icon>
+  </button>
+  <div class="admin-portal-text"><span>Admin Portal</span></div>
+  <span class="example-spacer"></span>
+  <button mat-icon-button class="example-icon favorite-icon">
+    <mat-icon matSuffix>notifications</mat-icon>
+  </button>
+  <mat-divider vertical></mat-divider>
+  <button mat-icon-button class="example-icon" (click)="logout()">
+    <mat-icon matSuffix>exit_to_app</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-drawer-container class="example-container" autosize>
+  <mat-drawer #drawer class="example-sidenav" mode="side">
+    <div>
+      <button mat-flat-button class="drawer-icon-button" (click)="setCurrentIndex(0)" 
+        [ngStyle]="{'background-color': currentIndex === 0 ? '#B02060' : 'white'}">
+        <mat-icon class="drawer-button-icon">error_outline</mat-icon>
+        <span>Abuse Reports</span>
+      </button>
+    </div>
+
+    <div>
+      <button mat-flat-button class="drawer-icon-button" (click)="setCurrentIndex(1)"
+      [ngStyle]="{'background-color': currentIndex === 1 ? '#B02060' : 'white'}">
+        <mat-icon class="drawer-button-icon">supervisor_account</mat-icon>
+        <span>Active Users</span>
+      </button>
+    </div>
+
+    <div>
+      <button mat-flat-button class="drawer-icon-button" (click)="setCurrentIndex(2)"
+        [ngStyle]="{'background-color': currentIndex === 2 ? '#B02060' : 'white'}">
+        <mat-icon class="drawer-button-icon">not_interested</mat-icon>
+        <span>Banned Accounts</span>
+      </button>
+    </div>
+    
+  </mat-drawer>
+
+  <div class="example-sidenav-content" >
+    <ng-template [ngIf]="currentIndex == 0"><app-reports-list></app-reports-list></ng-template>
+    <ng-template [ngIf]="currentIndex == 1"><app-active-users-list></app-active-users-list></ng-template>
+    <ng-template [ngIf]="currentIndex == 2"><app-banned-accounts-list></app-banned-accounts-list></ng-template>
+  </div>
+</mat-drawer-container>
