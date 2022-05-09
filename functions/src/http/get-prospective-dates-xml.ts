@@ -143,7 +143,7 @@ function addNextButtonItemXML(itemsArray:any [], uid: string) {
             {
                 _attr: {
                     style: '',
-                    href: `https://us-central1-umtuwam.cloudfunctions.net/getProspectiveDatesXML?id=${uid}`,
+                    href: `https://us-central1-umtuwam.cloudfunctions.net/http-getProspectiveDatesXml?id=${uid}`,
                     layout: 'relative',
                 },
             },

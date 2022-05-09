@@ -1,5 +1,6 @@
 import * as xml from 'xml';
 import * as cors from 'cors';
+import fetch from 'cross-fetch';
 import * as admin from 'firebase-admin';
 import * as util from '../utils/constans';
 import * as config from '../config/config';
@@ -61,7 +62,7 @@ export default functions.https.onRequest(async (req, res) => {
                                     _attr: {
                                         default: true,
                                         img: 'https://umtuwam.web.app/logo.png',
-                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getProspectiveDatesXML?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
+                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/http-getProspectiveDatesXml?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartup?id=${uid}`,
                                     },
                                 },
                                 util.FunctionsConstants.Home,
@@ -72,7 +73,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         img: 'https://umtuwam.web.app/chat_logo.png',
-                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getMatchesXML?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
+                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/http-getMatchesXml?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartup?id=${uid}`,
                                     },
                                 },
                                 util.FunctionsConstants.Chats,
@@ -83,7 +84,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         img: 'https://umtuwam.web.app/filter_1.png',
-                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getPreferencesView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
+                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/http-getPreferencesView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartup?id=${uid}`,
                                     },
                                 },
                                 util.FunctionsConstants.PreferencesCapital,
@@ -94,7 +95,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         img: 'https://umtuwam.web.app/profile_logo.png',
-                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/getProfileView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/getStartup?id=${uid}`,
+                                        href: doc.exists ?`https://us-central1-umtuwam.cloudfunctions.net/http-getProfileView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartup?id=${uid}`,
                                     },
                                 },
                                 util.FunctionsConstants.Profile,

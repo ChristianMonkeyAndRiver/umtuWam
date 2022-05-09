@@ -1,3 +1,4 @@
+import fetch from 'cross-fetch';
 import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
 
