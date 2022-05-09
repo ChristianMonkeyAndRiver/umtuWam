@@ -33,7 +33,7 @@
     margin: 15px 0px;
     background-color: #FFFFFF;
     border: 1px solid #79747E;
-    border-radius: 20px;
+    border-radius: 15px;
     display: flex;
     text-align: center;
     align-items: center;
@@ -63,5 +63,5 @@
 img.mat-card-avatar {
     width: 99px;
     height: 66px;
-    border-radius: 20px 0px 0px 20px;
+    border-radius: 15px 0px 0px 15px;
 }
