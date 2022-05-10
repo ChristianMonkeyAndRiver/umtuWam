@@ -61,3 +61,11 @@ img.mat-card-avatar {
     height: 66px;
     border-radius: 20px 0px 0px 20px;
 }
+
+.example-card {
+    max-height: 100px;
+}
+
+.example-card.mat-card-avatar {
+    width: 200px !important;
+}
