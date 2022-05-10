@@ -61,3 +61,10 @@ img.mat-card-avatar {
     height: 66px;
     border-radius: 20px 0px 0px 20px;
 }
+
+.back {
+    width: 50%;
+    height: 60px;
+    font-size: x-large;
+    border-radius: 20px;
+}

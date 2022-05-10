@@ -22,5 +22,5 @@
 
 <ng-template #details>
     <app-view-profile [user]="{user}"></app-view-profile>
-    <button>Back</button>
+    <button class="back" (click)="setShowDetails(false, user)">Back</button>
 </ng-template>
