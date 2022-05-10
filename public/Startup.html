@@ -61,10 +61,10 @@
                 var url = `https://us-central1-umtuwam.cloudfunctions.net/http-signUp?` +
                 `name=${myName.value}` +
                 `&gender=${gender}` +
-                `&lookingFOrFemale=${lookingForFemale}` +
+                `&lookingForFemale=${lookingForFemale}` +
                 `&lookingForMale=${lookingForMale}` +
                 `&age=${age.value}` +
-                `&location=${location.value}` +
+                `&location=${whereabouts.value}` +
                 `&id=${id.value}`;
 
                 fetch(url).then(function (response) {
@@ -114,7 +114,7 @@
                 </p>
                 <p>
                     <label>My location:
-                        <select name="location" id="location" required>
+                        <select name="whereabouts" id="whereabouts" required>
                             <option value="" disabled selected>Select your location</option>
                             <option value="Bloemfontein">Bloemfontein</option>
                             <option value="Cape Town">Cape Town</option>
