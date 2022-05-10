@@ -4,7 +4,7 @@ export interface ReportsModel {
   about: string;
   gender: string;
   location: string;
-  images: string [];
+  images: string[];
   title: string;
   content: string;
   reporterId: string;

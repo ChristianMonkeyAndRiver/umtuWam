@@ -16,10 +16,28 @@ export class ReportsService {
     this.reportsRef = db.collection(this.dbPath);
   }
 
-  getAll(): AngularFirestoreCollection<ReportsModel> {
-    return this.db.collection<ReportsModel>(this.dbPath, ref => 
+  loadReports(): AngularFirestoreCollection<ReportsModel> {
+    return this.db.collection<ReportsModel>(this.dbPath, ref =>
       ref
-        .limit(10)
+        .limit(5)
+    );
+  }
+
+
+  loadPrev(startAtDoc: any, firstInResponse: any): AngularFirestoreCollection<ReportsModel> {
+    return this.db.collection<ReportsModel>(this.dbPath, ref =>
+      ref
+        .limit(5)
+        .startAt(startAtDoc)
+        .endBefore(firstInResponse)
+    );
+  }
+
+  loadNext(lastInResponse: any): AngularFirestoreCollection<ReportsModel> {
+    return this.db.collection<ReportsModel>(this.dbPath, ref =>
+      ref
+        .limit(5)
+        .startAfter(lastInResponse)
     );
   }
 

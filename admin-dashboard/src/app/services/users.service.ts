@@ -15,26 +15,66 @@ export class UsersService {
     this.bannedUserRef = db.collection(this.dbPath);
   }
 
-  getAll(index: number): AngularFirestoreCollection<UserModel> {
-    const response = this.db.collection<UserModel>(this.dbPath, ref => 
+  loadPrev(startAtDoc: any, firstInResponse: any): AngularFirestoreCollection<UserModel> {
+    return this.db.collection<UserModel>(this.dbPath, ref =>
       ref
+        .limit(5)
         .orderBy('name')
-        .startAt(index)
-        .limit(30)
+        .startAt(startAtDoc)
+        .endBefore(firstInResponse)
         .where('isBanned', '==', false)
     );
-    return response;
   }
 
-  getAllBanned(index: number): AngularFirestoreCollection<UserModel> {
-    return this.db.collection<UserModel>(this.dbPath, ref => 
+  loadNext(lastInResponse: any): AngularFirestoreCollection<UserModel> {
+    return this.db.collection<UserModel>(this.dbPath, ref =>
       ref
+        .limit(5)
         .orderBy('name')
-        .startAt(index)
-        .limit(30)
+        .startAfter(lastInResponse)
+        .where('isBanned', '==', false)
+    );
+  }
+
+  loadUsers(): AngularFirestoreCollection<UserModel> {
+    return this.db.collection<UserModel>(this.dbPath, ref =>
+      ref
+        .limit(5)
+        .orderBy('name')
+        .where('isBanned', '==', false)
+    );
+  }
+
+  getAllBanned(): AngularFirestoreCollection<UserModel> {
+    return this.db.collection<UserModel>(this.dbPath, ref =>
+      ref
+        .limit(5)
+        .orderBy('name')
         .where('isBanned', '==', true)
     );
   }
+
+  loadBannedPrev(startAtDoc: any, firstInResponse: any): AngularFirestoreCollection<UserModel> {
+    return this.db.collection<UserModel>(this.dbPath, ref =>
+      ref
+        .limit(5)
+        .orderBy('name')
+        .startAt(startAtDoc)
+        .endBefore(firstInResponse)
+        .where('isBanned', '==', true)
+    );
+  }
+
+  loadBannedNext(lastInResponse: any): AngularFirestoreCollection<UserModel> {
+    return this.db.collection<UserModel>(this.dbPath, ref =>
+      ref
+        .limit(5)
+        .orderBy('name')
+        .startAfter(lastInResponse)
+        .where('isBanned', '==', true)
+    );
+  }
+
 
   update(id: string, data: any): Promise<void> {
     return this.usersRef.doc(id).update(data);

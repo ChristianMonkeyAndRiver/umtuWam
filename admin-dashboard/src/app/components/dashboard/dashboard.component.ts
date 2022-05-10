@@ -7,14 +7,16 @@ import { AuthService } from '../../shared/services/auth.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  public currentIndex:number = 1;
+  public currentIndex: number;
 
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService) {
+    this.currentIndex = 0;
+  }
 
   ngOnInit(): void {
   }
 
-  public setCurrentIndex(index:number) {
+  public setCurrentIndex(index: number) {
     this.currentIndex = index;
   }
 
