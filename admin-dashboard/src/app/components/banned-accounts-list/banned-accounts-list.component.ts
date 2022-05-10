@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { UsersService } from '../../services/users.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { map } from 'rxjs/operators';
 
 export interface DialogData {
@@ -15,6 +15,8 @@ export interface DialogData {
 export class BannedAccountsListComponent implements OnInit {
 
   bannedUsers: any;
+  user: any;
+  showDetails: boolean;
   private firestoreIndex: number;
   public searchText = '';
 
@@ -23,7 +25,8 @@ export class BannedAccountsListComponent implements OnInit {
     private userService: UsersService
   ) {
     this.firestoreIndex = 0;
-   }
+    this.showDetails = false;
+  }
 
   ngOnInit(): void {
     this.retrieveUsers();
@@ -41,9 +44,14 @@ export class BannedAccountsListComponent implements OnInit {
     });
   }
 
+  setShowDetails(showDetails: boolean, user: any): void {
+    this.user = user;
+    this.showDetails = showDetails;
+  }
+
   openDialog(id: string) {
     this.dialog.open(BannedAccountsDialog, {
-      data: {id: id}
+      data: { id: id }
     });
   }
 }
@@ -57,9 +65,9 @@ export class BannedAccountsDialog {
     public dialogRef: MatDialogRef<BannedAccountsDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private userService: UsersService
-  ) {}
+  ) { }
 
   public update(id: string) {
-    this.userService.update(id, {isBanned: false});
+    this.userService.update(id, { isBanned: false });
   }
 }

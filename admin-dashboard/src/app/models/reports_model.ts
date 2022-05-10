@@ -1,7 +1,7 @@
 export interface ReportsModel {
   transgressorId: string;
   name: string;
-  about: string;
+  bio: string;
   gender: string;
   location: string;
   images: string [];

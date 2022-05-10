@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReportsService } from '../../services/reports.service';
 import { map } from 'rxjs/operators';
 
@@ -15,14 +15,21 @@ export interface DialogData {
 })
 export class ReportsListComponent implements OnInit {
   reports: any;
+  user: any;
+  showDetails: boolean;
   public searchText = '';
   constructor(
     public dialog: MatDialog,
     private reportsService: ReportsService,
-  ) { }
+  ) { this.showDetails = false; }
 
   ngOnInit(): void {
     this.retrieveReports();
+  }
+
+  setShowDetails(showDetails: boolean, user: any): void {
+    this.user = user;
+    this.showDetails = showDetails;
   }
 
   retrieveReports(): void {
@@ -39,7 +46,7 @@ export class ReportsListComponent implements OnInit {
 
   openDialog(id: string) {
     this.dialog.open(ReportsListDialog, {
-      data: {id: id}
+      data: { id: id }
     });
   }
 
@@ -54,9 +61,9 @@ export class ReportsListDialog {
     public dialogRef: MatDialogRef<ReportsListDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private reportsService: ReportsService
-  ) {}
+  ) { }
 
   public update(id: string) {
-    this.reportsService.update(id, {isBanned: true});
+    this.reportsService.update(id, { isBanned: true });
   }
 }
