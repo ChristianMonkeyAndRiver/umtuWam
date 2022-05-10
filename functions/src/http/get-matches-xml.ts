@@ -28,7 +28,7 @@ export default functions.https.onRequest(async (req, res) => {
                         {
                             _attr: {
                                 style: '',
-                                href: `https://us-central1-umtuwam.cloudfunctions.net/viewChatProfile?did=${doc.data().id}&uid=${uid}`,
+                                href: `https://us-central1-umtuwam.cloudfunctions.net/http-viewChatProfile?did=${doc.data().id}&uid=${uid}`,
                                 layout: 'relative',
                             },
                         },

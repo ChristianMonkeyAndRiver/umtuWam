@@ -66,7 +66,7 @@ export default functions.https.onRequest(async (req, res) => {
                             {
                                 _attr: {
                                     style: '',
-                                    href: `https://us-central1-umtuwam.cloudfunctions.net/viewUserProfile?id=${doc.id}&uid=${uid}`,
+                                    href: `https://us-central1-umtuwam.cloudfunctions.net/http-viewUserProfile?id=${doc.id}&uid=${uid}`,
                                     layout: 'relative',
                                 },
                             },
