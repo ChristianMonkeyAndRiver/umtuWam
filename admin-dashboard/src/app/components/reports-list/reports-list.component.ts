@@ -14,9 +14,9 @@ export interface DialogData {
   styleUrls: ['./reports-list.component.css']
 })
 export class ReportsListComponent implements OnInit {
-
   searchText: string = '';
-
+  user: any;
+  showDetails: boolean;
   //Data object for listing items
   reports: any[] = [];
   filteredReports: any[] = [];
@@ -37,15 +37,15 @@ export class ReportsListComponent implements OnInit {
   disable_next: boolean = false;
   disable_prev: boolean = false;
 
+
   constructor(
     public dialog: MatDialog,
     private reportsService: ReportsService,
-  ) { }
+  ) { this.showDetails = false; }
 
   ngOnInit(): void {
     this.loadReports();
   }
-
   search(): void {
     this.filteredReports = this.reports.filter(user =>
       user.name.toLowerCase().indexOf(this.searchText.toLowerCase()) !== -1
@@ -160,6 +160,11 @@ export class ReportsListComponent implements OnInit {
     if (this.prev_strt_at.length > (this.pagination_clicked_count + 1))
       this.prev_strt_at.splice(this.prev_strt_at.length - 2, this.prev_strt_at.length - 1);
     return this.prev_strt_at[this.pagination_clicked_count - 1];
+  }
+
+  setShowDetails(showDetails: boolean, user: any): void {
+    this.user = user;
+    this.showDetails = showDetails;
   }
 
   openDialog(id: string) {

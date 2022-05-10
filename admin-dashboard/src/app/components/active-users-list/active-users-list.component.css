@@ -69,3 +69,10 @@ img.mat-card-avatar {
 .example-card.mat-card-avatar {
     width: 200px !important;
 }
+
+.back {
+    width: 50%;
+    height: 60px;
+    font-size: x-large;
+    border-radius: 20px;
+}

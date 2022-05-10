@@ -1,23 +1,29 @@
-<div class="search-bar-container">
-    <mat-form-field appearance="standard">
-        <input class="search-bar" matInput type="search" placeholder="Search Name" [(ngModel)]="searchText"
-            (input)="search()" name="searchText" required>
-    </mat-form-field>
+<div *ngIf="!showDetails; else details">
+    <div class="search-bar-container">
+        <mat-form-field appearance="standard">
+            <input class="search-bar" matInput type="search" placeholder="Search Name" [(ngModel)]="searchText"
+                (input)="search()" name="searchText" required>
+        </mat-form-field>
+    </div>
+    <div>
+        <button mat-button class="pagination-button" id="previous" (click)="prevPage()">&laquo; Previous</button>
+        <button mat-button class="pagination-button" id="next" (click)="nextPage()">Next &raquo;</button>
+    </div>
+    <div class="list-tile-container">
+        <mat-card class="list-tile-item" *ngFor="let report of filteredReports;">
+            <img mat-card-avatar
+                src="{{report.images[0] ?? 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53'}}">
+            <mat-card-title> {{report.name}} </mat-card-title>
+            <div class="card-div">
+                Abuse Reports: {{8}}
+                <button mat-icon-button (click)="openDialog(report.transgressorId)">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+            </div>
+        </mat-card>
+    </div>
 </div>
-<div>
-    <button mat-button class="pagination-button" id="previous" (click)="prevPage()">&laquo; Previous</button>
-    <button mat-button class="pagination-button" id="next" (click)="nextPage()">Next &raquo;</button>
-</div>
-<div class="list-tile-container">
-    <mat-card class="list-tile-item" *ngFor="let report of filteredReports;">
-        <img mat-card-avatar
-            src="{{report.images[0] ?? 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53'}}">
-        <mat-card-title> {{report.name}} </mat-card-title>
-        <div class="card-div">
-            Abuse Reports: {{8}}
-            <button mat-icon-button (click)="openDialog(report.transgressorId)">
-                <mat-icon>more_vert</mat-icon>
-            </button>
-        </div>
-    </mat-card>
-</div>
+<ng-template #details>
+    <app-view-profile [user]="{user}"></app-view-profile>
+    <button class="back" (click)="setShowDetails(false, user)">Back</button>
+</ng-template>

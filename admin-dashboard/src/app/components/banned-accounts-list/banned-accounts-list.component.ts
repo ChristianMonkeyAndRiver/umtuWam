@@ -14,9 +14,11 @@ export interface DialogData {
 })
 export class BannedAccountsListComponent implements OnInit {
 
+  user: any;
   bannedUsers: any;
 
   searchText: string = '';
+  showDetails: boolean;
 
   //Data object for listing items
   activeUsers: any[] = [];
@@ -42,7 +44,10 @@ export class BannedAccountsListComponent implements OnInit {
     public dialog: MatDialog,
     private userService: UsersService
   ) {
+    this.showDetails = false;
   }
+
+
 
   ngOnInit(): void {
     this.loadUsers();
@@ -164,6 +169,10 @@ export class BannedAccountsListComponent implements OnInit {
     if (this.prev_strt_at.length > (this.pagination_clicked_count + 1))
       this.prev_strt_at.splice(this.prev_strt_at.length - 2, this.prev_strt_at.length - 1);
     return this.prev_strt_at[this.pagination_clicked_count - 1];
+  }
+  setShowDetails(showDetails: boolean, user: any): void {
+    this.user = user;
+    this.showDetails = showDetails;
   }
 
   openDialog(id: string) {
