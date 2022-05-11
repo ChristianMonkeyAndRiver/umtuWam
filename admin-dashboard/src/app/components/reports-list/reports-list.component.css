@@ -73,3 +73,7 @@ img.mat-card-avatar {
     font-size: x-large;
     border-radius: 20px;
 }
+
+.list-tile-item:hover {
+    cursor: pointer;
+}

@@ -24,8 +24,8 @@
 
                     images.src = out.images[0];
 
-                    chat.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-getChatsView?id=${myId.value}&uid=${theirId.value}`)
-                    chat.style.backgroundColor = '#00FF00'
+                    chat.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-getChatsView?id=${myId.value}&uid=${theirId.value}`);
+                    chat.style.backgroundColor = '#00FF00';
 
                     report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-reportsView?id=${myId.value}&uid=${theirId.value}`);
                     imageArr = out.images;
@@ -38,12 +38,27 @@
                     btnUnlike.style.backgroundColor = '#FFC0CB';
                 }).catch(err => console.error(err));
         }
+        function gallery() {
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/http-getGalleryView?id=${myId.value}&uid=${theirId.value}`;
+            fetch(url)
+                .then((out) => {
+                    if (out.value != null) {
+                        for(let i = 1; i < imageArr.length; i++) {
+                            var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
+                            images.insertAdjacentHTML(after, imghtml);
+                        }
+                    } else {
+                        console.log(out);
+
+                    }
+                })
+        }
     </script>
     <div class="container">
         <div>
-            <img id="images" src="" alt="Error loading images">
+            <img id="images" src="" alt="Loading image...">
         </div>
-        <button href="" class="heart">View more images</button>
+        <button id="gallery" onclick="gallery()" class="heart">View more images</button>
         <button id="btnUnlike" onclick="unlike()" class="heart">Unlike</button>
         <a href="" class="heart" id="chat">Chat</a>
         <a id="report" class="report" href="">Report</a>

@@ -31,12 +31,27 @@
                     btnLike.style.backgroundColor = '#FFC0CB';
                 }).catch(err => console.error(err));
         }
+        function gallery() {
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/http-getGalleryView?id=${myId.value}&uid=${theirId.value}`;
+            fetch(url)
+                .then((out) => {
+                    if (out.value != null) {
+                        for(let i = 1; i < imageArr.length; i++) {
+                            var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
+                            images.insertAdjacentHTML(after, imghtml);
+                        }
+                    } else {
+                        console.log(out);
+
+                    }
+                })
+        }
     </script>
     <div class="container">
         <div>
             <img id="images" src="" alt="Error loading images">
         </div>
-        <a href="" class="heart">View more images</a>
+        <button id="gallery" onclick="gallery()" href="" class="heart">View more images</button>
         <button id="btnLike" onclick="like()" class="heart">Like</button>
         <a id="report" class="report" href="">Report</a>
         <input type="text" id="myId" name="id" hidden value="" />

@@ -13,4 +13,8 @@ export class ViewProfileComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  showDelete() {
+
+  }
 }
