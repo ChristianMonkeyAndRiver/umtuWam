@@ -16,35 +16,45 @@
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${theirId.value}`)
                 .then(res => res.json())
                 .then((out) => {
-                    name.innerText = out.name + ", " + out.age;
-                    location.innerText = out.location;
+                    myName.innerText = out.name + ", " + out.age;
+                    whereabouts.innerText = out.location;
                     bio.innerText = out.bio;
                     images.src = out.images[0];
                     report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-reportsView?id=${myId.value}&uid=${theirId.value}`);
                     imageArr = out.images;
+                    const galleryUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?` +
+                    `id=${myId.value}}` +
+                    `&uid=${theirId.value}` +
+                    `&product=${'Photos'}` +
+                    `&isMine=${true}`;
+                    galleryLink.setAttribute('href', galleryUrl);
                 }).catch(err => console.error(err));
         }
         function like() {
             var url = `https://us-central1-umtuwam.cloudfunctions.net/http-likeUser?id=${myId.value}&uid=${theirId.value}`
+            btnLike.disabled = true;
+            btnLike.innerText = 'Loading';
             fetch(url)
                 .then((out) => {
                     btnLike.style.backgroundColor = '#FFC0CB';
+                    btnLike.innerText = 'Liked!';
                 }).catch(err => console.error(err));
         }
         function gallery() {
             var url = `https://us-central1-umtuwam.cloudfunctions.net/http-getGalleryView?id=${myId.value}&uid=${theirId.value}`;
+            btnGallery.innerText = 'Loading..'
             fetch(url).then(res => {
                 return res.json();
             }).then((out) => {
-                console.log(out)
-                if (out.value != true) {
+                if (out.value != false) {
                     for (let i = 1; i < imageArr.length; i++) {
+                        btnGallery.style.visibility = 'hidden';
                         var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
                         images.insertAdjacentHTML('afterEnd', imghtml);
                     }
                 } else {
-                    console.log(out);
-
+                    btnGallery.style.visibility = 'hidden';
+                    galleryLink.style.visibility = 'visible';
                 }
             }).catch(err => console.error(err));
         }
@@ -53,14 +63,16 @@
         <div>
             <img id="images" src="" alt="Loading image...">
         </div>
-        <button id="gallery" onclick="gallery()" href="" class="heart">View more images</button>
+        <a href="" id="galleryLink" class="heart" hidden>Buy access to view gallery?</a>
+        <button id="btnGallery" onclick="gallery()" class="heart">View more images</button>
         <button id="btnLike" onclick="like()" class="heart">Like</button>
         <a id="report" class="report" href="">Report</a>
+
         <input type="text" id="myId" name="id" hidden value="" />
         <input type="text" id="theirId" name="id" hidden value="" />
 
-        <h3 id="name"></h3>
-        <h3 id="location"></h3>
+        <h3 id="myName"></h3>
+        <h3 id="whereabouts"></h3>
         <h3 id="bio"></h3>
     </div>
 </body>

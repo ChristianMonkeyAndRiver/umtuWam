@@ -10,28 +10,45 @@
 <body>
     <script>
         window.onload = function () {
-            id.setAttribute("value", new URL(location.href).searchParams.get("id"));
+            myId.setAttribute("value", new URL(location.href).searchParams.get("id"));
 
-            var type = new URL(location.href).searchParams.get("product");
-            title.innerText = `You do not have an active subscription for ${type}.\nDo you wish to purchase a subscription for ${type}`;
+            var product = new URL(location.href).searchParams.get("product");
+            title.innerText = `You do not have an active subscription for ${product}.\nDo you wish to purchase a subscription for ${product}`;
+            productId.setAttribute("value", product);
 
-            uid.setAttribute("value", new URL(location.href).searchParams.get("uid"));
+            theirId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
 
             isMine.setAttribute("value", new URL(location.href).searchParams.get("isMine"));
         }
 
         function subscribe() {
-
+            var payUrl = ''
+            if(isMine.value) {
+                payUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-createMySubscription?` +
+                `id=${myId.value}` +
+                `&uid=${theirId.value}` +
+                `&productId=${productId.value}`;
+            } else {
+                payUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-createOtherSubscription` +
+                `id=${myId.value}` +
+                `&uid=${theirId.value}` +
+                `&productId=${productId.value}`;
+            }
+            
+            fetch(payUrl).then(res => {
+                window.history.back();
+            }).catch(err => console.error(err));
         }
         
         function back() {
-
+            window.history.back();
         }
     </script>
     <div class="container">
         <h2 class="title" id="title"></h2>
-        <input type="text" id="id" name="id" hidden value="" />
-        <input type="text" id="uid" name="uid" hidden value="" />
+        <input type="text" id="productId" hidden value="">
+        <input type="text" id="myId" name="id" hidden value="" />
+        <input type="text" id="theirId" name="uid" hidden value="" />
         <input type="text" id="isMine" name="isMine" hidden value="" />
         <button id="yes" class="btn" onclick="subscribe()">Yes</button>
         <button id="no" class="btn" onclick="back()">No</button>
