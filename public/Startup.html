@@ -70,6 +70,7 @@
                 fetch(url).then(function (response) {
                     return response.json();
                     // TODO: add redirect
+                    window.location.reload();
                 }).catch((error) => {
                     console.error('Error:', error);
                 });;
