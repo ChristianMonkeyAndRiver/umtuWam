@@ -19,7 +19,7 @@
                     myName.setAttribute("value", out.name);
                     age.setAttribute("value", out.age);
                     bio.setAttribute("value", out.bio);
-                    membership.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${did}`);
+                    membership.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/http-getMembershipXml?id=${did}`);
 
                     var whereabouts = document.getElementById("whereabouts").children;
                     for (var i = 0; i < whereabouts.length; i++) {

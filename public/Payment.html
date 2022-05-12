@@ -15,7 +15,7 @@
             var type = new URL(location.href).searchParams.get("product");
             title.innerText = `You do not have an active subscription for ${type}.\nDo you wish to purchase a subscription for ${type}`;
 
-            uid.setAttribute("vale", new URL(location.href).searchParams.get("uid"));
+            uid.setAttribute("value", new URL(location.href).searchParams.get("uid"));
 
             isMine.setAttribute("value", new URL(location.href).searchParams.get("isMine"));
         }

@@ -7,24 +7,43 @@
 
 <body>
     <div>
-        <form onsubmit="upload();" method="post" enctype="multipart/form-data" id="form">
+        <form method="post" enctype="multipart/form-data" id="form">
             <input type="text" id="id" name="id" hidden value="" />
             <div class="container">
                 <label class="custom-file-upload">
-                    Upload an image
-                    <input id="imgInp" name="imgInp" type="file" accept="image/*" style="display:block" />
+                    Upload image for preview
+                    <input id="imgInp" name="imgInp" type="file" accept="image/*" />
                 </label>
             </div>
             <div class="container" id="card">
                 <img id="blah" src="#" alt="your image" hidden />
             </div>
-            <input type="submit" value="Upload Image" name="submit">
+            <div class="container" id="uploadContainer">
+                <div>
+                    <button class="custom-file-upload" onclick="rotate()">Rotate Image</button>
+                </div>
+                <div>
+                    <button class="custom-file-upload" onclick="upload()">Upload this image</button>
+                </div>
+            </div>
         </form>
     </div>
 
     <script>
+        let rotation = 0;
+        function rotate() {
+            event.preventDefault();
+            rotation += 90; // add 90 degrees
+            if (rotation === 360) {
+                // 360 means rotate back to 0
+                rotation = 0;
+            }
+            document.querySelector("#preview").style.transform = `rotate(${rotation}deg)`;
+        }
+
         window.onload = function () {
             id.setAttribute("value", new URL(location.href).searchParams.get("id"));
+            uploadContainer.style.display = "none";
         }
 
         function upload() {
@@ -46,13 +65,6 @@
                 MIME_TYPE,
                 QUALITY
             );
-        }
-
-        imgInp.onchange = evt => {
-            const [file] = imgInp.files
-            if (file) {
-                blah.src = URL.createObjectURL(file)
-            }
         }
 
         const MAX_WIDTH = 480;
@@ -85,6 +97,8 @@
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, newWidth, newHeight);
                 document.getElementById("card").append(canvas);
+                canvas.setAttribute('class', 'card')
+                uploadContainer.removeAttribute("style");;
             };
         };
 
@@ -105,23 +119,6 @@
                 }
             }
             return [width, height];
-        }
-
-        // Utility functions for demo purpose
-
-        function displayInfo(label, file) {
-            document.getElementById("main").remove();
-            const p = document.createElement('p');
-            p.id = "main";
-            p.innerText = `${label} - ${readableBytes(file.size)}`;
-            document.getElementById('card').append(p);
-        }
-
-        function readableBytes(bytes) {
-            const i = Math.floor(Math.log(bytes) / Math.log(1024)),
-                sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
-            return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
         }
     </script>
 </body>
