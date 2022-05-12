@@ -1,0 +1,10 @@
+<h1 mat-dialog-title style="text-align:center">Are you sure?</h1>
+<mat-dialog-content class="mat-typography">
+    <p style="text-align:center">Are you sure you want to <strong>Delete</strong> this image?</p>
+    <p style="text-align:center">Press ' <strong>Confirm</strong> ' if you are.</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-button [mat-dialog-close]="true" (click)="deleteImage(data.user, data.imageLink)" cdkFocusInitial
+        style="color: white; background-color:red;">Confrim</button>
+</mat-dialog-actions>

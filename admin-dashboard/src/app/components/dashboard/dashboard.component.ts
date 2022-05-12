@@ -10,7 +10,7 @@ export class DashboardComponent implements OnInit {
   public currentIndex: number;
 
   constructor(public authService: AuthService) {
-    this.currentIndex = 0;
+    this.currentIndex = 1;
   }
 
   ngOnInit(): void {

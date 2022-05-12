@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 
 export interface DialogData {
   user: any;
+  imageLink: string;
 }
 
 @Component({
@@ -21,8 +22,10 @@ export class ViewProfileComponent implements OnInit {
 
   ngOnInit(): void { }
 
-  showDelete() {
-
+  showDelete(image: string) {
+    this.dialog.open(ViewProfileDeleteImageDialog, {
+      data: { user: this.user, imageLink: image }
+    });
   }
 
   openDialog() {
@@ -50,4 +53,39 @@ export class ViewProfileBanDialog {
   public updateFalse(user: any) {
     this.userService.update(user.user.id, { isBanned: false });
   }
+
+  public deleteImage(user: any, image: string) {
+    const images = user.user.images;
+    var filteredArray = images.filter((item: string) => !image.includes(item))
+    console.log(filteredArray);
+
+  }
 }
+
+@Component({
+  selector: 'view-profile-delete-image-dialog',
+  templateUrl: 'view-profile-delete-image-dialog.html',
+})
+export class ViewProfileDeleteImageDialog {
+  constructor(
+    public dialogRef: MatDialogRef<ViewProfileBanDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private userService: UsersService
+  ) { }
+
+  public updateTrue(user: any) {
+    this.userService.update(user.user.id, { isBanned: true });
+  }
+
+  public updateFalse(user: any) {
+    this.userService.update(user.user.id, { isBanned: false });
+  }
+
+  public async deleteImage(user: any, image: string) {
+    const images = user.user.images;
+    var filteredArray = images.filter((item: string) => !image.includes(item))
+
+    await this.userService.update(user.user.id, { images: filteredArray });
+  }
+}
+

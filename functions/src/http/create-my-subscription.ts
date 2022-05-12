@@ -14,6 +14,8 @@ export default functions.https.onRequest(async (req, res) => {
             const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
             const id = formattedId.toString();
 
+            console.log(id);
+
             const options = {
                 method: 'POST',
                 headers: {

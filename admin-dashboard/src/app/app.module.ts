@@ -14,7 +14,7 @@ import { SignInComponent } from './components/sign-in/sign-in.component';
 import { ReportsListComponent } from './components/reports-list/reports-list.component';
 import { ActiveUsersListComponent } from './components/active-users-list/active-users-list.component';
 import { BannedAccountsListComponent } from './components/banned-accounts-list/banned-accounts-list.component';
-import { ViewProfileBanDialog, ViewProfileComponent } from './components/view-profile/view-profile.component';
+import { ViewProfileBanDialog, ViewProfileComponent, ViewProfileDeleteImageDialog } from './components/view-profile/view-profile.component';
 import { AuthService } from "./shared/services/auth.service";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
@@ -43,6 +43,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     ReportsListComponent,
     ActiveUsersListComponent,
     ViewProfileBanDialog,
+    ViewProfileDeleteImageDialog,
     BannedAccountsListComponent,
     ViewProfileComponent
   ],
