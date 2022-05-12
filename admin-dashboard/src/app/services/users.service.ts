@@ -18,7 +18,7 @@ export class UsersService {
   loadPrev(startAtDoc: any, firstInResponse: any): AngularFirestoreCollection<UserModel> {
     return this.db.collection<UserModel>(this.dbPath, ref =>
       ref
-        .limit(5)
+        .limit(100)
         .orderBy('name')
         .startAt(startAtDoc)
         .endBefore(firstInResponse)
@@ -29,7 +29,7 @@ export class UsersService {
   loadNext(lastInResponse: any): AngularFirestoreCollection<UserModel> {
     return this.db.collection<UserModel>(this.dbPath, ref =>
       ref
-        .limit(5)
+        .limit(100)
         .orderBy('name')
         .startAfter(lastInResponse)
         .where('isBanned', '==', false)
@@ -39,7 +39,7 @@ export class UsersService {
   loadUsers(): AngularFirestoreCollection<UserModel> {
     return this.db.collection<UserModel>(this.dbPath, ref =>
       ref
-        .limit(5)
+        .limit(100)
         .orderBy('name')
         .where('isBanned', '==', false)
     );
@@ -48,7 +48,7 @@ export class UsersService {
   getAllBanned(): AngularFirestoreCollection<UserModel> {
     return this.db.collection<UserModel>(this.dbPath, ref =>
       ref
-        .limit(5)
+        .limit(20)
         .orderBy('name')
         .where('isBanned', '==', true)
     );
@@ -57,7 +57,7 @@ export class UsersService {
   loadBannedPrev(startAtDoc: any, firstInResponse: any): AngularFirestoreCollection<UserModel> {
     return this.db.collection<UserModel>(this.dbPath, ref =>
       ref
-        .limit(5)
+        .limit(20)
         .orderBy('name')
         .startAt(startAtDoc)
         .endBefore(firstInResponse)
@@ -68,7 +68,7 @@ export class UsersService {
   loadBannedNext(lastInResponse: any): AngularFirestoreCollection<UserModel> {
     return this.db.collection<UserModel>(this.dbPath, ref =>
       ref
-        .limit(5)
+        .limit(20)
         .orderBy('name')
         .startAfter(lastInResponse)
         .where('isBanned', '==', true)

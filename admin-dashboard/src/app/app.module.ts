@@ -11,10 +11,10 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { environment } from '../environments/environment';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
-import { ReportsListComponent, ReportsListDialog } from './components/reports-list/reports-list.component';
+import { ReportsListComponent } from './components/reports-list/reports-list.component';
 import { ActiveUsersListComponent } from './components/active-users-list/active-users-list.component';
-import { BannedAccountsListComponent, BannedAccountsDialog } from './components/banned-accounts-list/banned-accounts-list.component';
-import { ViewProfileComponent } from './components/view-profile/view-profile.component';
+import { BannedAccountsListComponent } from './components/banned-accounts-list/banned-accounts-list.component';
+import { ViewProfileBanDialog, ViewProfileComponent } from './components/view-profile/view-profile.component';
 import { AuthService } from "./shared/services/auth.service";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
@@ -31,7 +31,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatDialogModule  } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 
@@ -40,10 +40,9 @@ import { MatGridListModule } from '@angular/material/grid-list';
     AppComponent,
     DashboardComponent,
     SignInComponent,
-    ReportsListDialog,
     ReportsListComponent,
     ActiveUsersListComponent,
-    BannedAccountsDialog,
+    ViewProfileBanDialog,
     BannedAccountsListComponent,
     ViewProfileComponent
   ],
@@ -71,7 +70,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     MatGridListModule,
     MatDialogModule,
   ],
-  providers: [AuthService, ReportsListComponent],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

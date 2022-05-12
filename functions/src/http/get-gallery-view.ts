@@ -1,4 +1,3 @@
-import * as xml from 'xml';
 import * as admin from 'firebase-admin';
 import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
@@ -26,27 +25,7 @@ export default functions.https.onRequest(async (req, res) => {
             return;
         }
 
-        const doc = [{
-            doc: [
-                {
-                    _attr: {
-                        title: util.FunctionsConstants.UmtuWam,
-                    },
-                },
-                {
-                    webview: [
-                        {
-                            _attr: {
-                                href: `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=Photos&isMine=${true}`,
-                                internal: 'true',
-                            },
-                        },
-                    ],
-                },
-            ],
-        }];
-
-        res.send(xml(doc, true));
+        res.status(200).send({ value: false });
         return;
     } catch (error) {
         console.error(util.ErrorMessages.ErrorText, error);
@@ -54,3 +33,26 @@ export default functions.https.onRequest(async (req, res) => {
         return;
     }
 });
+
+
+// const doc = [{
+//     doc: [
+//         {
+//             _attr: {
+//                 title: util.FunctionsConstants.UmtuWam,
+//             },
+//         },
+//         {
+//             webview: [
+//                 {
+//                     _attr: {
+//                         href: `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=Photos&isMine=${true}`,
+//                         internal: 'true',
+//                     },
+//                 },
+//             ],
+//         },
+//     ],
+// }];
+
+// res.send(xml(doc, true));

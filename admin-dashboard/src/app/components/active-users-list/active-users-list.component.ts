@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from '../../services/users.service';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-active-users-list',

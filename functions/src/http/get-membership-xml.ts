@@ -58,7 +58,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: isChatSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/createMySubscription?id=${userDocument.id}&productId=${util.Products.Chats}`,
+                                        href: isChatSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}}&uid=${''}&product=${util.Products.Chats}&isMine=${true}`,
                                         layout: 'relative',
                                     },
                                 },
@@ -72,7 +72,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: isFeaturedSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/createMySubscription?id=${userDocument.id}&productId=${util.Products.Boost}`,
+                                        href: isFeaturedSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Boost}&isMine=${true}`,
                                         layout: 'relative',
                                     },
                                 },
@@ -86,7 +86,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: `https://us-central1-umtuwam.cloudfunctions.net/createMySubscription?id=${userDocument.id}&productId=${util.Products.Verified}`,
+                                        href: `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Verified}&isMine=${true}`,
                                         layout: 'relative',
                                     },
                                 },

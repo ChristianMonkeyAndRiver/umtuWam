@@ -16,7 +16,7 @@
         </mat-card-content>
     </mat-card>
     <div class="report-card">
-        <button mat-button id="ban-user-button">BAN USER</button>
+        <button mat-button id="ban-user-button" (click)="openDialog()">BAN USER</button>
         Reports: {{user.user.age}}
     </div>
 </div>

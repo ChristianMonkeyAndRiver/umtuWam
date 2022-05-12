@@ -17,7 +17,27 @@ export default functions.https.onRequest(async (req, res) => {
             .get()
             .then((docs) => {
                 if (docs.empty) {
-                    res.status(500).send(util.ErrorMessages.NoUserError);
+                    const doc = [{
+                        doc: [
+                            {
+                                _attr: {
+                                    title: util.FunctionsConstants.UmtuWam,
+                                },
+                            },
+                            {
+                                webview: [
+                                    {
+                                        _attr: {
+                                            href: 'https://umtuwam.web.app/Empty.html',
+                                            internal: 'true',
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                    }];
+
+                    res.send(xml(doc, true));
                     return;
                 }
 

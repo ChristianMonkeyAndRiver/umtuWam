@@ -8,7 +8,7 @@ export default functions.runWith({
     memory: '512MB',
 }).https.onRequest(async (req, res) => {
     try {
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 1000; i++) {
             const name = faker.name.findName();
             const rand = Math.floor(Math.random() * locationsData.length);
             const location = locationsData[rand];

@@ -19,7 +19,8 @@ export class ReportsService {
   loadReports(): AngularFirestoreCollection<ReportsModel> {
     return this.db.collection<ReportsModel>(this.dbPath, ref =>
       ref
-        .limit(5)
+        .where('reports', '>=', 2)
+        .limit(20)
     );
   }
 
@@ -27,7 +28,8 @@ export class ReportsService {
   loadPrev(startAtDoc: any, firstInResponse: any): AngularFirestoreCollection<ReportsModel> {
     return this.db.collection<ReportsModel>(this.dbPath, ref =>
       ref
-        .limit(5)
+        .where('reports', '>=', 2)
+        .limit(20)
         .startAt(startAtDoc)
         .endBefore(firstInResponse)
     );
@@ -36,7 +38,8 @@ export class ReportsService {
   loadNext(lastInResponse: any): AngularFirestoreCollection<ReportsModel> {
     return this.db.collection<ReportsModel>(this.dbPath, ref =>
       ref
-        .limit(5)
+        .where('reports', '>=', 2)
+        .limit(20)
         .startAfter(lastInResponse)
     );
   }

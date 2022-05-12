@@ -15,9 +15,16 @@ export default functions.https.onRequest(async (req, res) => {
         const uid = formattedUid.toString();
 
         const document = await admin.firestore()
-        .collection(util.FunctionsConstants.Users)
-        .doc(id)
-        .get();
+            .collection(util.FunctionsConstants.Users)
+            .doc(id)
+            .get();
+
+        const now = admin.firestore.Timestamp.now();
+
+        const chatTimeDiff = now.seconds - document.data()?.chatsExpiryDate.seconds ?? 0;
+        const daysDifference = Math.floor(chatTimeDiff / 1000 / 60);
+        const isChatSubscriptionValid = (document.data()?.hasPaidForChats && daysDifference < 0);
+
 
         const doc = [{
             doc: [
@@ -30,7 +37,7 @@ export default functions.https.onRequest(async (req, res) => {
                     webview: [
                         {
                             _attr: {
-                                href: document.data()?.hasPaidForChats ? `https://umtuwam.web.app/Chats.html?id=${id}&uid=${uid}` : `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=Photos&isMine=${true}`,
+                                href: isChatSubscriptionValid ? `https://umtuwam.web.app/Chats.html?id=${id}&uid=${uid}` : `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=Photos&isMine=${true}`,
                                 internal: 'true',
                             },
                         },

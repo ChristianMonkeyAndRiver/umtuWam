@@ -18,12 +18,11 @@ export default functions.https.onRequest(async (req, res) => {
     indexOfAppId = indexOfAppId - 2;
     const id = xBinu.toString().substring(indexOfDid, indexOfAppId);
 
-
     try {
         let uid = '';
 
         if (id == '97618f4b0cec4667' || id == ':"0727779845"') {
-            uid = '3790bf43-5193-4232-b4cd-3e7b30d1a128';
+            uid = '27727888675';
         } else {
             uid = '27794614755';
         }

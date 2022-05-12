@@ -1,11 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReportsService } from '../../services/reports.service';
-import { map } from 'rxjs/operators';
-
-export interface DialogData {
-  id: string;
-}
 
 
 @Component({
@@ -39,7 +33,6 @@ export class ReportsListComponent implements OnInit {
 
 
   constructor(
-    public dialog: MatDialog,
     private reportsService: ReportsService,
   ) { this.showDetails = false; }
 
@@ -65,7 +58,7 @@ export class ReportsListComponent implements OnInit {
 
         this.reports = [];
         for (let item of users) {
-          this.reports.push({ id: item.payload.doc.id, ...item.payload.doc.data() });
+          this.reports.push({ docId: item.payload.doc.id, id: item.payload.doc.data().transgressorId, ...item.payload.doc.data() });
         }
         this.filteredReports = this.reports;
 
@@ -167,26 +160,4 @@ export class ReportsListComponent implements OnInit {
     this.showDetails = showDetails;
   }
 
-  openDialog(id: string) {
-    this.dialog.open(ReportsListDialog, {
-      data: { id: id }
-    });
-  }
-
-}
-
-@Component({
-  selector: 'reports-list-dialog',
-  templateUrl: 'reports-list-dialog.html',
-})
-export class ReportsListDialog {
-  constructor(
-    public dialogRef: MatDialogRef<ReportsListDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private reportsService: ReportsService
-  ) { }
-
-  public update(id: string) {
-    this.reportsService.update(id, { isBanned: true });
-  }
 }

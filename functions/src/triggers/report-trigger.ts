@@ -20,6 +20,8 @@ export default functions.firestore.document('reports/{docId}')
         bio: userDoc.data()?.bio,
         images: userDoc.data()?.images,
         location: userDoc.data()?.location,
+        isBanned: userDoc.data()?.isBanned,
+        reports: (reports + 1),
       }, { merge: true });
     } catch (error) {
       console.error(util.ErrorMessages.ErrorText, error);
