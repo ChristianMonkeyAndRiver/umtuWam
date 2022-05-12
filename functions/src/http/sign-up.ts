@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
 
-const corsHandler = cors({origin: true});
+const corsHandler = cors({ origin: true });
 
 export default functions.https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
@@ -33,6 +33,7 @@ export default functions.https.onRequest(async (req, res) => {
 
             if (preference.length == 1 && preference[0] == gender) genderPreference = 'Gay';
 
+            const now = admin.firestore.Timestamp.now();
 
             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).set({
                 id: uid,
@@ -42,10 +43,13 @@ export default functions.https.onRequest(async (req, res) => {
                 age: ageNumber,
                 name: req.query.name,
                 gender: gender,
+                reports: 0,
                 location: req.query.location,
                 isBanned: false,
                 isVerified: false,
                 hasPaidForChats: false,
+                featuredExpiryDate: now,
+                chatsExpiryDate: now,
                 hasPaidForFeatured: false,
                 genderPreference: genderPreference,
             });

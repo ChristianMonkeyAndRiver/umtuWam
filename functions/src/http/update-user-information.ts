@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
 
-const corsHandler = cors({origin: true});
+const corsHandler = cors({ origin: true });
 
 export default functions.https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
@@ -14,13 +14,13 @@ export default functions.https.onRequest(async (req, res) => {
 
             const updateObject = {};
 
-            if (req.query.age != null) Object.assign(updateObject, {age: req.query.age});
+            if (req.query.age != null) Object.assign(updateObject, { age: req.query.age });
 
-            if (req.query.bio != null) Object.assign(updateObject, {bio: req.query.bio});
+            if (req.query.bio != null) Object.assign(updateObject, { bio: req.query.bio });
 
-            if (req.query.name != null) Object.assign(updateObject, {name: req.query.name});
+            if (req.query.name != null) Object.assign(updateObject, { name: req.query.name });
 
-            if (req.query.location != null) Object.assign(updateObject, {location: req.query.location});
+            if (req.query.location != null) Object.assign(updateObject, { location: req.query.location });
 
             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).update(updateObject);
 

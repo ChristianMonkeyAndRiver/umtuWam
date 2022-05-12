@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
 
-const corsHandler = cors({origin: true});
+const corsHandler = cors({ origin: true });
 
 export default functions.https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
@@ -20,19 +20,19 @@ export default functions.https.onRequest(async (req, res) => {
             }
 
             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).collection(util.FunctionsConstants.Chats)
-            .get()
-            .then((docs) => {
-                if (docs.empty) return res.status(500).send(util.ErrorMessages.NoUserError);
+                .get()
+                .then((docs) => {
+                    if (docs.empty) return res.status(500).send(util.ErrorMessages.NoUserError);
 
-                const docsArray = [];
-                for (const doc of docs.docs) {
-                    docsArray.push(doc.data());
-                }
+                    const docsArray = [];
+                    for (const doc of docs.docs) {
+                        docsArray.push(doc.data());
+                    }
 
 
-                res.status(200).send(docsArray);
-                return;
-            });
+                    res.status(200).send(docsArray);
+                    return;
+                });
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
             res.status(404).send(util.ErrorMessages.UnexpectedExrror);

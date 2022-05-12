@@ -3,7 +3,7 @@ import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
 
 import * as cors from 'cors';
-const corsHandler = cors({origin: true});
+const corsHandler = cors({ origin: true });
 
 export default functions.https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {

@@ -1,7 +1,9 @@
 
 import * as admin from 'firebase-admin';
-import {exportFunctions} from 'better-firebase-functions';
+import { exportFunctions } from 'better-firebase-functions';
 
-admin.initializeApp();
+if (!admin.apps.length) {
+    admin.initializeApp();
+}
 
-exportFunctions({__filename, exports});
+exportFunctions({ __filename, exports });

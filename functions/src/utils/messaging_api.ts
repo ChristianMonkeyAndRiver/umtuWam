@@ -6,15 +6,15 @@ async function sendMoyaMessageAfterBeingLiked(number: string) {
     const options = {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.MOYA_API_KEY}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${config.MOYA_API_KEY}`,
         },
         body: JSON.stringify({
             to: number,
             recipient_type: 'individual',
             type: 'text',
             text: {
-                  body: 'Someone has Liked you back on UmtuWam - click to see who it is.',
+                body: 'Someone has Liked you back on UmtuWam - click to see who it is.',
             },
         }),
     };
@@ -24,22 +24,22 @@ async function sendMoyaMessageAfterBeingLiked(number: string) {
 
     if (json.error != null) throw json;
 
-    return json;
+    return;
 }
 
 async function sendMoyaMessageAfterMessageHasBeenSent(number: string) {
     const options = {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.MOYA_API_KEY}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${config.MOYA_API_KEY}`,
         },
         body: JSON.stringify({
             to: number,
             recipient_type: 'individual',
             type: 'text',
             text: {
-                  body: 'Someone has sent you a message on UmtuWam - click to read it',
+                body: 'Someone has sent you a message on UmtuWam - click to read it',
             },
         }),
     };
@@ -49,22 +49,22 @@ async function sendMoyaMessageAfterMessageHasBeenSent(number: string) {
 
     if (json.error != null) throw json;
 
-    return json;
+    return;
 }
 
 async function sendMoyaMessageAfterSubscriptionHasBeenBought(number: string) {
     const options = {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.MOYA_API_KEY}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${config.MOYA_API_KEY}`,
         },
         body: JSON.stringify({
             to: number,
             recipient_type: 'individual',
             type: 'text',
             text: {
-                  body: 'Your subscription on UmtuWam has started and will end in 24 hours.',
+                body: 'Your subscription on UmtuWam has started and will end in 24 hours.',
             },
         }),
     };
@@ -74,22 +74,22 @@ async function sendMoyaMessageAfterSubscriptionHasBeenBought(number: string) {
 
     if (json.error != null) throw json;
 
-    return json;
+    return;
 }
 
 async function sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse(number: string) {
     const options = {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.MOYA_API_KEY}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${config.MOYA_API_KEY}`,
         },
         body: JSON.stringify({
             to: number,
             recipient_type: 'individual',
             type: 'text',
             text: {
-                  body: 'Someone has gifted you a subscription to UmtuWam Dating! Click to go and chat to them!',
+                body: 'Someone has gifted you a subscription to UmtuWam Dating! Click to go and chat to them!',
             },
         }),
     };
@@ -99,7 +99,7 @@ async function sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse(numbe
 
     if (json.error != null) throw json;
 
-    return json;
+    return;
 }
 
 export {

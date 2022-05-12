@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin';
 import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
 
-const corsHandler = cors({origin: true});
+const corsHandler = cors({ origin: true });
 
 export default functions.https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
@@ -14,69 +14,69 @@ export default functions.https.onRequest(async (req, res) => {
         const uid = formattedId.toString();
 
         await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).collection(util.FunctionsConstants.Chats)
-        .get()
-        .then((docs) => {
-            if (docs.empty) {
-                res.status(500).send(util.ErrorMessages.NoUserError);
-                return;
-            }
+            .get()
+            .then((docs) => {
+                if (docs.empty) {
+                    res.status(500).send(util.ErrorMessages.NoUserError);
+                    return;
+                }
 
-            const usersList: any = [];
-            for (const doc of docs.docs) {
-                const item = {
-                    item: [
-                        {
-                            _attr: {
-                                style: '',
-                                href: `https://us-central1-umtuwam.cloudfunctions.net/http-viewChatProfile?did=${doc.data().id}&uid=${uid}`,
-                                layout: 'relative',
-                            },
-                        },
-                        {
-                            img: {
+                const usersList: any = [];
+                for (const doc of docs.docs) {
+                    const item = {
+                        item: [
+                            {
                                 _attr: {
-                                    url: doc.data().imageUrl != '' ? doc.data().imageUrl : util.FunctionsConstants.DefualtImage,
+                                    style: '',
+                                    href: `https://us-central1-umtuwam.cloudfunctions.net/http-viewChatProfile?did=${doc.data().id}&uid=${uid}`,
+                                    layout: 'relative',
                                 },
                             },
-                        },
-                        {
-                            md: [
-                                {
+                            {
+                                img: {
                                     _attr: {
-                                        style: '',
+                                        url: doc.data().imageUrl != '' ? doc.data().imageUrl : util.FunctionsConstants.DefualtImage,
                                     },
                                 },
-                                doc.data().name,
+                            },
+                            {
+                                md: [
+                                    {
+                                        _attr: {
+                                            style: '',
+                                        },
+                                    },
+                                    doc.data().name,
+                                ],
+                            },
+                        ],
+                    };
+                    usersList.push(item);
+                }
+
+                const doc = [{
+                    doc: [
+                        {
+                            _attr: {
+                                title: util.FunctionsConstants.Binu,
+                            },
+                        },
+                        {
+                            list: [
+                                ...usersList,
                             ],
                         },
                     ],
-                };
-                usersList.push(item);
-            }
-
-            const doc = [{
-                doc: [
-                    {
-                        _attr: {
-                            title: util.FunctionsConstants.Binu,
-                        },
-                    },
-                    {
-                        list: [
-                            ...usersList,
-                        ],
-                    },
-                ],
-            }];
+                }];
 
 
-            res.send(xml(doc, true));
-            return;
-        })
-        .catch((error) => {
-            console.error(util.ErrorMessages.ErrorText, error);
-            res.status(404).send(util.ErrorMessages.UnexpectedExrror);
-            return;
-        });
+                res.send(xml(doc, true));
+                return;
+            })
+            .catch((error) => {
+                console.error(util.ErrorMessages.ErrorText, error);
+                res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+                return;
+            });
     });
 });

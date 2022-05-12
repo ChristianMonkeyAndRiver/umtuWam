@@ -17,12 +17,12 @@ export default functions.https.onRequest(async (req, res) => {
         const docId = id.concat('_').concat(uid);
 
         const subscriptionDoc = await admin.firestore()
-        .collection(util.FunctionsConstants.Subscriptions)
-        .doc(docId)
-        .get();
+            .collection(util.FunctionsConstants.Subscriptions)
+            .doc(docId)
+            .get();
 
         if (subscriptionDoc.exists) {
-            res.status(200).send({value: true});
+            res.status(200).send({ value: true });
             return;
         }
 

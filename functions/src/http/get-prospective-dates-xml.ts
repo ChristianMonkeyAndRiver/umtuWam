@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin';
 import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
 
-const corsHandler = cors({origin: true});
+const corsHandler = cors({ origin: true });
 
 export default functions.https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
@@ -14,113 +14,155 @@ export default functions.https.onRequest(async (req, res) => {
             const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
             const uid = formattedId.toString();
 
-            console.log(uid);
+            const isNextPressed = req.query.isNextPressed ?? '';
+            const formattedBool = Array.isArray(isNextPressed) ? isNextPressed[0] : isNextPressed;
+            const isFromNextPressedBool = formattedBool.toString();
+
 
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get()
-            .then(async (document) => {
-                if (!document.exists) {
-                    res.status(500).send(util.ErrorMessages.NoUserError);
-                    return;
-                }
+                .then(async (document) => {
+                    let docs;
 
-                let docs;
-                if (document.data()?.currentIndex == '') {
-                    docs = await admin.firestore().collection(util.FunctionsConstants.Users)
-                    .where(util.FunctionsConstants.IsBanned, '==', false)
-                    .where(util.FunctionsConstants.Gender, 'in', document.data()?.gender)
-                    .where(util.FunctionsConstants.GenderPreference, '==', document.data()?.genderPreference)
-                    .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
-                    .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
-                    .where(util.FunctionsConstants.Location, '==', document.data()?.location)
-                    .orderBy(util.FunctionsConstants.Age, 'asc')
-                    .orderBy(util.FunctionsConstants.Points, 'desc')
-                    .limit(20)
-                    .get();
-                } else {
-                    const lastVisible = await admin.firestore().collection(util.FunctionsConstants.Users).doc(document.data()?.currentIndex).get();
+                    if (isFromNextPressedBool == '1') {
+                        const index = req.query.currentIndex ?? '';
+                        const formattedIndex = Array.isArray(index) ? index[0] : index;
+                        const currentIndex = formattedIndex.toString();
 
-                    if (!lastVisible.exists) {
-                        res.status(500).send(util.ErrorMessages.NoUserError);
-                        return;
+                        if (index == '') {
+                            docs = await admin.firestore().collection(util.FunctionsConstants.Users)
+                                .where(util.FunctionsConstants.IsBanned, '==', false)
+                                .where(util.FunctionsConstants.Gender, 'in', document.data()?.gender)
+                                .where(util.FunctionsConstants.GenderPreference, '==', document.data()?.genderPreference)
+                                .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
+                                .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
+                                .where(util.FunctionsConstants.Location, '==', document.data()?.location)
+                                .orderBy(util.FunctionsConstants.Age, 'asc')
+                                .orderBy(util.FunctionsConstants.Points, 'desc')
+                                .limit(20)
+                                .get();
+                        } else {
+                            const lastVisible = await admin.firestore().collection(util.FunctionsConstants.Users).doc(currentIndex).get();
+                            docs = await admin.firestore().collection(util.FunctionsConstants.Users)
+                                .where(util.FunctionsConstants.IsBanned, '==', false)
+                                .where(util.FunctionsConstants.Gender, 'in', document.data()?.gender)
+                                .where(util.FunctionsConstants.GenderPreference, '==', document.data()?.genderPreference)
+                                .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
+                                .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
+                                .where(util.FunctionsConstants.Location, '==', document.data()?.location)
+                                .orderBy(util.FunctionsConstants.Age, 'asc')
+                                .orderBy(util.FunctionsConstants.Points, 'desc')
+                                .startAfter(lastVisible)
+                                .limit(20)
+                                .get();
+                        }
+                        document.ref.update({ currentIndex: index });
+                    } else {
+                        if (document.data()?.currentIndex == '') {
+                            docs = await admin.firestore().collection(util.FunctionsConstants.Users)
+                                .where(util.FunctionsConstants.IsBanned, '==', false)
+                                .where(util.FunctionsConstants.Gender, 'in', document.data()?.gender)
+                                .where(util.FunctionsConstants.GenderPreference, '==', document.data()?.genderPreference)
+                                .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
+                                .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
+                                .where(util.FunctionsConstants.Location, '==', document.data()?.location)
+                                .orderBy(util.FunctionsConstants.Age, 'asc')
+                                .orderBy(util.FunctionsConstants.Points, 'desc')
+                                .limit(20)
+                                .get();
+                        } else {
+                            const lastVisible = await admin.firestore().collection(util.FunctionsConstants.Users).doc(document.data()?.currentIndex).get();
+                            docs = await admin.firestore().collection(util.FunctionsConstants.Users)
+                                .where(util.FunctionsConstants.IsBanned, '==', false)
+                                .where(util.FunctionsConstants.Gender, 'in', document.data()?.gender)
+                                .where(util.FunctionsConstants.GenderPreference, '==', document.data()?.genderPreference)
+                                .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
+                                .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
+                                .where(util.FunctionsConstants.Location, '==', document.data()?.location)
+                                .orderBy(util.FunctionsConstants.Age, 'asc')
+                                .orderBy(util.FunctionsConstants.Points, 'desc')
+                                .startAfter(lastVisible)
+                                .limit(20)
+                                .get();
+                        }
                     }
 
-                    docs = await admin.firestore().collection(util.FunctionsConstants.Users)
-                    .where(util.FunctionsConstants.IsBanned, '==', false)
-                    .where(util.FunctionsConstants.Gender, 'in', document.data()?.gender)
-                    .where(util.FunctionsConstants.GenderPreference, '==', document.data()?.genderPreference)
-                    .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
-                    .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
-                    .where(util.FunctionsConstants.Location, '==', document.data()?.location)
-                    .orderBy(util.FunctionsConstants.Age, 'asc')
-                    .orderBy(util.FunctionsConstants.Points, 'desc')
-                    .startAfter(lastVisible)
-                    .limit(20)
-                    .get();
-                }
+                    const usersList: any = [];
 
-                const usersList: any = [];
+                    if (docs.empty) {
+                        docs = await admin.firestore().collection(util.FunctionsConstants.Users)
+                            .where(util.FunctionsConstants.IsBanned, '==', false)
+                            .where(util.FunctionsConstants.Gender, 'in', document.data()?.gender)
+                            .where(util.FunctionsConstants.GenderPreference, '==', document.data()?.genderPreference)
+                            .where(util.FunctionsConstants.Age, '>=', document.data()?.ageMin)
+                            .where(util.FunctionsConstants.Age, '<=', document.data()?.ageMax)
+                            .where(util.FunctionsConstants.Location, '==', document.data()?.location)
+                            .orderBy(util.FunctionsConstants.Age, 'asc')
+                            .orderBy(util.FunctionsConstants.Points, 'desc')
+                            .limit(20)
+                            .get();
+                    }
 
-                for (const doc of docs.docs) {
-                    const item = {
-                        item: [
-                            {
-                                _attr: {
-                                    style: '',
-                                    href: `https://us-central1-umtuwam.cloudfunctions.net/http-viewUserProfile?id=${doc.id}&uid=${uid}`,
-                                    layout: 'relative',
-                                },
-                            },
-                            {
-                                img: {
+                    for (const doc of docs.docs) {
+                        const item = {
+                            item: [
+                                {
                                     _attr: {
-                                        url: doc.data().images.length > 0 ? doc.data().images[0] : util.FunctionsConstants.DefualtImage,
+                                        style: '',
+                                        href: `https://us-central1-umtuwam.cloudfunctions.net/http-viewUserProfile?id=${doc.id}&uid=${uid}`,
+                                        layout: 'relative',
                                     },
                                 },
-                            },
-                            {
-                                md: [
-                                    {
+                                {
+                                    img: {
                                         _attr: {
-                                            style: '',
+                                            url: doc.data().images.length > 0 ? doc.data().images[0] : util.FunctionsConstants.DefualtImage,
                                         },
                                     },
-                                   `${doc.data().name} ${doc.data().age}
+                                },
+                                {
+                                    md: [
+                                        {
+                                            _attr: {
+                                                style: '',
+                                            },
+                                        },
+                                        `${doc.data().name} ${doc.data().age}
                                     ${doc.data().location}
                                    `,
+                                    ],
+                                },
+                            ],
+                        };
+                        usersList.push(item);
+                    }
+
+                    let currentIndex;
+                    if (docs.docs.length == 20) {
+                        currentIndex = docs.docs[docs.docs.length - 1].id;
+                    } else {
+                        currentIndex = '';
+                    }
+
+                    const newUsersList = addNextButtonItemXML(usersList, uid, currentIndex);
+
+                    const docXML = [{
+                        doc: [
+                            {
+                                _attr: {
+                                    title: util.FunctionsConstants.Binu,
+                                },
+                            },
+                            {
+                                list: [
+                                    ...newUsersList,
                                 ],
                             },
                         ],
-                    };
-                    usersList.push(item);
-                }
+                    }];
 
-                if (docs.docs.length == 2) {
-                    const currentIndex = docs.docs[docs.docs.length - 1].id;
-                    await document.ref.update({currentIndex: currentIndex});
-                } else {
-                    await document.ref.update({currentIndex: ''});
-                }
-
-                const newUsersList = addNextButtonItemXML(usersList, uid);
-
-                const docXML = [{
-                    doc: [
-                        {
-                            _attr: {
-                                title: util.FunctionsConstants.Binu,
-                            },
-                        },
-                        {
-                            list: [
-                                ...newUsersList,
-                            ],
-                        },
-                    ],
-                }];
-
-                res.status(200).send(xml(docXML, true));
-                return;
-            });
+                    res.status(200).send(xml(docXML, true));
+                    return;
+                });
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
             res.status(404).send(util.ErrorMessages.UnexpectedExrror);
@@ -130,7 +172,7 @@ export default functions.https.onRequest(async (req, res) => {
 });
 
 
-function addNextButtonItemXML(itemsArray:any [], uid: string) {
+function addNextButtonItemXML(itemsArray: any[], uid: string, currentIndex: string) {
     const item = {
         item: [
             {
@@ -143,7 +185,7 @@ function addNextButtonItemXML(itemsArray:any [], uid: string) {
             {
                 _attr: {
                     style: '',
-                    href: `https://us-central1-umtuwam.cloudfunctions.net/http-getProspectiveDatesXml?id=${uid}`,
+                    href: `https://us-central1-umtuwam.cloudfunctions.net/http-getProspectiveDatesXml?id=${uid}&isNextPressed=${1}&currentIndex=${currentIndex}`,
                     layout: 'relative',
                 },
             },

@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 import * as util from '../utils/constans';
 import * as functions from 'firebase-functions';
 
-const corsHandler = cors({origin: true});
+const corsHandler = cors({ origin: true });
 
 export default functions.https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
@@ -26,23 +26,26 @@ export default functions.https.onRequest(async (req, res) => {
             const chatId = uid.concat('_').concat(uidString);
 
             await admin.firestore().collection(util.FunctionsConstants.Users)
-            .doc(uid)
-            .collection(util.FunctionsConstants.Chats)
-            .doc(chatId)
-            .collection(util.FunctionsConstants.Messages)
-            .orderBy(util.FunctionsConstants.Timestamp)
-            .limit(20)
-            .get()
-            .then((docs) => {
-                if (docs.empty) return [];
+                .doc(uid)
+                .collection(util.FunctionsConstants.Chats)
+                .doc(chatId)
+                .collection(util.FunctionsConstants.Messages)
+                .orderBy(util.FunctionsConstants.Timestamp)
+                .limit(20)
+                .get()
+                .then((docs) => {
+                    if (docs.empty) {
+                        res.status(200).send([]);
+                        return;
+                    }
 
-                const docsArray = [];
-                for (const doc of docs.docs) {
-                    docsArray.push(doc.data());
-                }
-                res.status(200).send(docsArray);
-                return;
-            });
+                    const docsArray = [];
+                    for (const doc of docs.docs) {
+                        docsArray.push(doc.data());
+                    }
+                    res.status(200).send(docsArray);
+                    return;
+                });
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
             res.status(404).send(util.ErrorMessages.UnexpectedExrror);

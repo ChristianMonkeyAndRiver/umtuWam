@@ -32,5 +32,7 @@ module.exports = {
     'quotes': ['error', 'single'],
     'import/no-unresolved': 0,
     'indent': 'off',
+    'object-curly-spacing': [2, 'always'],
+
   },
 };
