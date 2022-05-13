@@ -7,7 +7,7 @@ async function sendMoyaMessageAfterBeingLiked(number: string) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${config.MOYA_API_KEY}`,
+            'Authorization': `Bearer ${process.env.MOYA_API_KEY}`,
         },
         body: JSON.stringify({
             to: number,
@@ -32,7 +32,7 @@ async function sendMoyaMessageAfterMessageHasBeenSent(number: string) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${config.MOYA_API_KEY}`,
+            'Authorization': `Bearer ${process.env.MOYA_API_KEY}`,
         },
         body: JSON.stringify({
             to: number,
@@ -57,7 +57,7 @@ async function sendMoyaMessageAfterSubscriptionHasBeenBought(number: string) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${config.MOYA_API_KEY}`,
+            'Authorization': `Bearer ${process.env.MOYA_API_KEY}`,
         },
         body: JSON.stringify({
             to: number,
@@ -82,7 +82,7 @@ async function sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse(numbe
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${config.MOYA_API_KEY}`,
+            'Authorization': `Bearer ${process.env.MOYA_API_KEY}`,
         },
         body: JSON.stringify({
             to: number,

@@ -21,7 +21,7 @@ export default functions.https.onRequest(async (req, res) => {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${config.MOYA_PAY_DEVELOPER_KEY}`,
+                    'Authorization': `Bearer ${process.env.MOYA_PAY_DEVELOPER_KEY}`,
                 },
                 body: JSON.stringify({
                     amount: 1,

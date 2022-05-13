@@ -12,6 +12,13 @@ export default functions.https.onRequest(async (req, res) => {
             const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
             const uid = formattedId.toString();
 
+            const queryIsMale= req.query.lookingForMale ?? '';
+            const formattedMale = Array.isArray(queryIsMale) ? queryIsMale[0] : queryIsMale;
+            const isMale = formattedMale.toString();
+
+            const queryIsFemale= req.query.lookingForFemale ?? '';
+            const formattedFemale = Array.isArray(queryIsFemale) ? queryIsFemale[0] : queryIsFemale;
+            const isFemale = formattedFemale.toString();
 
             const ageNumber = Number(req.query.age);
 
@@ -22,11 +29,13 @@ export default functions.https.onRequest(async (req, res) => {
 
             const preference = [];
 
-            if (req.query.lookingForMale) {
+            if (isMale == '1') {
+                console.log('in male');
                 preference.push('Male');
             }
 
-            if (req.query.lookingForFemale) {
+            if (isFemale == '1') {
+                console.log('in female');
                 preference.push('Female');
             }
             let genderPreference = 'Straight';

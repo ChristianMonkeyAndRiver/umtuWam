@@ -85,7 +85,8 @@ export class ViewProfileDeleteImageDialog {
     const images = user.user.images;
     var filteredArray = images.filter((item: string) => !image.includes(item))
 
-    await this.userService.update(user.user.id, { images: filteredArray });
+    this.userService.update(user.user.id, { images: filteredArray });
+    user.user.images = filteredArray;
   }
 }
 

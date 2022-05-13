@@ -22,7 +22,7 @@ export default functions.https.onRequest(async (req, res) => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${config.MOYA_PAY_DEVELOPER_KEY}`,
+                    'Authorization': `Bearer ${process.env.MOYA_PAY_DEVELOPER_KEY}`,
                 },
             };
 
