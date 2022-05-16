@@ -33,35 +33,55 @@
         }
         function unlike() {
             var url = `https://us-central1-umtuwam.cloudfunctions.net/http-unlikeUser?id=${myId.value}&uid=${theirId.value}`
+            btnUnlike.innerText = 'Loading..';
+            btnUnlike.disabled = true;
             fetch(url)
                 .then((out) => {
                     btnUnlike.style.backgroundColor = '#FFC0CB';
+                    btnUnlike.innerText = 'Unliked!';
                 }).catch(err => console.error(err));
         }
         function gallery() {
             var url = `https://us-central1-umtuwam.cloudfunctions.net/http-getGalleryView?id=${myId.value}&uid=${theirId.value}`;
-            fetch(url)
-                .then((out) => {
-                    if (out.value != null) {
-                        for(let i = 1; i < imageArr.length; i++) {
-                            var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
-                            images.insertAdjacentHTML(after, imghtml);
-                        }
-                    } else {
-                        console.log(out);
-
+            btnGallery.innerText = 'Loading..'
+            btnGallery.disabled = true;
+            fetch(url).then(res => {
+                return res.json();
+            }).then((out) => {
+                if (out.value != false) {
+                    displayView.style.display = 'none';
+                    for (let i = 1; i < imageArr.length; i++) {
+                        var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
+                        const imgTest = document.createElement("img");
+                        imgTest.src = imageArr[i];
+                        imageDisplay.append(imgTest);
                     }
-                })
+                } else {
+                    displayView.style.display = 'none';
+                    displayBuy.style.display = 'block';
+                }
+            }).catch(err => console.error(err));
         }
     </script>
     <div class="container">
         <div>
             <img id="images" src="" alt="Loading image...">
         </div>
-        <button id="gallery" onclick="gallery()" class="heart">View more images</button>
-        <button id="btnUnlike" onclick="unlike()" class="heart">Unlike</button>
-        <a href="" class="heart" id="chat">Chat</a>
-        <a id="report" class="report" href="">Report</a>
+        <div id="displayBuy">
+            <a href="" id="galleryLink" class="heart" hidden>Buy access to view gallery?</a>
+        </div>
+        <div id="displayView">
+            <button id="btnGallery" onclick="gallery()" class="heart">View more images</button>
+        </div>
+        <div>
+            <a href="" class="heart" id="chat">Chat</a>
+        </div>
+        <div>
+            <a id="report" class="report" href="">Report</a>
+        </div>
+        <div>
+            <button id="btnUnlike" onclick="unlike()" class="heart">Unlike</button>
+        </div>
 
         <input type="text" id="myId" name="id" hidden value="" />
         <input type="text" id="theirId" name="id" hidden value="" />

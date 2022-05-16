@@ -14,6 +14,7 @@
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserPreferences?id=${id.value}`)
                 .then(res => res.json())
                 .then((out) => {
+                    console.log(out);
                     if (out.gender == "Female") {
                         female.setAttribute("checked", true)
                     } else {
@@ -23,10 +24,10 @@
                     ageFrom.setAttribute("value", out.ageMin);
                     ageTo.setAttribute("value", out.ageMax);
 
-                    var location = document.getElementById("location").children;
-                    for (var i = 0; i < location.length; i++) {
-                        if (location[i].value == out.location) {
-                            location[i].selected = true;
+                    var whereabouts = document.getElementById("whereabouts").children;
+                    for (var i = 0; i < whereabouts.length; i++) {
+                        if (whereabouts[i].value == out.location) {
+                            whereabouts[i].selected = true;
                             break;
                         }
                     }
@@ -70,17 +71,28 @@
                 }
 
                 var url = `https://us-central1-umtuwam.cloudfunctions.net/http-updateUserPreferences?` +
-                `ageFrom=${ageFrom.value}` +
-                `&ageTo=${ageTo.value}` +
-                `&location=${location.value}` +
-                `&lookingForFemale=${lookingForFemale}` +
-                `&lookingForMale=${lookingForMale}` +
-                `&id=${id.value}`;
+                    `ageFrom=${ageFrom.value}` +
+                    `&ageTo=${ageTo.value}` +
+                    `&location=${whereabouts.value}` +
+                    `&lookingForFemale=${lookingForFemale}` +
+                    `&lookingForMale=${lookingForMale}` +
+                    `&id=${id.value}`;
+
+                checkBtn.disabled = true;
+                checkBtn.innerText = 'Loading...';
 
                 fetch(url).then(function (response) {
+                    console.log(response);
+                    checkBtn.innerText = 'Changes saved!';
+                    let timeout = setTimeout(reset, 3000);
                     return response.json();
                 }).catch(err => console.error(err));
             }
+        }
+
+        function reset() {
+            checkBtn.disabled = false;
+            checkBtn.innerText = 'Save changes'
         }
 
     </script>
@@ -108,7 +120,7 @@
             </p>
             <p>
                 <label>Location:
-                    <select name="location" id="location" required>
+                    <select name="whereabouts" id="whereabouts" required>
                         <option value="" disabled selected>Select your location</option>
                         <option value="Bloemfontein">Bloemfontein</option>
                         <option value="Cape Town">Cape Town</option>
@@ -125,7 +137,7 @@
             </p>
             <input type="text" id="id" name="id" hidden value= />
         </div>
-        <button type="submit">Save Changes</button>
+        <button id="checkBtn" type="submit">Save Changes</button>
     </form>
 </body>
 

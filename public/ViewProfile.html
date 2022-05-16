@@ -11,6 +11,7 @@
     <script>
         var imageArr = [];
         window.onload = function () {
+            displayBuy.style.display = 'none';
             theirId.setAttribute("value", new URL(location.href).searchParams.get("did"));
             myId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${theirId.value}`)
@@ -20,20 +21,23 @@
                     whereabouts.innerText = out.location;
                     bio.innerText = out.bio;
                     images.src = out.images[0];
-                    report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-reportsView?id=${myId.value}&uid=${theirId.value}`);
+                    report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-reportsView?` +
+                    `id=${myId.value}` +
+                    `&uid=${theirId.value}` +
+                    `&name=${out.name}`);
                     imageArr = out.images;
                     const galleryUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?` +
-                    `id=${myId.value}}` +
-                    `&uid=${theirId.value}` +
-                    `&product=${'Photos'}` +
-                    `&isMine=${true}`;
+                        `id=${myId.value}}` +
+                        `&uid=${theirId.value}` +
+                        `&product=${'Photos'}` +
+                        `&isMine=${true}`;
                     galleryLink.setAttribute('href', galleryUrl);
                 }).catch(err => console.error(err));
         }
         function like() {
             var url = `https://us-central1-umtuwam.cloudfunctions.net/http-likeUser?id=${myId.value}&uid=${theirId.value}`
             btnLike.disabled = true;
-            btnLike.innerText = 'Loading';
+            btnLike.innerText = 'Loading..';
             fetch(url)
                 .then((out) => {
                     btnLike.style.backgroundColor = '#FFC0CB';
@@ -43,30 +47,41 @@
         function gallery() {
             var url = `https://us-central1-umtuwam.cloudfunctions.net/http-getGalleryView?id=${myId.value}&uid=${theirId.value}`;
             btnGallery.innerText = 'Loading..'
+            btnGallery.disabled = true;
             fetch(url).then(res => {
                 return res.json();
             }).then((out) => {
                 if (out.value != false) {
+                    displayView.style.display = 'none';
                     for (let i = 1; i < imageArr.length; i++) {
-                        btnGallery.style.visibility = 'hidden';
                         var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
-                        images.insertAdjacentHTML('afterEnd', imghtml);
+                        const imgTest = document.createElement("img");
+                        imgTest.src = imageArr[i];
+                        imageDisplay.append(imgTest);
                     }
                 } else {
-                    btnGallery.style.visibility = 'hidden';
-                    galleryLink.style.visibility = 'visible';
+                    displayView.style.display = 'none';
+                    displayBuy.style.display = 'block';
                 }
             }).catch(err => console.error(err));
         }
     </script>
     <div class="container">
-        <div>
+        <div id="imageDisplay">
             <img id="images" src="" alt="Loading image...">
         </div>
-        <a href="" id="galleryLink" class="heart" hidden>Buy access to view gallery?</a>
-        <button id="btnGallery" onclick="gallery()" class="heart">View more images</button>
-        <button id="btnLike" onclick="like()" class="heart">Like</button>
-        <a id="report" class="report" href="">Report</a>
+        <div id="displayBuy">
+            <a href="" id="galleryLink" class="heart" hidden>Buy access to view gallery?</a>
+        </div>
+        <div id="displayView">
+            <button id="btnGallery" onclick="gallery()" class="heart">View more images</button>
+        </div>
+        <div>
+            <button id="btnLike" onclick="like()" class="heart">Like</button>
+        </div>
+        <div>
+            <a id="report" class="report" href="">Report</a>
+        </div>
 
         <input type="text" id="myId" name="id" hidden value="" />
         <input type="text" id="theirId" name="id" hidden value="" />

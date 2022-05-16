@@ -16,29 +16,56 @@
                 </label>
             </div>
             <div class="container" id="card">
-                <img id="blah" src="#" alt="your image" hidden />
+
             </div>
             <div class="container" id="uploadContainer">
                 <div>
                     <button class="custom-file-upload" onclick="rotate()">Rotate Image</button>
                 </div>
                 <div>
-                    <button class="custom-file-upload" onclick="upload()">Upload this image</button>
+                    <button id="btnUpload" class="custom-file-upload" onclick="upload()">Upload this image</button>
                 </div>
             </div>
         </form>
     </div>
 
     <script>
-        let rotation = 0;
         function rotate() {
             event.preventDefault();
-            rotation += 90; // add 90 degrees
-            if (rotation === 360) {
-                // 360 means rotate back to 0
-                rotation = 0;
+            var canvas = document.getElementById("preview");
+            var context = canvas.getContext("2d");
+            var cw = canvas.width;
+            var ch = canvas.height;
+
+            var myImageData, rotating = false;
+
+            if (!rotating) {
+                rotating = true;
+                // store current data to an image
+                myImageData = new Image();
+                myImageData.src = canvas.toDataURL();
+
+                myImageData.onload = function () {
+                    // reset the canvas with new dimensions
+                    canvas.width = ch;
+                    canvas.height = cw;
+                    cw = canvas.width;
+                    ch = canvas.height;
+
+                    context.save();
+                    // translate and rotate
+                    context.translate(cw, ch / cw);
+                    context.rotate(Math.PI / 2);
+                    // draw the previows image, now rotated
+                    context.drawImage(myImageData, 0, 0);
+                    context.restore();
+
+                    // clear the temporary image
+                    myImageData = null;
+
+                    rotating = false;
+                }
             }
-            document.querySelector("#preview").style.transform = `rotate(${rotation}deg)`;
         }
 
         window.onload = function () {
@@ -53,10 +80,14 @@
                 (blob) => {
                     var image = blob;
 
+                    btnUpload.disabled = true;
+                    btnUpload.innerText = 'Loading...';
                     fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-uploadImage?id=${id.value}`, {
                         method: 'POST',
                         body: blob,
                     }).then(response => {
+                        btnUpload.innerText = 'Upload successful';
+                        let timeout = setTimeout(reset, 3000);
                         if (!response.ok) {
                             throw new Error('Network response was not ok.')
                         }
@@ -65,6 +96,11 @@
                 MIME_TYPE,
                 QUALITY
             );
+        }
+
+        function reset() {
+            checkBtn.disabled = false;
+            checkBtn.innerText = 'Save changes'
         }
 
         const MAX_WIDTH = 480;

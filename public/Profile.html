@@ -39,9 +39,18 @@
             `&bio=${bio.value}` +
             `&id=${id.value}`;
 
+            checkBtn.disabled = true;
+            checkBtn.innerText = 'Loading...'
             fetch(url).then(function (response) {
+                console.log(response);
+                checkBtn.innerText = 'Changes saved!';
+                let timeout = setTimeout(reset, 3000);
                 return response.json();
             }).catch(err => console.error(err));
+        }
+        function reset() {
+            checkBtn.disabled = false;
+            checkBtn.innerText = 'Save changes'
         }
     </script>
     <div>

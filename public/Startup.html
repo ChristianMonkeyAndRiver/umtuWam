@@ -44,16 +44,17 @@
                     }
                 }
 
-                var lookingForMale = false;
-                var lookingForFemale = false;
+                var lookingForMale = '0';
+                var lookingForFemale = '0';
                 inputs = document.getElementsByName("lookingFor");
+                console.log(inputs);
                 for (var i = 0; i < inputs.length; i++) {
                     if (inputs[i].checked) {
                         if (inputs[i].value == "Female") {
-                            lookingForFemale = true;
+                            lookingForFemale = '1';
                         }
                         if (inputs[i].value == "Male") {
-                            lookingForMale = true;
+                            lookingForMale = '1';
                         }
                     }
                 }
@@ -67,10 +68,10 @@
                 `&location=${whereabouts.value}` +
                 `&id=${id.value}`;
 
+                checkBtn.disabled = true;
+                checkBtn.innerText = 'Loading...'
                 fetch(url).then(function (response) {
-                    return response.json();
-                    // TODO: add redirect
-                    window.location.reload();
+                    checkBtn.innerText = 'Signup was successful!'
                 }).catch((error) => {
                     console.error('Error:', error);
                 });;

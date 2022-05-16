@@ -25,3 +25,7 @@ label input[type="file"] {
     padding-left: 10%;
     padding-right: 10%;
 }
+
+body {
+    padding-bottom: 150px;
+}
