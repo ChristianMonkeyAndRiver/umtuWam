@@ -1,6 +1,7 @@
 import * as xml from 'xml';
 import * as cors from 'cors';
 import * as util from '../utils/constans';
+import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 
 const corsHandler = cors({ origin: true });
@@ -11,6 +12,16 @@ export default functions.https.onRequest(async (req, res) => {
             const queryId = req.query.id ?? '';
             const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
             const uid = formattedId.toString();
+
+            const document = await admin.firestore()
+                .collection(util.FunctionsConstants.Users)
+                .doc(uid)
+                .get();
+
+                console.log(' ================= Preferences =================');
+                console.log(uid);
+                console.log(' ================= Preferences =================');
+
             const doc = [{
                 doc: [
                     {
@@ -22,7 +33,7 @@ export default functions.https.onRequest(async (req, res) => {
                         webview: [
                             {
                                 _attr: {
-                                    href: `https://umtuwam.web.app/Startup.html?did=${uid}`,
+                                    href: document.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getPreferencesView?id=${document.id}` : `https://umtuwam.web.app/Startup.html?did=${uid}`,
                                     internal: 'true',
                                 },
                             },
