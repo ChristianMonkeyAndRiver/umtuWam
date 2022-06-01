@@ -1,6 +1,8 @@
 import { Component, Input, OnInit, Inject } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+import { ViewProfileServiceService } from 'src/app/services/view-profile-service.service';
 
 export interface DialogData {
   user: any;
@@ -14,13 +16,19 @@ export interface DialogData {
 })
 export class ViewProfileComponent implements OnInit {
 
-  @Input() user: any;
+  user: any;
 
   constructor(
-    public dialog: MatDialog,
-  ) { }
+    public dialog: MatDialog, private route: ActivatedRoute, private router: Router, private userData: ViewProfileServiceService,
+  ) {
+    this.route.queryParams.subscribe(params => {
+      this.user = params['user'];
+    });
+  }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.userData.currentUser.subscribe((userObj: any) => this.user = userObj)
+  }
 
   showDelete(image: string) {
     this.dialog.open(ViewProfileDeleteImageDialog, {

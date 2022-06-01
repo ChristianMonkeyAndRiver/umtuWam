@@ -18,9 +18,6 @@ export default functions.https.onRequest(async (req, res) => {
                 .doc(uid)
                 .get();
 
-            console.log(' ================= Profile =================');
-            console.log(uid);
-            console.log(' ================= Profile =================');
             const doc = [{
                 doc: [
                     {

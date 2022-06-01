@@ -18,10 +18,6 @@ export default functions.https.onRequest(async (req, res) => {
                 .doc(uid)
                 .get();
 
-                console.log(' ================= Matches =================');
-                console.log(uid);
-                console.log(' ================= Matches =================');
-
             const doc = [{
                 doc: [
                     {

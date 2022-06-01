@@ -10,25 +10,26 @@
 </mat-toolbar>
 
 <mat-drawer-container class="example-container" autosize>
+
   <mat-drawer #drawer class="example-sidenav" mode="side">
     <div>
-      <button mat-flat-button class="drawer-icon-button" (click)="setCurrentIndex(0)"
+      <button mat-flat-button class="drawer-icon-button" (click)="showActiveUsers()"
         [ngStyle]="{'background-color': currentIndex === 0 ? '#f6e3ed' : 'white'}">
-        <mat-icon class="drawer-button-icon">error_outline</mat-icon>
-        <span>Abuse Reports</span>
-      </button>
-    </div>
-
-    <div>
-      <button mat-flat-button class="drawer-icon-button" (click)="setCurrentIndex(1)"
-        [ngStyle]="{'background-color': currentIndex === 1 ? '#f6e3ed' : 'white'}">
         <mat-icon class="drawer-button-icon">supervisor_account</mat-icon>
         <span>Active Users</span>
       </button>
     </div>
 
     <div>
-      <button mat-flat-button class="drawer-icon-button" (click)="setCurrentIndex(2)"
+      <button mat-flat-button class="drawer-icon-button" (click)="showReports()"
+        [ngStyle]="{'background-color': currentIndex === 1 ? '#f6e3ed' : 'white'}">
+        <mat-icon class="drawer-button-icon">error_outline</mat-icon>
+        <span>Abuse Reports</span>
+      </button>
+    </div>
+
+    <div>
+      <button mat-flat-button class="drawer-icon-button" (click)="showBannedUsers()"
         [ngStyle]="{'background-color': currentIndex === 2 ? '#f6e3ed' : 'white'}">
         <mat-icon class="drawer-button-icon">not_interested</mat-icon>
         <span>Banned Accounts</span>
@@ -37,14 +38,6 @@
   </mat-drawer>
 
   <div class="example-sidenav-content">
-    <ng-template [ngIf]="currentIndex == 0">
-      <app-reports-list></app-reports-list>
-    </ng-template>
-    <ng-template [ngIf]="currentIndex == 1">
-      <app-active-users-list></app-active-users-list>
-    </ng-template>
-    <ng-template [ngIf]="currentIndex == 2">
-      <app-banned-accounts-list></app-banned-accounts-list>
-    </ng-template>
+    <router-outlet></router-outlet>
   </div>
 </mat-drawer-container>

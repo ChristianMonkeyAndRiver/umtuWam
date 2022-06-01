@@ -15,6 +15,16 @@ export class UsersService {
     this.bannedUserRef = db.collection(this.dbPath);
   }
 
+  loadSearch(startCode: string, endCode: string): AngularFirestoreCollection<UserModel> {
+    return this.db.collection<UserModel>(this.dbPath, ref =>
+      ref
+        .limit(100)
+        .orderBy('name')
+        .where('name', '>=', startCode)
+        .where('name', '<', endCode)
+    );
+  }
+
   loadPrev(startAtDoc: any, firstInResponse: any): AngularFirestoreCollection<UserModel> {
     return this.db.collection<UserModel>(this.dbPath, ref =>
       ref

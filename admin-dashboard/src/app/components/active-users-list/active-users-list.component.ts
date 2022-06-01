@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from "@angular/common";
 import { UsersService } from '../../services/users.service';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+import { ViewProfileServiceService } from 'src/app/services/view-profile-service.service';
 
 @Component({
   selector: 'app-active-users-list',
@@ -25,7 +28,7 @@ export class ActiveUsersListComponent implements OnInit {
   lastInResponse: any = [];
 
   //Keep the array of first document of previous pages
-  prev_strt_at: any = [];
+  prev_start_at: any = [];
 
   //Maintain the count of clicks on Next Prev button
   pagination_clicked_count = 0;
@@ -34,23 +37,36 @@ export class ActiveUsersListComponent implements OnInit {
   disable_next: boolean = false;
   disable_prev: boolean = false;
 
-  constructor(private userService: UsersService) {
-    this.showDetails = false;
+  constructor(private userService: UsersService, private location: Location, private userData: ViewProfileServiceService, private route: ActivatedRoute, private router: Router) {
+    if (this.router.url.includes('active/profile')) {
+      this.showDetails = true;
+      this.router.navigate(['profile'], { relativeTo: this.route })
+    } else {
+      this.showDetails = false;
+    }
   }
 
   ngOnInit(): void {
     this.loadUsers();
+    console.log('Loading users');
+    this.location.subscribe(event => {
+      if (event.url?.includes('active/profile')) {
+        this.showDetails = true;
+        this.router.navigate(['profile'], { relativeTo: this.route })
+      }
+    });
+
   }
 
-  search(): void {
-    this.filteredActiveUsers = this.activeUsers.filter(user =>
-      user.name.toLowerCase().indexOf(this.searchText.toLowerCase()) !== -1
-    );
-  }
+  // search(val): void {
+  //   this.timer= 
+  // }
 
-  setShowDetails(showDetails: boolean, user: any): void {
+  showProfile(showDetails: boolean, user: any): void {
     this.user = user;
     this.showDetails = showDetails;
+    this.userData.setUser(user);
+    this.router.navigate(['profile'], { relativeTo: this.route })
   }
 
   loadUsers(): void {
@@ -71,7 +87,7 @@ export class ActiveUsersListComponent implements OnInit {
         this.filteredActiveUsers = this.activeUsers;
 
         //Initialize values
-        this.prev_strt_at = [];
+        this.prev_start_at = [];
         this.pagination_clicked_count = 0;
         this.disable_next = false;
         this.disable_prev = false;
@@ -144,12 +160,12 @@ export class ActiveUsersListComponent implements OnInit {
 
   //Add document
   push_prev_startAt(prev_first_doc: any) {
-    this.prev_strt_at.push(prev_first_doc);
+    this.prev_start_at.push(prev_first_doc);
   }
 
   //Remove not required document 
   pop_prev_startAt(prev_first_doc: any) {
-    this.prev_strt_at.forEach((element: any) => {
+    this.prev_start_at.forEach((element: any) => {
       if (prev_first_doc.data().id == element.data().id) {
         element = null;
       }
@@ -158,8 +174,8 @@ export class ActiveUsersListComponent implements OnInit {
 
   //Return the Doc rem where previous page will startAt
   get_prev_startAt() {
-    if (this.prev_strt_at.length > (this.pagination_clicked_count + 1))
-      this.prev_strt_at.splice(this.prev_strt_at.length - 2, this.prev_strt_at.length - 1);
-    return this.prev_strt_at[this.pagination_clicked_count - 1];
+    if (this.prev_start_at.length > (this.pagination_clicked_count + 1))
+      this.prev_start_at.splice(this.prev_start_at.length - 2, this.prev_start_at.length - 1);
+    return this.prev_start_at[this.pagination_clicked_count - 1];
   }
 }

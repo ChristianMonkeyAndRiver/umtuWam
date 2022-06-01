@@ -2,15 +2,41 @@
     <div class="search-bar-container">
         <mat-form-field appearance="standard">
             <input class="search-bar" matInput type="search" placeholder="Search Name or Phone Number"
-                [(ngModel)]="searchText" (input)="search()" name="searchText" required>
+                [(ngModel)]="searchText" name="searchText" required>
         </mat-form-field>
     </div>
     <div>
         <button mat-button class="pagination-button" id="previous" (click)="prevPage()">&laquo; Previous</button>
         <button mat-button class="pagination-button" id="next" (click)="nextPage()">Next &raquo;</button>
     </div>
-    <div class="list-tile-container">
-        <mat-card class="list-tile-item" *ngFor="let user of filteredActiveUsers;" (click)="setShowDetails(true, user)">
+    <div class="list-tile-container" *ngFor="let user of filteredActiveUsers;" (click)="showProfile(true, user)">
+        <div class="information-container">
+            <img src="{{user.images[0] ?? 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53'}}"
+                alt="">
+            <div class="details-container">
+                <div class="name-container">
+                    {{user.name}}
+                </div>
+                <div class="location-container">
+                    {{user.location}}
+                </div>
+            </div>
+        </div>
+        <div class="reports-container">
+            <div class="abuse-container">
+                Abuse Reports: {{user.reports}}
+            </div>
+            <mat-icon>remove_red_eye</mat-icon>
+        </div>
+    </div>
+</div>
+
+<ng-template #details>
+    <router-outlet></router-outlet>
+</ng-template>
+
+<!-- <div class="list-tile-container">
+        <mat-card class="list-tile-item" *ngFor="let user of filteredActiveUsers;" (click)="showProfile(true, user)">
             <img mat-card-avatar
                 src="{{user.images[0] ?? 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53'}}">
             <mat-card-title> {{user.name}} </mat-card-title>
@@ -18,10 +44,4 @@
                 Abuse Reports: {{user.reports}}
             </div>
         </mat-card>
-    </div>
-</div>
-
-<ng-template #details>
-    <app-view-profile [user]="{user}"></app-view-profile>
-    <button class="back" (click)="setShowDetails(false, user)">Back</button>
-</ng-template>
+    </div> -->
