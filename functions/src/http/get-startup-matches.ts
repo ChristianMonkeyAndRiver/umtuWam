@@ -1,6 +1,6 @@
 import * as xml from 'xml';
 import * as cors from 'cors';
-import * as util from '../utils/constans';
+import * as util from '../utils/constants';
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 
@@ -18,6 +18,8 @@ export default functions.https.onRequest(async (req, res) => {
                 .doc(uid)
                 .get();
 
+            const randomKey = Math.floor(Math.random() * 100);
+
             const doc = [{
                 doc: [
                     {
@@ -29,7 +31,7 @@ export default functions.https.onRequest(async (req, res) => {
                         webview: [
                             {
                                 _attr: {
-                                    href: document.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getMatchesXml?id=${document.id}` : `https://umtuwam.web.app/Startup.html?did=${uid}`,
+                                    href: document.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getMatchesXml?id=${document.id}&randomKey=${randomKey}` : `https://umtuwam.web.app/Startup.html?did=${uid}&randomKey=${randomKey}`,
                                     internal: 'true',
                                 },
                             },
@@ -37,7 +39,9 @@ export default functions.https.onRequest(async (req, res) => {
                     },
                 ],
             }];
-
+            res.set('Cache-Control', 'no-cache');
+            res.set('Cache-Control', 'max-age=0');
+            res.set('Cache-Control', 'must-revalidate');
             res.send(xml(doc, true));
             return;
         } catch (error) {

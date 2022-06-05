@@ -1,6 +1,6 @@
 import * as xml from 'xml';
 import * as cors from 'cors';
-import * as util from '../utils/constans';
+import * as util from '../utils/constants';
 import * as functions from 'firebase-functions';
 
 const corsHandler = cors({ origin: true });

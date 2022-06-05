@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import * as util from '../utils/constans';
+import * as util from '../utils/constants';
 import * as functions from 'firebase-functions';
 
 export default functions.firestore.document('reports/{docId}')

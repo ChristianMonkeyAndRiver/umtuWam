@@ -1,7 +1,7 @@
 import * as cors from 'cors';
 import fetch from 'cross-fetch';
 import * as admin from 'firebase-admin';
-import * as util from '../utils/constans';
+import * as util from '../utils/constants';
 import * as config from '../config/config';
 import * as functions from 'firebase-functions';
 

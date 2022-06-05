@@ -1,7 +1,7 @@
 import * as xml from 'xml';
 import * as cors from 'cors';
 import * as admin from 'firebase-admin';
-import * as util from '../utils/constans';
+import * as util from '../utils/constants';
 import * as functions from 'firebase-functions';
 
 const corsHandler = cors({ origin: true });
@@ -64,6 +64,20 @@ export default functions.https.onRequest(async (req, res) => {
                                 },
                                 {
                                     md: isChatSubscriptionValid ? 'Chat subscription is currently active' : `${util.FunctionsConstants.Chatting}: ${util.FunctionsConstants.ClickToPayChats}`,
+                                },
+                            ],
+                        },
+                        {
+                            item: [
+                                {
+                                    _attr: {
+                                        style: '',
+                                        href: isChatSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}}&uid=${''}&product=${util.Products.Chats}&isMine=${true}`,
+                                        layout: 'relative',
+                                    },
+                                },
+                                {
+                                    md: isChatSubscriptionValid ? 'Chat subscription is currently active' : `${util.FunctionsConstants.Chatting}: ${util.FunctionsConstants.ClickToPayChatsMonth}`,
                                 },
                             ],
                         },

@@ -81,6 +81,7 @@ enum FunctionsConstants {
     SeeAllPhotos = 'See All Photos',
     MoyaSubjectText = 'Moya #datafree app',
     ClickToPayChats = 'Click to pay R1 to chat for a day',
+    ClickToPayChatsMonth = 'Click to pay R15 to chat for a month',
     ClickToPayPhotos = 'Click to pay R1 to see all profile photos',
     ClickToPayFeatured = 'Click to pay R1 to have your profile boosed for a day',
     ClickToPayVerified = 'Click to pay R1 to show a VERIFIED badge on your profile',

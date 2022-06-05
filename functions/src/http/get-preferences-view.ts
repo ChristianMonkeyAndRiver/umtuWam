@@ -1,6 +1,6 @@
 import * as cors from 'cors';
 import * as xml from 'xml';
-import * as util from '../utils/constans';
+import * as util from '../utils/constants';
 import * as functions from 'firebase-functions';
 
 const corsHandler = cors({ origin: true });
@@ -11,6 +11,7 @@ export default functions.https.onRequest(async (req, res) => {
             const queryId = req.query.id ?? '';
             const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
             const uid = formattedId.toString();
+
             const doc = [{
                 doc: [
                     {

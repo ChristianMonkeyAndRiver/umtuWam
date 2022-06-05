@@ -1,6 +1,6 @@
 import * as cors from 'cors';
 import * as admin from 'firebase-admin';
-import * as util from '../utils/constans';
+import * as util from '../utils/constants';
 import * as functions from 'firebase-functions';
 
 const corsHandler = cors({ origin: true });
@@ -12,11 +12,11 @@ export default functions.https.onRequest(async (req, res) => {
             const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
             const uid = formattedId.toString();
 
-            const queryIsMale= req.query.lookingForMale ?? '';
+            const queryIsMale = req.query.lookingForMale ?? '';
             const formattedMale = Array.isArray(queryIsMale) ? queryIsMale[0] : queryIsMale;
             const isMale = formattedMale.toString();
 
-            const queryIsFemale= req.query.lookingForFemale ?? '';
+            const queryIsFemale = req.query.lookingForFemale ?? '';
             const formattedFemale = Array.isArray(queryIsFemale) ? queryIsFemale[0] : queryIsFemale;
             const isFemale = formattedFemale.toString();
 
@@ -30,12 +30,10 @@ export default functions.https.onRequest(async (req, res) => {
             const preference = [];
 
             if (isMale == '1') {
-                console.log('in male');
                 preference.push('Male');
             }
 
             if (isFemale == '1') {
-                console.log('in female');
                 preference.push('Female');
             }
             let genderPreference = 'Straight';

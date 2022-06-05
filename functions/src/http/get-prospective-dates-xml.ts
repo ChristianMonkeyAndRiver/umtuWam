@@ -2,7 +2,7 @@
 import * as xml from 'xml';
 import * as cors from 'cors';
 import * as admin from 'firebase-admin';
-import * as util from '../utils/constans';
+import * as util from '../utils/constants';
 import * as functions from 'firebase-functions';
 
 const corsHandler = cors({ origin: true });
@@ -17,7 +17,6 @@ export default functions.https.onRequest(async (req, res) => {
             const isNextPressed = req.query.isNextPressed ?? '';
             const formattedBool = Array.isArray(isNextPressed) ? isNextPressed[0] : isNextPressed;
             const isFromNextPressedBool = formattedBool.toString();
-
 
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).get()
                 .then(async (document) => {

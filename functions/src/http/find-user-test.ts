@@ -1,5 +1,5 @@
 import fetch from 'cross-fetch';
-import * as util from '../utils/constans';
+import * as util from '../utils/constants';
 import * as functions from 'firebase-functions';
 
 export default functions.https.onRequest(async (req, res) => {
