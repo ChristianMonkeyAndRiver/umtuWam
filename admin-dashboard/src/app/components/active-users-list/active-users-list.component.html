@@ -1,8 +1,8 @@
 <div *ngIf="!showDetails; else details">
     <div class="search-bar-container">
         <mat-form-field appearance="standard">
-            <input class="search-bar" matInput type="search" placeholder="Search Name or Phone Number"
-                [(ngModel)]="searchText" name="searchText" required>
+            <input class="search-bar" matInput type="search" placeholder="Search Name"
+                [(ngModel)]="searchText" [formControl]="searchController" required>
         </mat-form-field>
     </div>
     <div>

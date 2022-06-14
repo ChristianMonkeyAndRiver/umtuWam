@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from "@angular/common";
+import { FormControl } from '@angular/forms';
 import { UsersService } from '../../services/users.service';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { ViewProfileServiceService } from 'src/app/services/view-profile-service.service';
+import { debounce, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-active-users-list',
@@ -37,6 +39,7 @@ export class ActiveUsersListComponent implements OnInit {
   disable_next: boolean = false;
   disable_prev: boolean = false;
 
+  public searchController = new FormControl('');
 
   constructor(
     private userService: UsersService, 
@@ -64,6 +67,61 @@ export class ActiveUsersListComponent implements OnInit {
         this.loadUsers();
       }
     });
+
+    this.searchController.valueChanges
+      .pipe(debounceTime(2000))
+      .pipe(distinctUntilChanged())
+      .subscribe(text => {
+        text = text.charAt(0).toUpperCase() + text.slice(1);
+        var strSearch = text;
+        var strlength = strSearch.length;
+        var strFrontCode = strSearch.slice(0, strlength-1);
+        var strEndCode = strSearch.slice(strlength-1, strSearch.length);
+
+        var startcode = strSearch;
+        var endcode= strFrontCode + String.fromCharCode(strEndCode.charCodeAt(0) + 1);
+        
+        
+        this.userService.searchUsers(startcode, endcode)
+        .subscribe(response => {
+
+          if (!response.docs.length) {
+            console.log("No More Data Available");
+            this.disable_next = true;
+            return;
+          }
+  
+          this.firstInResponse = response.docs[0];
+          this.lastInResponse = response.docs[response.docs.length - 1];
+  
+          this.activeUsers = [];
+          for (let item of response.docs) {
+            const data = JSON.parse(JSON.stringify(item.data()));
+            this.activeUsers.push({ 
+              id: item.id,
+              ...data,
+            });
+          }
+          this.filteredActiveUsers = this.activeUsers;
+  
+  
+          this.pagination_clicked_count++;
+  
+          this.push_prev_startAt(this.firstInResponse);
+  
+          if (response.docs.length < 5) {
+            // disable next button if data fetched is less than 5 - means no more data left to load
+            // because limit ti get data is set to 5
+            this.disable_next = true;
+          } else {
+              this.disable_next = false;
+          }
+        this.disable_prev = false;
+        }, error => {
+          this.disable_next = false;
+        });
+      })
+
   }
 
   showLocalProfile(): void {
@@ -198,6 +256,7 @@ export class ActiveUsersListComponent implements OnInit {
   push_prev_startAt(prev_first_doc: any) {
     this.prev_start_at.push(prev_first_doc);
   }
+
   // remove non required document 
   pop_prev_startAt(prev_first_doc: any) {
     this.prev_start_at.forEach((element: any) => {
@@ -206,6 +265,7 @@ export class ActiveUsersListComponent implements OnInit {
       }
     });
   }
+
   // return the Doc rem where previous page will startAt
   get_prev_startAt() {
     if (this.prev_start_at.length > (this.pagination_clicked_count + 1)) {
@@ -213,6 +273,7 @@ export class ActiveUsersListComponent implements OnInit {
     }
     return this.prev_start_at[this.pagination_clicked_count - 1];
   }
+
   setShowDetails(showDetails: boolean, user: any): void {
     this.user = user;
     this.showDetails = showDetails;
