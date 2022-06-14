@@ -10,12 +10,16 @@ import { ViewProfileServiceService } from 'src/app/services/view-profile-service
   styleUrls: ['./reports-list.component.css']
 })
 export class ReportsListComponent implements OnInit {
-  searchText: string = '';
+
   user: any;
+
   showDetails: boolean;
+
+  searchText: string = '';
+
   //Data object for listing items
-  reports: any[] = [];
-  filteredReports: any[] = [];
+  activeUsers: any[] = [];
+  filteredActiveUsers: any[] = [];
 
   //Save first document in snapshot of items received
   firstInResponse: any = [];
@@ -35,90 +39,113 @@ export class ReportsListComponent implements OnInit {
 
 
   constructor(
-    private reportsService: ReportsService, private userData: ViewProfileServiceService, private location: Location, private route: ActivatedRoute, private router: Router
+    private reportsService: ReportsService, 
+    private location: Location, 
+    private userData: ViewProfileServiceService, 
+    private route: ActivatedRoute, 
+    private router: Router
   ) {
     if (this.router.url.includes('reports/profile')) {
       this.showDetails = true;
-      this.router.navigate(['profile'], { relativeTo: this.route })
+      this.showLocalProfile(); 
     } else {
       this.showDetails = false;
+      this.loadUsers();
     }
   }
 
   ngOnInit(): void {
-    this.loadReports();
     this.location.subscribe(event => {
       if (event.url?.includes('reports/profile')) {
-        this.showDetails = true;
-        this.router.navigate(['profile'], { relativeTo: this.route })
+        this.showLocalProfile();
+      }
+      else if (event.pop) { 
+        this.showDetails = false;
+        this.loadUsers();
       }
     });
   }
+
+  showLocalProfile(): void {
+    this.showDetails =  true;
+    var retrievedObject = localStorage.getItem('RECENT_USER');
+    this.userData.setUser(JSON.parse(retrievedObject ?? ''));
+    this.router.navigate(['profile'], { relativeTo: this.route })
+  } 
+
   showProfile(showDetails: boolean, user: any): void {
     this.user = user;
     this.showDetails = showDetails;
     this.userData.setUser(user);
+    localStorage.setItem('RECENT_USER', JSON.stringify(this.user));
     this.router.navigate(['profile'], { relativeTo: this.route })
   }
 
-  search(): void {
-    this.filteredReports = this.reports.filter(user =>
-      user.name.toLowerCase().indexOf(this.searchText.toLowerCase()) !== -1
-    );
-  }
-
-  loadReports(): void {
+  loadUsers(): void {
     this.reportsService.loadReports()
-      .snapshotChanges()
       .subscribe(users => {
-        if (!users.length) {
+        if (users.length == 0) {
           console.log("No Data Available");
           return;
         }
+
         this.firstInResponse = users[0].payload.doc;
         this.lastInResponse = users[users.length - 1].payload.doc;
-
-        this.reports = [];
+  
+        this.activeUsers = [];
         for (let item of users) {
-          this.reports.push({ docId: item.payload.doc.id, id: item.payload.doc.data().transgressorId, ...item.payload.doc.data() });
+          const data = JSON.parse(JSON.stringify(item.payload.doc.data()));
+          this.activeUsers.push({ 
+            id: item.payload.doc.id,
+            ...data,
+          });
         }
-        this.filteredReports = this.reports;
-
+        this.filteredActiveUsers = this.activeUsers;
+  
         //Initialize values
         this.prev_start_at = [];
         this.pagination_clicked_count = 0;
         this.disable_next = false;
         this.disable_prev = false;
-
+  
         //Push first item to use for Previous action
         this.push_prev_startAt(this.firstInResponse);
+      }, error => {
+        console.log(error);
       });
   }
-
+  
   //Show previous set 
   prevPage() {
     this.disable_prev = true;
     this.reportsService.loadPrev(this.get_prev_startAt(), this.firstInResponse)
-      .get()
-      .subscribe(users => {
-        this.firstInResponse = users.docs[0];
-        this.lastInResponse = users.docs[users.docs.length - 1];
+      .subscribe(response => {
+        this.firstInResponse = response.docs[0];
+        this.lastInResponse = response.docs[response.docs.length - 1];
 
-        this.reports = [];
-        for (let item of users.docs) {
-          this.reports.push({ id: item.id, ...item.data() });
+        this.activeUsers = [];
+        for (let item of response.docs) {
+          const data = JSON.parse(JSON.stringify(item.data()));
+          this.activeUsers.push({ 
+            id: item.id,
+            ...data,
+          });
         }
-        this.filteredReports = this.reports;
+        this.filteredActiveUsers = this.activeUsers;
 
 
-        //Maintaing page no.
+        //Maintaining page no.
         this.pagination_clicked_count--;
 
         //Pop not required value in array
         this.pop_prev_startAt(this.firstInResponse);
 
-        //Enable buttons again
-        this.disable_prev = false;
+        // enable buttons again
+        if (this.pagination_clicked_count == 0) {
+          this.disable_prev = true;
+        } else {
+          this.disable_prev = false;
+        }
         this.disable_next = false;
       }, error => {
         this.disable_prev = false;
@@ -128,40 +155,50 @@ export class ReportsListComponent implements OnInit {
   nextPage() {
     this.disable_next = true;
     this.reportsService.loadNext(this.lastInResponse)
-      .get()
-      .subscribe(users => {
+      .subscribe(response => {
 
-        if (!users.docs.length) {
+        if (!response.docs.length) {
+          console.log("No More Data Available");
           this.disable_next = true;
           return;
         }
 
-        this.firstInResponse = users.docs[0];
-        this.lastInResponse = users.docs[users.docs.length - 1];
+        this.firstInResponse = response.docs[0];
+        this.lastInResponse = response.docs[response.docs.length - 1];
 
-        this.reports = [];
-        for (let item of users.docs) {
-          this.reports.push({ id: item.id, ...item.data() });
+        this.activeUsers = [];
+        for (let item of response.docs) {
+          const data = JSON.parse(JSON.stringify(item.data()));
+          this.activeUsers.push({ 
+            id: item.id,
+            ...data,
+          });
         }
-        this.filteredReports = this.reports;
+        this.filteredActiveUsers = this.activeUsers;
 
 
         this.pagination_clicked_count++;
 
         this.push_prev_startAt(this.firstInResponse);
 
-        this.disable_next = false;
+        if (response.docs.length < 5) {
+          // disable next button if data fetched is less than 5 - means no more data left to load
+          // because limit ti get data is set to 5
+          this.disable_next = true;
+        } else {
+            this.disable_next = false;
+        }
+      this.disable_prev = false;
       }, error => {
         this.disable_next = false;
       });
   }
 
-  //Add document
+  // add a document
   push_prev_startAt(prev_first_doc: any) {
     this.prev_start_at.push(prev_first_doc);
   }
-
-  //Remove not required document 
+  // remove non required document 
   pop_prev_startAt(prev_first_doc: any) {
     this.prev_start_at.forEach((element: any) => {
       if (prev_first_doc.data().id == element.data().id) {
@@ -169,17 +206,15 @@ export class ReportsListComponent implements OnInit {
       }
     });
   }
-
-  //Return the Doc rem where previous page will startAt
+  // return the Doc rem where previous page will startAt
   get_prev_startAt() {
-    if (this.prev_start_at.length > (this.pagination_clicked_count + 1))
+    if (this.prev_start_at.length > (this.pagination_clicked_count + 1)) {
       this.prev_start_at.splice(this.prev_start_at.length - 2, this.prev_start_at.length - 1);
+    }
     return this.prev_start_at[this.pagination_clicked_count - 1];
   }
-
   setShowDetails(showDetails: boolean, user: any): void {
     this.user = user;
     this.showDetails = showDetails;
   }
-
 }

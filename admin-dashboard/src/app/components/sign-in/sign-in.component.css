@@ -1,5 +1,6 @@
-.login-div{
+.login-div {
   height: 100vh;
+  margin: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,13 +10,18 @@ mat-card {
   width: 25%;
   margin: 2em auto;
   text-align: center;
-}
-  
-mat-form-field {
   display: block;
+  border-radius: 2.5%;
+
 }
 
-.login-button{
+mat-form-field {
+  display: block;
+  margin: 12px 0px;
+  font-size: 16px;
+}
+
+.login-button {
   width: 100%;
   color: white;
   font-size: 14px;

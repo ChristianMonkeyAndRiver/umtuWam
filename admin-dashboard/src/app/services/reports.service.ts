@@ -1,61 +1,44 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { ReportsModel } from '../models/reports_model';
-import { UserModel } from '../models/user_model';
-
+import { AngularFirestore, AngularFirestoreCollection, DocumentChangeAction } from '@angular/fire/compat/firestore';
 @Injectable({
   providedIn: 'root'
 })
 export class ReportsService {
   private usersDBPath = '/users';
   private dbPath = '/reports';
-  usersRef: AngularFirestoreCollection<UserModel>;
-  reportsRef: AngularFirestoreCollection<ReportsModel>;
-  constructor(private db: AngularFirestore) {
-    this.usersRef = db.collection(this.usersDBPath);
-    this.reportsRef = db.collection(this.dbPath);
-  }
+  constructor(private angularFirestore: AngularFirestore){}
 
-  loadSearch(startCode: string, endCode: string): AngularFirestoreCollection<UserModel> {
-    return this.db.collection<UserModel>(this.dbPath, ref =>
-      ref
-        .limit(100)
-        .orderBy('name')
-        .where('name', '>=', startCode)
-        .where('name', '<', endCode)
-    );
-  }
-
-
-  loadReports(): AngularFirestoreCollection<ReportsModel> {
-    return this.db.collection<ReportsModel>(this.dbPath, ref =>
-      ref
-        .where('reports', '>=', 2)
+  loadReports()  {
+    return this.angularFirestore.collection(
+      'reports',
+      ref => ref
+         .where('reports', '>=', 2)
         .limit(20)
-    );
+    ).snapshotChanges();
   }
 
-
-  loadPrev(startAtDoc: any, firstInResponse: any): AngularFirestoreCollection<ReportsModel> {
-    return this.db.collection<ReportsModel>(this.dbPath, ref =>
-      ref
-        .where('reports', '>=', 2)
-        .limit(20)
-        .startAt(startAtDoc)
-        .endBefore(firstInResponse)
-    );
+  loadPrev(startAtDoc: any, firstInResponse: any) {
+    return this.angularFirestore.collection(
+      'reports',
+      ref => ref
+      .where('reports', '>=', 2)
+      .limit(20)
+      .startAt(startAtDoc)
+      .endBefore(firstInResponse)
+    ).get();
   }
 
-  loadNext(lastInResponse: any): AngularFirestoreCollection<ReportsModel> {
-    return this.db.collection<ReportsModel>(this.dbPath, ref =>
-      ref
-        .where('reports', '>=', 2)
-        .limit(20)
-        .startAfter(lastInResponse)
-    );
+  loadNext(lastInResponse: any) {
+    return this.angularFirestore.collection(
+      'reports',
+      ref => ref
+      .where('reports', '>=', 2)
+      .limit(20)
+      .startAfter(lastInResponse)
+    ).get();
   }
 
-  update(id: string, data: any): Promise<void> {
-    return this.usersRef.doc(id).update(data);
-  }
+  // update(id: string, data: any): Promise<void> {
+  //   return this.usersRef.doc(id).update(data);
+  // }
 }

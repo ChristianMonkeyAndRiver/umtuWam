@@ -3,11 +3,7 @@ import { UsersService } from '../../services/users.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { ViewProfileServiceService } from 'src/app/services/view-profile-service.service';
-
-export interface DialogData {
-  user: any;
-  imageLink: string;
-}
+import { ModalPopupService } from 'src/app/services/modal-popup.service';
 
 @Component({
   selector: 'app-view-profile',
@@ -19,7 +15,8 @@ export class ViewProfileComponent implements OnInit {
   user: any;
 
   constructor(
-    public dialog: MatDialog, private route: ActivatedRoute, private router: Router, private userData: ViewProfileServiceService,
+    public dialog: MatDialog, private route: ActivatedRoute, private router: Router,
+    private userData: ViewProfileServiceService, private modalPopupService: ModalPopupService,
   ) {
     this.route.queryParams.subscribe(params => {
       this.user = params['user'];
@@ -31,70 +28,15 @@ export class ViewProfileComponent implements OnInit {
   }
 
   showDelete(image: string) {
-    this.dialog.open(ViewProfileDeleteImageDialog, {
-      data: { user: this.user, imageLink: image }
-    });
+    this.modalPopupService.deleteModal(this.user, image);
+  }
+
+  showBioDialog() {
+    this.modalPopupService.showBioModal(this.user);
   }
 
   openDialog() {
-    this.dialog.open(ViewProfileBanDialog, {
-      data: { user: this.user }
-    });
+    if (this.user.isBanned) this.modalPopupService.unBanModal(this.user);
+    else this.modalPopupService.banModal(this.user);
   }
 }
-
-@Component({
-  selector: 'view-profile-ban-dialog',
-  templateUrl: 'view-profile-ban-dialog.html',
-})
-export class ViewProfileBanDialog {
-  constructor(
-    public dialogRef: MatDialogRef<ViewProfileBanDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private userService: UsersService
-  ) { }
-
-  public updateTrue(user: any) {
-    this.userService.update(user.user.id, { isBanned: true });
-  }
-
-  public updateFalse(user: any) {
-    this.userService.update(user.user.id, { isBanned: false });
-  }
-
-  public deleteImage(user: any, image: string) {
-    const images = user.user.images;
-    var filteredArray = images.filter((item: string) => !image.includes(item))
-    console.log(filteredArray);
-
-  }
-}
-
-@Component({
-  selector: 'view-profile-delete-image-dialog',
-  templateUrl: 'view-profile-delete-image-dialog.html',
-})
-export class ViewProfileDeleteImageDialog {
-  constructor(
-    public dialogRef: MatDialogRef<ViewProfileBanDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private userService: UsersService
-  ) { }
-
-  public updateTrue(user: any) {
-    this.userService.update(user.user.id, { isBanned: true });
-  }
-
-  public updateFalse(user: any) {
-    this.userService.update(user.user.id, { isBanned: false });
-  }
-
-  public async deleteImage(user: any, image: string) {
-    const images = user.user.images;
-    var filteredArray = images.filter((item: string) => !image.includes(item))
-
-    this.userService.update(user.user.id, { images: filteredArray });
-    user.user.images = filteredArray;
-  }
-}
-

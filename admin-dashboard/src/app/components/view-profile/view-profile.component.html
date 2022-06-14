@@ -1,25 +1,49 @@
 <div class="profile-page">
-    <mat-card>
-        <img mat-card-avatar src="{{user.images[0]}}">
-        <mat-card-header>
-            <mat-card-title>{{user.name}}</mat-card-title>
-            <mat-card-subtitle>{{user.location}}</mat-card-subtitle>
-            <mat-card-subtitle>{{user.gender}}</mat-card-subtitle>
-        </mat-card-header>
-    </mat-card>
-    <mat-card>
-        <mat-card-content>
-            <mat-card-title>About</mat-card-title>
-            <p>
-                {{user.bio}}
-            </p>
-        </mat-card-content>
-    </mat-card>
+    <div class="personal-info">
+        <img src="{{user.images[0] ?? 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53'}}"
+            alt="">
+        <div class="personal-info-details-container">
+            <div class="name-container">
+                {{user.name}}
+            </div>
+            <div class="gender-container">
+                <strong>Gender:</strong> {{user.gender}}
+            </div>
+            <div class="location-container">
+                <strong>Location:</strong> {{user.location}}
+            </div>
+            <div class="id-container">
+                <strong>Phone number:</strong> {{user.id}}
+            </div>
+        </div>
+    </div>
+    <div class="about-info">
+        <div class="about-info-details-container">
+            <div class="about-container">
+                <h3>About</h3>
+            </div>
+            <div class="bio-container">
+               <p> {{user.bio}}</p>
+               
+            </div>
+            <div class="read-more-container">
+                <button  type="button" (click)="showBioDialog()"> read more</button>
+            </div>
+        </div>
+    </div>
+
     <div class="report-card">
         <button mat-button id="ban-user-button" (click)="openDialog()">BAN USER</button>
-        Reports: {{user.age}}
+        Abuse: {{user.reports}}
     </div>
 </div>
-<div class="image-list">
-    <img class="image" *ngFor="let image of user.images;" src={{image}} alt="" (click)="showDelete(image)">
+
+<div class="content">
+    <div fxLayout="row wrap" fxLayoutGap="16px grid">
+        <div fxFlex="25%" fxFlex.xs="100%" fxFlex.sm="33%" *ngFor="let image of user.images;">
+            <mat-card class="mat-elevation-z4">
+                <img mat-card-image class="image" src={{image}} alt="" (click)="showDelete(image)">
+            </mat-card>
+        </div>
+    </div>
 </div>

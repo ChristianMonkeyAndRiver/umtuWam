@@ -31,8 +31,10 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  public logout() {
-    this.authService.SignOut();
+  logout() {
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['login']);
+    });
   }
 
   showActiveUsers() {

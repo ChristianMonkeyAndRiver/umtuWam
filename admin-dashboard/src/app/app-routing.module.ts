@@ -8,18 +8,35 @@ import { ReportsListComponent } from './components/reports-list/reports-list.com
 import { ActiveUsersListComponent } from './components/active-users-list/active-users-list.component';
 import { BannedAccountsListComponent } from './components/banned-accounts-list/banned-accounts-list.component';
 import { ViewProfileComponent } from './components/view-profile/view-profile.component';
+import {
+  canActivate,
+  redirectLoggedInTo,
+  redirectUnauthorizedTo,
+} from '@angular/fire/auth-guard';
+
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
+const redirectLoggedInToHome = () => redirectLoggedInTo(['dashboard']);
+
 const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: 'sign-in', component: SignInComponent },
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'dashboard',
+  },
+  {
+    path: 'login',
+    component: SignInComponent,
+    ...canActivate(redirectLoggedInToHome)
+  },
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [AuthGuard],
+    ...canActivate(redirectUnauthorizedToLogin),
     children: [
       {
         path: '',
+        pathMatch: 'full',
         redirectTo: 'active',
-        pathMatch: 'full'
       },
       {
         path: 'active',
@@ -27,7 +44,7 @@ const routes: Routes = [
         children: [
           {
             path: 'profile',
-            component: ViewProfileComponent
+            component: ViewProfileComponent,
           },
         ],
       },
@@ -37,7 +54,7 @@ const routes: Routes = [
         children: [
           {
             path: 'profile',
-            component: ViewProfileComponent
+            component: ViewProfileComponent,
           },
         ],
       },
@@ -47,7 +64,7 @@ const routes: Routes = [
         children: [
           {
             path: 'profile',
-            component: ViewProfileComponent
+            component: ViewProfileComponent,
           },
         ],
       },
