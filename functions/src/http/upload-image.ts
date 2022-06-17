@@ -22,7 +22,7 @@ export default functions.https.onRequest(async (req, res) => {
           return;
         }
         if (doc.data()?.images.length == 5) {
-          res.status(500).send(util.ErrorMessages.TooManyimagesError);
+          res.status(500).send(util.ErrorMessages.TooManyImagesError);
           return;
         }
 

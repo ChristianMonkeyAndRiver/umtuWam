@@ -6,11 +6,11 @@ import * as functions from 'firebase-functions';
 import { sendMoyaMessageAfterSubscriptionHasBeenBought, sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse } from '../utils/messaging_api';
 const corsHandler = cors({ origin: true });
 
-function sleep(miliseconds: number) {
+function sleep(milliseconds: number) {
     const currentTime = new Date().getTime();
 
     // eslint-disable-next-line no-empty
-    while (currentTime + miliseconds >= new Date().getTime()) { }
+    while (currentTime + milliseconds >= new Date().getTime()) { }
 }
 
 export default functions.https.onRequest(async (req, res) => {
@@ -45,30 +45,28 @@ export default functions.https.onRequest(async (req, res) => {
                         .get()
                         .then(async (docs) => {
                             if (docs.empty) {
-                                res.status(500).send(util.ErrorMessages.SubscritionNotFound);
+                                res.status(500).send(util.ErrorMessages.SubscriptionNotFound);
                                 return;
                             }
                             const promises = [];
                             const now = admin.firestore.Timestamp.now();
                             const expiresAt = new admin.firestore.Timestamp(now.seconds + 24 * 60 * 60, now.nanoseconds);
                             if (!docs.docs[0].data().isGift) {
-                                if (docs.docs[0].data().productId == util.Products.Chats || docs.docs[0].data().productId == util.Products.Boost) {
-                                    if (docs.docs[0].data().productId == util.Products.Boost) {
-                                        const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().purchaserId)
-                                            .update({
-                                                points: 10,
-                                                hasPaidForFeatured: true,
-                                                featuredExpiryDate: expiresAt,
-                                            });
-                                        promises.push(promise1);
-                                    } else {
-                                        const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().purchaserId)
-                                            .update({
-                                                hasPaidForChats: true,
-                                                chatsExpiryDate: expiresAt,
-                                            });
-                                        promises.push(promise1);
-                                    }
+                                if (docs.docs[0].data().productId == util.Products.Boost) {
+                                    const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().purchaserId)
+                                        .update({
+                                            points: 10,
+                                            hasPaidForFeatured: true,
+                                            featuredExpiryDate: expiresAt,
+                                        });
+                                    promises.push(promise1);
+                                } else if (docs.docs[0].data().productId == util.Products.Chats) {
+                                    const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().purchaserId)
+                                        .update({
+                                            hasPaidForChats: true,
+                                            chatsExpiryDate: expiresAt,
+                                        });
+                                    promises.push(promise1);
                                 } else {
                                     if (docs.docs[0].data().productId == util.Products.Verified) {
                                         const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().purchaserId)
