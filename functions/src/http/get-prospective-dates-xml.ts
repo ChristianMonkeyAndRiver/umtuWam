@@ -114,7 +114,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     img: {
                                         _attr: {
-                                            url: doc.data().images.length > 0 ? doc.data().images[0] : util.FunctionsConstants.DefualtImage,
+                                            url: doc.data().images.length > 0 ? doc.data().images[0] : util.FunctionsConstants.DefaultImage,
                                         },
                                     },
                                 },
@@ -164,7 +164,7 @@ export default functions.https.onRequest(async (req, res) => {
                 });
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
-            res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+            res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }
     });

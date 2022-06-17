@@ -19,7 +19,7 @@ enum ErrorMessages {
     NoMessageFoundError = 'No messages found',
     SubscritionNotFound = 'Subscrition not found',
     IncorrectProductId = 'Incorrect product ID used',
-    UnexpectedExrror = 'An unexpected error occurred',
+    UnexpectedError = 'An unexpected error occurred',
     TooManyimagesError = 'Max upload limit has been reached',
 }
 
@@ -86,7 +86,7 @@ enum FunctionsConstants {
     ClickToPayFeatured = 'Click to pay R1 to have your profile boosed for a day',
     ClickToPayVerified = 'Click to pay R1 to show a VERIFIED badge on your profile',
     NextImage = 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fnext_button%20(2).png?alt=media&token=5b91d688-b483-4725-8e8b-d932583dc166',
-    DefualtImage = 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
+    DefaultImage = 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',
     MoyaShareText = 'Check out the Moya #datafree super-app! I use it for #datafree chat and many other services. Even better, it works when you have no airtime or data balance. Get it from https://moya.app/dl/',
     PaymentId = 'paymentId',
 }

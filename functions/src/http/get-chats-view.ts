@@ -22,6 +22,11 @@ export default functions.https.onRequest(async (req, res) => {
                 .doc(id)
                 .get();
 
+            if (!document.exists) {
+                res.status(404).send(util.ErrorMessages.NoUserError);
+                return;
+            }
+
             const now = admin.firestore.Timestamp.now();
 
             const chatTimeDiff = now.seconds - document.data()?.chatsExpiryDate.seconds ?? 0;
@@ -53,7 +58,7 @@ export default functions.https.onRequest(async (req, res) => {
             return;
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
-            res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+            res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }
     });

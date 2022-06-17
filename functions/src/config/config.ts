@@ -9,7 +9,6 @@ const CALLBACK_URL = 'https://us-central1-umtuwam.cloudfunctions.net/http-subscr
 
 const MOYA_API_URL = 'https://api.moya.app/v1/users/';
 const MOYA_MESSAGE_API_URL = 'https://api.moya.app/v1/message';
-const MOYA_API_KEY = 'kPzzGQ-zipQ-V-m_7uwLpgwfLiY40xap_LJnG8EF5TwwEG--ixj5A_fohjgqmoGd';
 
 export {
     TEST_URL,
@@ -17,7 +16,6 @@ export {
     MOYA_PAY_URL,
     CALLBACK_URL,
     MOYA_API_URL,
-    MOYA_API_KEY,
     MOYA_MESSAGE_API_URL,
     MOYA_PAY_DEVELOPER_KEY,
 };

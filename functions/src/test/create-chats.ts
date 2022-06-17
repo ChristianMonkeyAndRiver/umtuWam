@@ -90,12 +90,12 @@ async function likeUser(user1: any, user2: any) {
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.id).collection(util.FunctionsConstants.Chats).doc(docId).set({
         id: user2.id,
         name: user2.name,
-        imageUrl: user2.images[0] ?? util.FunctionsConstants.DefualtImage,
+        imageUrl: user2.images[0] ?? util.FunctionsConstants.DefaultImage,
     });
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.id).collection(util.FunctionsConstants.Chats).doc(docId2).set({
         id: user1.id,
         name: user1.name,
-        imageUrl: user1.images[0] ?? util.FunctionsConstants.DefualtImage,
+        imageUrl: user1.images[0] ?? util.FunctionsConstants.DefaultImage,
     });
 }
 
@@ -108,13 +108,13 @@ async function paidChat(user1: any, user2: any) {
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.id).collection(util.FunctionsConstants.Chats).doc(docId).set({
         id: user2.id,
         name: user2.name,
-        imageUrl: user2.images[0] ?? util.FunctionsConstants.DefualtImage,
+        imageUrl: user2.images[0] ?? util.FunctionsConstants.DefaultImage,
     });
 
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.id).collection(util.FunctionsConstants.Chats).doc(docId2).set({
         id: user1.id,
         name: user1.name,
-        imageUrl: user1.images[0] ?? util.FunctionsConstants.DefualtImage,
+        imageUrl: user1.images[0] ?? util.FunctionsConstants.DefaultImage,
     });
     const timestamp = admin.firestore.Timestamp.now();
     let counter = 0;
@@ -172,13 +172,13 @@ async function halfPaidChat(user1: any, user2: any) {
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user1.id).collection(util.FunctionsConstants.Chats).doc(docId).set({
         id: user2.id,
         name: user2.name,
-        imageUrl: user2.images[0] ?? util.FunctionsConstants.DefualtImage,
+        imageUrl: user2.images[0] ?? util.FunctionsConstants.DefaultImage,
     });
 
     await admin.firestore().collection(util.FunctionsConstants.Users).doc(user2.id).collection(util.FunctionsConstants.Chats).doc(docId2).set({
         id: user1.id,
         name: user1.name,
-        imageUrl: user1.images[0] ?? util.FunctionsConstants.DefualtImage,
+        imageUrl: user1.images[0] ?? util.FunctionsConstants.DefaultImage,
     });
 
     const now = admin.firestore.Timestamp.now();

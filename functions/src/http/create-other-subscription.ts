@@ -26,7 +26,7 @@ export default functions.https.onRequest(async (req, res) => {
                     'Authorization': `Bearer ${process.env.MOYA_PAY_DEVELOPER_KEY}`,
                 },
                 body: JSON.stringify({
-                    amount: 1,
+                    amount: 100,
                     redirectUrl: '',
                     username: id,
                     webhookUrl: config.CALLBACK_URL,
@@ -37,7 +37,7 @@ export default functions.https.onRequest(async (req, res) => {
                 .then((result) => result.json())
                 .then(async (json) => {
                     if (req.query.productId != util.Products.Chats) {
-                        res.status(500).send(util.ErrorMessages.IncorrectProductId);
+                        res.status(404).send(util.ErrorMessages.IncorrectProductId);
                         return;
                     }
 
@@ -56,8 +56,7 @@ export default functions.https.onRequest(async (req, res) => {
                 });
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
-
-            res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+            res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }
     });

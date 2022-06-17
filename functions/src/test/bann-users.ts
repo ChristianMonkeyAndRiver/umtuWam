@@ -28,7 +28,7 @@ export default functions.runWith({
             return;
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
-            res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+            res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }
     });

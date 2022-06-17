@@ -29,7 +29,7 @@ export default functions.https.onRequest(async (req, res) => {
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
 
-            res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+            res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }
     });

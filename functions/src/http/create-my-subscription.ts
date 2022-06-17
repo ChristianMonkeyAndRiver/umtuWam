@@ -14,8 +14,6 @@ export default functions.https.onRequest(async (req, res) => {
             const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
             const id = formattedId.toString();
 
-            console.log(id);
-
             const options = {
                 method: 'POST',
                 headers: {
@@ -24,7 +22,7 @@ export default functions.https.onRequest(async (req, res) => {
                     'Authorization': `Bearer ${process.env.MOYA_PAY_DEVELOPER_KEY}`,
                 },
                 body: JSON.stringify({
-                    amount: 1,
+                    amount: 100,
                     redirectUrl: '',
                     username: id,
                     webhookUrl: config.CALLBACK_URL,
@@ -34,6 +32,7 @@ export default functions.https.onRequest(async (req, res) => {
             fetch(config.MOYA_PAY_URL, options)
                 .then((result) => result.json())
                 .then(async (json) => {
+
                     if (req.query.productId == util.Products.Photos) {
                         const queryUid = req.query.uid ?? '';
                         const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
@@ -57,14 +56,13 @@ export default functions.https.onRequest(async (req, res) => {
                         });
                     }
 
-
                     res.status(200).send(util.SuccessMessages.SuccessMessage);
                     return;
                 });
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
 
-            res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+            res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }
     });

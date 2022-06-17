@@ -56,7 +56,7 @@ export default functions.https.onRequest(async (req, res) => {
                             {
                                 img: {
                                     _attr: {
-                                        url: doc.data().imageUrl != '' ? doc.data().imageUrl : util.FunctionsConstants.DefualtImage,
+                                        url: doc.data().imageUrl != '' ? doc.data().imageUrl : util.FunctionsConstants.DefaultImage,
                                     },
                                 },
                             },
@@ -96,7 +96,7 @@ export default functions.https.onRequest(async (req, res) => {
             })
             .catch((error) => {
                 console.error(util.ErrorMessages.ErrorText, error);
-                res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+                res.status(404).send(util.ErrorMessages.UnexpectedError);
                 return;
             });
     });

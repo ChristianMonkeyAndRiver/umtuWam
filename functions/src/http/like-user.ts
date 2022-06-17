@@ -38,14 +38,14 @@ export default functions.https.onRequest(async (req, res) => {
                             chatsPaymentID: '',
                             imagesPaymentID: '',
                             name: userBdoc.data()?.name,
-                            imageUrl: userBdoc.data()?.images.length > 0 ? userBdoc.data()?.images[0] : util.FunctionsConstants.DefualtImage,
+                            imageUrl: userBdoc.data()?.images.length > 0 ? userBdoc.data()?.images[0] : util.FunctionsConstants.DefaultImage,
                         });
                         await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).collection(util.FunctionsConstants.Chats).doc(docId).set({
                             id: id,
                             chatsPaymentID: '',
                             imagesPaymentID: '',
                             name: userDocument.data()?.name,
-                            imageUrl: userDocument.data()?.images.length > 0 ? userDocument.data()?.images[0] : util.FunctionsConstants.DefualtImage,
+                            imageUrl: userDocument.data()?.images.length > 0 ? userDocument.data()?.images[0] : util.FunctionsConstants.DefaultImage,
                         });
                         await admin.firestore().collection(util.FunctionsConstants.Likes).doc(docId).delete();
                     }
@@ -56,7 +56,7 @@ export default functions.https.onRequest(async (req, res) => {
             return;
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
-            res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+            res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }
     });

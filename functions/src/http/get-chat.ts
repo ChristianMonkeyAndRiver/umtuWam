@@ -19,7 +19,7 @@ export default functions.https.onRequest(async (req, res) => {
             const userDocument = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
             if (!userDocument.exists) {
-                res.status(500).send(util.ErrorMessages.NoUserError);
+                res.status(404).send(util.ErrorMessages.NoUserError);
                 return;
             }
 
@@ -48,7 +48,7 @@ export default functions.https.onRequest(async (req, res) => {
                 });
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);
-            res.status(404).send(util.ErrorMessages.UnexpectedExrror);
+            res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }
     });
