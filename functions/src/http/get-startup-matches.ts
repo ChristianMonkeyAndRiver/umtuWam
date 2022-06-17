@@ -39,10 +39,8 @@ export default functions.https.onRequest(async (req, res) => {
                     },
                 ],
             }];
-            res.set('Cache-Control', 'no-cache');
-            res.set('Cache-Control', 'max-age=0');
-            res.set('Cache-Control', 'must-revalidate');
-            res.send(xml(doc, true));
+            res.set('Access-Control-Content-Type', 'application/xml');
+            res.send(xml(doc, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
             return;
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);

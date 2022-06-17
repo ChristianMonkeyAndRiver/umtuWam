@@ -32,7 +32,6 @@ export default functions.https.onRequest(async (req, res) => {
             fetch(config.MOYA_PAY_URL, options)
                 .then((result) => result.json())
                 .then(async (json) => {
-
                     if (req.query.productId == util.Products.Photos) {
                         const queryUid = req.query.uid ?? '';
                         const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;

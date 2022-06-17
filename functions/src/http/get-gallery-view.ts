@@ -37,26 +37,3 @@ export default functions.https.onRequest(async (req, res) => {
         }
     });
 });
-
-
-// const doc = [{
-//     doc: [
-//         {
-//             _attr: {
-//                 title: util.FunctionsConstants.UmtuWam,
-//             },
-//         },
-//         {
-//             webview: [
-//                 {
-//                     _attr: {
-//                         href: `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=Photos&isMine=${true}`,
-//                         internal: 'true',
-//                     },
-//                 },
-//             ],
-//         },
-//     ],
-// }];
-
-// res.send(xml(doc, true));
