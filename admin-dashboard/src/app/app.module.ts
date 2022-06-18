@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideAuth, getAuth } from '@angular/fire/auth';
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 
 import { AngularFireModule } from '@angular/fire/compat';
@@ -20,6 +19,7 @@ import { BannedAccountsListComponent } from './components/banned-accounts-list/b
 import { ViewProfileComponent } from './components/view-profile/view-profile.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
@@ -38,6 +38,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ModalPopupComponent } from './components/modal-popup/modal-popup.component';
 import { HotToastModule } from '@ngneat/hot-toast';
+import { LoaderComponent } from './components/loader/loader.component';
 
 
 @NgModule({
@@ -50,6 +51,7 @@ import { HotToastModule } from '@ngneat/hot-toast';
     BannedAccountsListComponent,
     ViewProfileComponent,
     ModalPopupComponent,
+    LoaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -75,6 +77,7 @@ import { HotToastModule } from '@ngneat/hot-toast';
     AngularFireModule, 
     AngularFireAuthModule,
     AngularFirestoreModule,
+    MatProgressSpinnerModule,
     HotToastModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebase),
     provideFirebaseApp(() => initializeApp(environment.firebase)),

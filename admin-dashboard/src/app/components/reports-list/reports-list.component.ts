@@ -3,6 +3,7 @@ import { Location } from "@angular/common";
 import { ReportsService } from '../../services/reports.service';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { ViewProfileServiceService } from 'src/app/services/view-profile-service.service';
+import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
   selector: 'app-reports-list',
@@ -43,8 +44,9 @@ export class ReportsListComponent implements OnInit {
     private location: Location, 
     private userData: ViewProfileServiceService, 
     private route: ActivatedRoute, 
-    private router: Router
-  ) {
+    private router: Router,
+    private loaderService: LoaderService
+    ) {
     if (this.router.url.includes('reports/profile')) {
       this.showDetails = true;
       this.showLocalProfile(); 
@@ -82,6 +84,7 @@ export class ReportsListComponent implements OnInit {
   }
 
   loadUsers(): void {
+    this.loaderService.showLoader();
     this.reportsService.loadReports()
       .subscribe(users => {
         if (users.length == 0) {
@@ -111,12 +114,14 @@ export class ReportsListComponent implements OnInit {
         //Push first item to use for Previous action
         this.push_prev_startAt(this.firstInResponse);
       }, error => {
+        this.loaderService.hideLoader();
         console.log(error);
       });
   }
   
   //Show previous set 
   prevPage() {
+    this.loaderService.showLoader();
     this.disable_prev = true;
     this.reportsService.loadPrev(this.get_prev_startAt(), this.firstInResponse)
       .subscribe(response => {
@@ -147,12 +152,16 @@ export class ReportsListComponent implements OnInit {
           this.disable_prev = false;
         }
         this.disable_next = false;
+        this.loaderService.hideLoader();
       }, error => {
         this.disable_prev = false;
+        this.loaderService.hideLoader();
+        console.log(error);
       });
   }
 
   nextPage() {
+    this.loaderService.showLoader();
     this.disable_next = true;
     this.reportsService.loadNext(this.lastInResponse)
       .subscribe(response => {
@@ -188,9 +197,12 @@ export class ReportsListComponent implements OnInit {
         } else {
             this.disable_next = false;
         }
-      this.disable_prev = false;
+        this.loaderService.hideLoader();
+        this.disable_prev = false;
       }, error => {
         this.disable_next = false;
+        this.loaderService.hideLoader();
+        console.log(error);
       });
   }
 

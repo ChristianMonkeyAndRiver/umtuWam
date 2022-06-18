@@ -3,6 +3,7 @@ import { Location } from "@angular/common";
 import { UsersService } from '../../services/users.service';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { ViewProfileServiceService } from 'src/app/services/view-profile-service.service';
+import { LoaderService } from 'src/app/services/loader.service';
 
 
 @Component({
@@ -44,7 +45,8 @@ export class BannedAccountsListComponent implements OnInit {
     private location: Location, 
     private userData: ViewProfileServiceService, 
     private route: ActivatedRoute, 
-    private router: Router
+    private router: Router,
+    private loaderService: LoaderService
   ) {
     if (this.router.url.includes('banned/profile')) {
       this.showDetails = true;
@@ -67,6 +69,7 @@ export class BannedAccountsListComponent implements OnInit {
     });
   }
 
+  
   showLocalProfile(): void {
     this.showDetails =  true;
     var retrievedObject = localStorage.getItem('RECENT_USER');
@@ -83,6 +86,7 @@ export class BannedAccountsListComponent implements OnInit {
   }
 
   loadUsers(): void {
+    this.loaderService.showLoader();
     this.userService.loadBannedUsers()
       .subscribe(users => {
         if (users.length == 0) {
@@ -118,6 +122,7 @@ export class BannedAccountsListComponent implements OnInit {
   
   //Show previous set 
   prevPage() {
+    this.loaderService.showLoader();
     this.disable_prev = true;
     this.userService.loadBannedPrev(this.get_prev_startAt(), this.firstInResponse)
       .subscribe(response => {
@@ -148,13 +153,17 @@ export class BannedAccountsListComponent implements OnInit {
           this.disable_prev = false;
         }
         this.disable_next = false;
+        this.loaderService.hideLoader();
       }, error => {
         this.disable_prev = false;
+        this.loaderService.hideLoader();
+        console.log(error);
       });
   }
 
   nextPage() {
     this.disable_next = true;
+    this.loaderService.showLoader();
     this.userService.loadBannedNext(this.lastInResponse)
       .subscribe(response => {
 
@@ -189,9 +198,12 @@ export class BannedAccountsListComponent implements OnInit {
         } else {
             this.disable_next = false;
         }
-      this.disable_prev = false;
+        this.loaderService.hideLoader();
+        this.disable_prev = false;
       }, error => {
         this.disable_next = false;
+        this.loaderService.hideLoader();
+        console.log(error);
       });
   }
 
