@@ -5,6 +5,7 @@ import { UsersService } from '../../services/users.service';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { ViewProfileServiceService } from 'src/app/services/view-profile-service.service';
 import { debounce, debounceTime, distinctUntilChanged } from 'rxjs';
+import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
   selector: 'app-active-users-list',
@@ -46,7 +47,8 @@ export class ActiveUsersListComponent implements OnInit {
     private location: Location, 
     private userData: ViewProfileServiceService, 
     private route: ActivatedRoute, 
-    private router: Router
+    private router: Router,
+    private loaderService: LoaderService
   ) {
     if (this.router.url.includes('active/profile')) {
       this.showDetails = true;
@@ -67,7 +69,25 @@ export class ActiveUsersListComponent implements OnInit {
         this.loadUsers();
       }
     });
+  }
 
+  showLocalProfile(): void {
+    this.showDetails =  true;
+    var retrievedObject = localStorage.getItem('RECENT_USER');
+    this.userData.setUser(JSON.parse(retrievedObject ?? ''));
+    this.router.navigate(['profile'], { relativeTo: this.route })
+  } 
+
+  showProfile(showDetails: boolean, user: any): void {
+    this.user = user;
+    this.showDetails = showDetails;
+    this.userData.setUser(user);
+    localStorage.setItem('RECENT_USER', JSON.stringify(this.user));
+    this.router.navigate(['profile'], { relativeTo: this.route })
+  }
+
+  loadUsers(): void {
+    this.loaderService.showLoader();
     this.searchController.valueChanges
       .pipe(debounceTime(2000))
       .pipe(distinctUntilChanged())
@@ -117,64 +137,18 @@ export class ActiveUsersListComponent implements OnInit {
               this.disable_next = false;
           }
         this.disable_prev = false;
+        this.loaderService.hideLoader();
         }, error => {
           this.disable_next = false;
+          this.loaderService.hideLoader();
+          console.log(error);
         });
       })
-
-  }
-
-  showLocalProfile(): void {
-    this.showDetails =  true;
-    var retrievedObject = localStorage.getItem('RECENT_USER');
-    this.userData.setUser(JSON.parse(retrievedObject ?? ''));
-    this.router.navigate(['profile'], { relativeTo: this.route })
-  } 
-
-  showProfile(showDetails: boolean, user: any): void {
-    this.user = user;
-    this.showDetails = showDetails;
-    this.userData.setUser(user);
-    localStorage.setItem('RECENT_USER', JSON.stringify(this.user));
-    this.router.navigate(['profile'], { relativeTo: this.route })
-  }
-
-  loadUsers(): void {
-    this.userService.loadUsers()
-      .subscribe(users => {
-        if (users.length == 0) {
-          console.log("No Data Available");
-          return;
-        }
-
-        this.firstInResponse = users[0].payload.doc;
-        this.lastInResponse = users[users.length - 1].payload.doc;
-  
-        this.activeUsers = [];
-        for (let item of users) {
-          const data = JSON.parse(JSON.stringify(item.payload.doc.data()));
-          this.activeUsers.push({ 
-            id: item.payload.doc.id,
-            ...data,
-          });
-        }
-        this.filteredActiveUsers = this.activeUsers;
-  
-        //Initialize values
-        this.prev_start_at = [];
-        this.pagination_clicked_count = 0;
-        this.disable_next = false;
-        this.disable_prev = false;
-  
-        //Push first item to use for Previous action
-        this.push_prev_startAt(this.firstInResponse);
-      }, error => {
-        console.log(error);
-      });
   }
   
   //Show previous set 
   prevPage() {
+    this.loaderService.showLoader();
     this.disable_prev = true;
     this.userService.loadPrev(this.get_prev_startAt(), this.firstInResponse)
       .subscribe(response => {
@@ -205,12 +179,16 @@ export class ActiveUsersListComponent implements OnInit {
           this.disable_prev = false;
         }
         this.disable_next = false;
+        this.loaderService.hideLoader();
       }, error => {
         this.disable_prev = false;
+        this.loaderService.hideLoader();
+        console.log(error);
       });
   }
 
   nextPage() {
+    this.loaderService.showLoader();
     this.disable_next = true;
     this.userService.loadNext(this.lastInResponse)
       .subscribe(response => {
@@ -247,8 +225,11 @@ export class ActiveUsersListComponent implements OnInit {
             this.disable_next = false;
         }
       this.disable_prev = false;
+        this.loaderService.hideLoader();
       }, error => {
         this.disable_next = false;
+        this.loaderService.hideLoader();
+        console.log(error);
       });
   }
 

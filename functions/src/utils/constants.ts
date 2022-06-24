@@ -17,10 +17,10 @@ enum ErrorMessages {
     NoDatesMessage = 'No dates found',
     PaymentFailureError = 'Payment failed',
     NoMessageFoundError = 'No messages found',
-    SubscritionNotFound = 'Subscrition not found',
+    SubscriptionNotFound = 'Subscrition not found',
     IncorrectProductId = 'Incorrect product ID used',
     UnexpectedError = 'An unexpected error occurred',
-    TooManyimagesError = 'Max upload limit has been reached',
+    TooManyImagesError = 'Max upload limit has been reached',
 }
 
 enum SuccessMessages {
@@ -50,6 +50,9 @@ enum FunctionsConstants {
     Rate = 'rate',
     Likes = 'likes',
     Users = 'users',
+    Notifications = 'notifications',
+    AdminData = 'admin_data',
+    AdminTracker = 'admin_trackers',
     Reports = 'reports',
     Usage = 'usage',
     Xbinu = 'x-binu',

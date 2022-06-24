@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import * as util from '../utils/constants';
 import * as functions from 'firebase-functions';
+import { getAdminDocument, addReportNotification } from '../utils/firestore_data';
 
 export default functions.firestore.document('reports/{docId}')
   .onCreate(async (snap) => {
@@ -13,6 +14,23 @@ export default functions.firestore.document('reports/{docId}')
       await userDoc.ref.update({
         reports: (reports + 1),
       });
+
+
+      // ============================= Adding to notifications =========================
+
+      await addReportNotification(userDoc.data()?.name, newDoc.transgressorId);
+
+      // ============================= Adding to admin doc =============================
+      const adminDoc = await getAdminDocument();
+
+      const totalReports = adminDoc.data()!.totalReports;
+      const notifications = adminDoc.data()!.notifications;
+
+      adminDoc.ref.update({
+        totalReports: (totalReports+1),
+        notifications: (notifications+1),
+      });
+      // ============================= Adding to admin doc =============================
 
       return snap.ref.set({
         name: userDoc.data()?.name,

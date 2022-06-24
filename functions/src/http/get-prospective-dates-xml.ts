@@ -159,7 +159,8 @@ export default functions.https.onRequest(async (req, res) => {
                         ],
                     }];
 
-                    res.status(200).send(xml(docXML, true));
+                    res.set('Access-Control-Content-Type', 'application/xml');
+                    res.status(200).send(xml(docXML, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
                     return;
                 });
         } catch (error) {

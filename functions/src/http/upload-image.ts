@@ -12,11 +12,6 @@ export default functions.https.onRequest(async (req, res) => {
     const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
     const uid = formattedId.toString();
 
-    console.log('============================');
-    console.log(uid);
-    console.log('============================');
-    console.log(data);
-    console.log('============================');
 
     const buffer = Buffer.from(data);
 
@@ -27,7 +22,7 @@ export default functions.https.onRequest(async (req, res) => {
           return;
         }
         if (doc.data()?.images.length == 5) {
-          res.status(500).send(util.ErrorMessages.TooManyimagesError);
+          res.status(500).send(util.ErrorMessages.TooManyImagesError);
           return;
         }
 

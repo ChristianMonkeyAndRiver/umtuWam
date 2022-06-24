@@ -1,9 +1,8 @@
-import { Component, Input, OnInit, Inject } from '@angular/core';
-import { UsersService } from '../../services/users.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ViewProfileServiceService } from 'src/app/services/view-profile-service.service';
 import { ModalPopupService } from 'src/app/services/modal-popup.service';
+import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
   selector: 'app-view-profile',
@@ -15,16 +14,16 @@ export class ViewProfileComponent implements OnInit {
   user: any;
 
   constructor(
-    public dialog: MatDialog, private route: ActivatedRoute, private router: Router,
+    public dialog: MatDialog, private loaderService: LoaderService,
     private userData: ViewProfileServiceService, private modalPopupService: ModalPopupService,
-  ) {
-    this.route.queryParams.subscribe(params => {
-      this.user = params['user'];
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.userData.currentUser.subscribe((userObj: any) => this.user = userObj)
+    this.loaderService.showLoader();
+    this.userData.currentUser.subscribe((userObj: any) => {
+      this.user = userObj;
+      this.loaderService.hideLoader();
+    })
   }
 
   showDelete(image: string) {
