@@ -35,6 +35,7 @@ export default functions.https.onRequest(async (req, res) => {
                 .get()
                 .then((docs) => {
                     if (docs.empty) {
+                        res.set('Content-Type', 'application/xml');
                         res.status(200).send([]);
                         return;
                     }
@@ -43,6 +44,7 @@ export default functions.https.onRequest(async (req, res) => {
                     for (const doc of docs.docs) {
                         docsArray.push(doc.data());
                     }
+                    res.set('Content-Type', 'application/xml');
                     res.status(200).send(docsArray);
                     return;
                 });

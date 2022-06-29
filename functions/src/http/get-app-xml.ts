@@ -44,6 +44,8 @@ export default functions.https.onRequest(async (req, res) => {
                 .doc(uid)
                 .get();
 
+            const randomKey = Math.floor(Math.random() * 100);
+
             const app = [{
                 app: [
                     {
@@ -61,7 +63,7 @@ export default functions.https.onRequest(async (req, res) => {
                                         _attr: {
                                             default: true,
                                             img: 'https://umtuwam.web.app/logo.png',
-                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getProspectiveDatesXml?id=${uid}&isNextPressed=${0}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupHome?id=${uid}`,
+                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getProspectiveDatesXml?id=${uid}&isNextPressed=${0}&randomKey=${randomKey}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupHome?id=${uid}&randomKey=${randomKey}`,
                                         },
                                     },
                                     util.FunctionsConstants.Home,
@@ -72,7 +74,7 @@ export default functions.https.onRequest(async (req, res) => {
                                     {
                                         _attr: {
                                             img: 'https://umtuwam.web.app/chat_logo.png',
-                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getMatchesXml?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupMatches?id=${uid}`,
+                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getMatchesXml?id=${uid}&randomKey=${randomKey}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupMatches?id=${uid}&randomKey=${randomKey}`,
                                         },
                                     },
                                     util.FunctionsConstants.Chats,
@@ -83,7 +85,7 @@ export default functions.https.onRequest(async (req, res) => {
                                     {
                                         _attr: {
                                             img: 'https://umtuwam.web.app/filter_1.png',
-                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getPreferencesView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupPreferences?id=${uid}`,
+                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getPreferencesView?id=${uid}&randomKey=${randomKey}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupPreferences?id=${uid}&randomKey=${randomKey}`,
                                         },
                                     },
                                     util.FunctionsConstants.PreferencesCapital,
@@ -94,7 +96,7 @@ export default functions.https.onRequest(async (req, res) => {
                                     {
                                         _attr: {
                                             img: 'https://umtuwam.web.app/profile_logo.png',
-                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getProfileView?id=${uid}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupProfile?id=${uid}`,
+                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getProfileView?id=${uid}&randomKey=${randomKey}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupProfile?id=${uid}&randomKey=${randomKey}`,
                                         },
                                     },
                                     util.FunctionsConstants.Profile,
@@ -148,7 +150,9 @@ export default functions.https.onRequest(async (req, res) => {
                     },
                 ],
             }];
-            res.set('Access-Control-Content-Type', 'application/xml');
+            res.set('Content-Type', 'application/xml');
+            res.set('Max-Age', '0');
+            res.set('Cache-Control', 'no-cache');
             res.status(200).send(xml(app, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
             return;
         } catch (error) {

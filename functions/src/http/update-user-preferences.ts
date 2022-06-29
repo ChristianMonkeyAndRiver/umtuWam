@@ -24,7 +24,7 @@ export default functions.https.onRequest(async (req, res) => {
 
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).update(updateObject);
 
-
+            res.set('Content-Type', 'application/xml');
             res.status(200).send(util.SuccessMessages.SuccessMessage);
             return;
         } catch (error) {

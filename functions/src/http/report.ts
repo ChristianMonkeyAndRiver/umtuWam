@@ -33,6 +33,7 @@ export default functions.https.onRequest(async (req, res) => {
                 timestamp: now,
             });
 
+            res.set('Content-Type', 'application/xml');
             res.status(200).send(util.SuccessMessages.SuccessMessage);
         } catch (error) {
             console.error(util.ErrorMessages.ErrorText, error);

@@ -38,7 +38,7 @@ export default functions.https.onRequest(async (req, res) => {
                         ],
                     }];
 
-            res.set('Access-Control-Content-Type', 'application/xml');
+            res.set('Content-Type', 'application/xml');
             res.send(xml(doc, true));
                     return;
                 }
@@ -92,7 +92,7 @@ export default functions.https.onRequest(async (req, res) => {
                 }];
 
 
-            res.set('Access-Control-Content-Type', 'application/xml');
+            res.set('Content-Type', 'application/xml');
             res.send(xml(doc, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
                 return;
             })

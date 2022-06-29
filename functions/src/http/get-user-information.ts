@@ -16,6 +16,7 @@ export default functions.https.onRequest(async (req, res) => {
 
             if (!userDocument.exists) res.status(500).send(util.ErrorMessages.NoUserError);
 
+            res.set('Content-Type', 'application/xml');
 
             res.status(200).send(userDocument.data());
             return;
