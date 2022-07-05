@@ -38,6 +38,8 @@ export default functions.https.onRequest(async (req, res) => {
             const result = await fetch(`${config.MOYA_API_URL}${uid}`, options);
             const json = await result.json();
 
+            console.log(json);
+
             uid = json.user_profile.number;
 
             const doc = await admin.firestore()
@@ -68,28 +70,6 @@ export default functions.https.onRequest(async (req, res) => {
                                         },
                                     },
                                     util.FunctionsConstants.Home,
-                                ],
-                            },
-                            {
-                                menuItem: [
-                                    {
-                                        _attr: {
-                                            img: 'https://umtuwam.web.app/chat_logo.png',
-                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getMatchesXml?id=${uid}&randomKey=${randomKey}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupMatches?id=${uid}&randomKey=${randomKey}`,
-                                        },
-                                    },
-                                    util.FunctionsConstants.Chats,
-                                ],
-                            },
-                            {
-                                menuItem: [
-                                    {
-                                        _attr: {
-                                            img: 'https://umtuwam.web.app/filter_1.png',
-                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getPreferencesView?id=${uid}&randomKey=${randomKey}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupPreferences?id=${uid}&randomKey=${randomKey}`,
-                                        },
-                                    },
-                                    util.FunctionsConstants.PreferencesCapital,
                                 ],
                             },
                             {
@@ -163,15 +143,3 @@ export default functions.https.onRequest(async (req, res) => {
         }
     });
 });
-
-// let uid = '';
-
-    // if (id == '97618f4b0cec4667' || id == ':"0727779845"') {
-    //     uid = '27727888675';
-    // } else {
-    //     uid = '27794614755';
-// }
-// `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupHome?id=${uid}`
-// `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupMatches?id=${uid}`
-// `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupPreferences?id=${uid}`
-// `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupProfile?id=${uid}`
