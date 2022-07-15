@@ -41,6 +41,8 @@ export default functions.https.onRequest(async (req, res) => {
                 });
 
             await sendMoyaMessageAfterMessageHasBeenSent(uid);
+
+            res.set('Content-Type', 'application/xml');
             res.status(200).send(util.SuccessMessages.SuccessMessage);
             return;
         } catch (error) {

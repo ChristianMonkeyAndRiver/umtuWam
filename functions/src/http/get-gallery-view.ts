@@ -24,10 +24,11 @@ export default functions.https.onRequest(async (req, res) => {
                 .get();
 
             if (subscriptionDoc.exists) {
+                res.set('Content-Type', 'application/xml');
                 res.status(200).send({ value: true });
                 return;
             }
-
+            res.set('Content-Type', 'application/xml');
             res.status(200).send({ value: false });
             return;
         } catch (error) {
