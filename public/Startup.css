@@ -29,7 +29,7 @@ select {
     height: 35px;
 }
 
-input[type="text"] {
+.input {
     height: 30px;
     width: 80%;
 }

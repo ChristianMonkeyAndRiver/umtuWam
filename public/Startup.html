@@ -11,6 +11,77 @@
     <script>
         window.onload = function () {
             id.setAttribute("value", new URL(location.href).searchParams.get("did"));
+
+            checkBtn.disabled = true;
+           
+            var cities = [
+                "Alfred Nzo",
+                "Amatole",
+                "Cacadu",
+                "Chris Hani",
+                "Nelson Mandela Bay",
+                "Or Thambo",
+                "Ukhahlamba",
+                "Lejweleputswa",
+                "Motheo",
+                "Northern Free State",
+                "Thabo Mofutsanyane",
+                "Xhariep",
+                "Ekurhuleni",
+                "Johannesburg",
+                "Metsweding",
+                "Sedibeng",
+                "Tshwane",
+                "West Rand",
+                "Amajuba",
+                "Ethekwini",
+                "Ilembe",
+                "Sisonke",
+                "Ugu",
+                "Umgungundlovu",
+                "Umkhanyakude",
+                "Umzinyathi",
+                "Uthukela",
+                "Uthungulu",
+                "Zululand",
+                "Capricorn",
+                "Mopani",
+                "Sekhukhune",
+                "Vhembe",
+                "Waterberg",
+                "Ehlanzeni",
+                "Gert Sibande",
+                "Nkangala",
+                "Bojanala Platinum",
+                "Bophirima",
+                "Central Province",
+                "Southern Province",
+                "Frances Baard",
+                "Kgalagadi",
+                "Namakwa",
+                "Pixley Ka Seme",
+                "Siyanda",
+                "Cape Town Metro",
+                "Cape Winelands",
+                "Central Karoo",
+                "Eden",
+                "Overberg",
+                "West Coast",
+            ]
+
+            cities.sort();
+
+            var list = document.getElementById('locationList')
+
+            cities.forEach(city => {
+                var option = document.createElement('option');
+                option.value = city;
+                list.appendChild(option);
+            })
+        }
+
+        function acceptedTOS() {
+            checkBtn.disabled = !checkBtn.disabled;
         }
 
         function validateThis() {
@@ -86,7 +157,7 @@
                 <p>
                     <label>My name is:
                         <br />
-                        <input type="text" id="myName" name="myName" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$"
+                        <input type="text" class="input" id="myName" name="myName" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$"
                             maxlength="50" required>
                     </label>
                 </p>
@@ -115,20 +186,14 @@
                     </label>
                 </p>
                 <p>
-                    <label>My location:
-                        <select name="whereabouts" id="whereabouts" required>
-                            <option value="" disabled selected>Select your location</option>
-                            <option value="Bloemfontein">Bloemfontein</option>
-                            <option value="Cape Town">Cape Town</option>
-                            <option value="Durban">Durban</option>
-                            <option value="Johannesburg">Johannesburg</option>
-                            <option value="Kimberley">Kimberley</option>
-                            <option value="Nelspruit">Nelspruit</option>
-                            <option value="PE">PE</option>
-                            <option value="Polokwane">Polokwane</option>
-                            <option value="Pretoria">Pretoria</option>
-                            <option value="Soweto">Soweto</option>
-                        </select>
+                    <datalist id="locationList">
+                    </datalist>
+                    <input id="whereabouts" class="input" autoComplete="on" list="locationList" placeholder="Select your location">
+                </p>
+                <p>
+                    <label>
+                        <input type="checkbox" onclick="acceptedTOS()">
+                        By creating an account, you agree to our <a href="https://umtuwam.web.app/Terms.xml">Terms and Conditions</a>
                     </label>
                 </p>
                 <input type="text" id="id" name="id" hidden value= />

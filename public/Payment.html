@@ -13,7 +13,7 @@
             myId.setAttribute("value", new URL(location.href).searchParams.get("id"));
 
             var product = new URL(location.href).searchParams.get("product");
-            title.innerText = `You do not have an active subscription for ${product}.\nDo you wish to purchase a subscription for ${product}`;
+            title.innerText = `You do not have an active subscription for ${product}.\nPurchase a subscription for ${product}`;
             productId.setAttribute("value", product);
 
             theirId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
@@ -21,7 +21,10 @@
             isMine.setAttribute("value", new URL(location.href).searchParams.get("isMine"));
         }
 
-        function subscribe() {
+        function moyaPay() {
+            PeachPay.hidden = true;
+            FlashPay.hidden = true;
+            MoyaPay.hidden = true;
             var payUrl = ''
             if(isMine.value) {
                 payUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-createMySubscription?` +
@@ -36,12 +39,45 @@
             }
             
             fetch(payUrl).then(res => {
-                window.history.back();
+                console.log(res);
+                // window.history.back();
             }).catch(err => console.error(err));
         }
+
+        function flashPay() {
+            PeachPay.hidden = true;
+            FlashPay.hidden = true;
+            MoyaPay.hidden = true;
+            var payUrl = 'https://us-central1-umtuwam.cloudfunctions.net/httpPayment-flashPaymentGift?'
+            if(isMine.value) {
+                payUrl = payUrl +
+                `id=${myId.value}` +
+                `&uid=${myId.value}` +
+                `&pin=${FlashPay.value}` +
+                `&amount${price.value}` +
+                `&productId=${productId.value}`;
+            } else {
+                payUrl = payUrl +
+                `id=${myId.value}` +
+                `&uid=${theirId.value}` +
+                `&pin=${FlashPay.value}` +
+                `&amount${price.value}` +
+                `&productId=${productId.value}`;
+            }
+        }
         
-        function back() {
-            window.history.back();
+        function peachPay() {
+            PeachPay.hidden = true;
+            FlashPay.hidden = true;
+            MoyaPay.hidden = true;
+            var payUrl = `https://us-central1-umtuwam.cloudfunctions.net/httpPayment-peachPayment?amount=${price.value}`;
+
+            fetch(payUrl)
+                .then(res => res.json())
+                .then((out) => {
+                    peachForm.src = `https://umtuwam.web.app/Form.html?id=${out.id}`
+                    peachForm.hidden = false;
+                });
         }
     </script>
     <div class="container">
@@ -50,8 +86,17 @@
         <input type="text" id="myId" name="id" hidden value="" />
         <input type="text" id="theirId" name="uid" hidden value="" />
         <input type="text" id="isMine" name="isMine" hidden value="" />
-        <button id="yes" class="btn" onclick="subscribe()">Yes</button>
-        <button id="no" class="btn" onclick="back()">No</button>
+        <input type="text" id="price" name="price" hidden value="" />
+        <iframe class="peachFrame" id="peachForm" src="" title="Peach Pay" hidden></iframe>
+        <label id="flash" hidden>
+            Please enter your PIN:
+            <input type="text" id="FlashPin" />
+        </label>
+        <button id="MoyaPay" class="btn" onclick="moyaPay()">Pay with MoyaPay</button>
+        <button id="FlashPay" class="btn" onclick="flashPay()">Pay with Flash Payments</button>
+        <button id="PeachPay" class="btn" onclick="peachPay()">Pay with Peach Payments</button>
+        
+        <h2 id="status"></h2>
     </div>
 </body>
 

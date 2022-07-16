@@ -20,6 +20,11 @@ select {
     height: 35px;
 }
 
+.input {
+    height: 30px;
+    width: 80%;
+}
+
 .age {
     text-align: center;
     height: 30px;
