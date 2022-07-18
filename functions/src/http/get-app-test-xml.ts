@@ -27,18 +27,17 @@ export default functions.https.onRequest(async (req, res) => {
             } else {
                 uid = '27794614755';
             }
+
             const options = {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.MOYA_API_KEY}`,
+                    'Authorization': 'Bearer kPzzGQ-zipQ-V-m_7uwLpgwfLiY40xap_LJnG8EF5TwwEG--ixj5A_fohjgqmoGd',
                 },
             };
 
             const result = await fetch(`${config.MOYA_API_URL}${uid}`, options);
             const json = await result.json();
-
-            console.log(json);
 
             uid = json.user_profile.number;
 

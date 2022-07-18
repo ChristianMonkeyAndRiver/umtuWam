@@ -14,13 +14,42 @@ export default functions.https.onRequest(async (req, res) => {
 
             const updateObject = {};
 
+            const queryIsMale = req.query.lookingForMale ?? '';
+            const formattedMale = Array.isArray(queryIsMale) ? queryIsMale[0] : queryIsMale;
+            const isMale = formattedMale.toString();
+
+            const queryIsFemale = req.query.lookingForFemale ?? '';
+            const formattedFemale = Array.isArray(queryIsFemale) ? queryIsFemale[0] : queryIsFemale;
+            const isFemale = formattedFemale.toString();
+
+            const preference = [];
+
+            if (isMale == '1') {
+                preference.push('Male');
+            }
+
+            if (isFemale == '1') {
+                preference.push('Female');
+            }
+
+            let genderPreference = 'Straight';
+
+            const doc = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
+
+            if (preference.length == 1 && preference[0] == doc.data()?.gender) {
+                genderPreference = 'Gay';
+                await doc.ref.update({ gender: genderPreference });
+            }
+
             if (req.query.ageMin != null) Object.assign(updateObject, { ageMin: req.query.ageMin });
 
             if (req.query.ageMax != null) Object.assign(updateObject, { ageMax: req.query.ageMax });
 
-            if (req.query.gender != null) Object.assign(updateObject, { gender: req.query.gender });
+            if (preference.length > 0) Object.assign(updateObject, { gender: preference });
 
             if (req.query.location != null) Object.assign(updateObject, { location: req.query.location });
+
+            Object.assign(updateObject, { genderPreference: genderPreference });
 
             await admin.firestore().collection(util.FunctionsConstants.Preferences).doc(uid).update(updateObject);
 

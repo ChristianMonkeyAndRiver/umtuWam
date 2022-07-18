@@ -2,18 +2,11 @@
 import * as https from 'https';
 import * as cors from 'cors';
 import * as querystring from 'querystring';
-// import * as config from '../config/config';
-// import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
-// import * as util from '../utils/constants';
 
 const corsHandler = cors({ origin: true });
 
 export default functions.https.onRequest(async (req, res) => {
-    // const queryId = req.query.id ?? '';
-    // const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
-    // const id = formattedId.toString();
-
     const queryAmount = req.query.amount ?? '';
     const formattedAmount = Array.isArray(queryAmount) ? queryAmount[0] : queryAmount;
     const amount = formattedAmount.toString();

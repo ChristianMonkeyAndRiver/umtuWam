@@ -27,6 +27,7 @@ export default functions.https.onRequest(async (req, res) => {
             } else {
                 uid = '27794614755';
             }
+
             const options = {
                 method: 'GET',
                 headers: {
