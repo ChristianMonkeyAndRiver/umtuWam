@@ -38,6 +38,7 @@ export class ReportsListComponent implements OnInit {
   disable_next: boolean = false;
   disable_prev: boolean = false;
 
+  isLoading:boolean;
 
   constructor(
     private reportsService: ReportsService, 
@@ -47,6 +48,7 @@ export class ReportsListComponent implements OnInit {
     private router: Router,
     private loaderService: LoaderService
     ) {
+    this.isLoading=true;
     if (this.router.url.includes('reports/profile')) {
       this.showDetails = true;
       this.showLocalProfile(); 
@@ -66,6 +68,10 @@ export class ReportsListComponent implements OnInit {
         this.loadUsers();
       }
     });
+  }
+
+  hideLoader(){
+    this.isLoading=false;
   }
 
   showLocalProfile(): void {
@@ -113,6 +119,7 @@ export class ReportsListComponent implements OnInit {
   
         //Push first item to use for Previous action
         this.push_prev_startAt(this.firstInResponse);
+        this.loaderService.hideLoader();
       }, error => {
         this.loaderService.hideLoader();
         console.log(error);

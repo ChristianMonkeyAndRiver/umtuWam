@@ -42,7 +42,11 @@
     <div fxLayout="row wrap" fxLayoutGap="16px grid">
         <div fxFlex="25%" fxFlex.xs="100%" fxFlex.sm="33%" *ngFor="let image of user.images;">
             <mat-card class="mat-elevation-z4">
-                <img mat-card-image class="image" src={{image}} alt="" (click)="showDelete(image)">
+                <div *ngIf="isLoading" id="matSpinnerDiv">
+                    <mat-spinner color="#b01f60" diameter="100"></mat-spinner>
+                </div>
+                <img class="image" mat-card-image src={{image}} alt="" (click)="showDelete(image)"
+                [ngStyle]="{visibility:isLoading?'hidden':''}" (load)="hideLoader()" (error)="hideLoader()" />
             </mat-card>
         </div>
     </div>
