@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            window.onload = function() {
+                var checkout = new URL(location.href).searchParams.get("id")
+                let payScript = document.createElement("script");
+                payScript.setAttribute("src", `https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId=${checkout}`);
+                document.body.appendChild(payScript);
+
+                peachPayForm.action = `https://us-central1-umtuwam.cloudfunctions.net/httpPayment-peachCallback?checkoutId=${checkout}`
+            }
+        </script>
+    </head>
+    
+    <body>
+        <form action="" id="peachPayForm" class="paymentWidgets" data-brands="VISA MASTER AMEX" target="_self"></form>
+    </body>
+</html>

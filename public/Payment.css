@@ -11,3 +11,9 @@
     width: 100%;
     margin: 10px auto;
 }
+
+.peachFrame {
+    border: 0;
+    height: 700px;
+    width: 100%;
+}
