@@ -70,7 +70,7 @@
             PeachPay.hidden = true;
             FlashPay.hidden = true;
             MoyaPay.hidden = true;
-            var payUrl = `https://us-central1-umtuwam.cloudfunctions.net/httpPayment-peachPayment?amount=${price.value}`;
+            var payUrl = ` https://us-central1-umtuwam.cloudfunctions.net/httpPayment-peachPayment?amount=${price.value}`;
 
             fetch(payUrl)
                 .then(res => res.json())

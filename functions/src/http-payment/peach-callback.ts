@@ -13,8 +13,8 @@ export default functions.https.onRequest(async (req, res) => {
 
     corsHandler(req, res, async () => {
         const request = async () => {
-            const path=`/v1/checkouts/${id}/payment`;
-            // path += '?entityId=8ac7a4c981a409ed0181a5ce03740312';
+            let path=`/v1/checkouts/${id}/payment`;
+            path += '?entityId=8ac7a4c981a409ed0181a5ce03740312';
             const options = {
                 port: 443,
                 host: 'eu-test.oppwa.com',
@@ -46,11 +46,9 @@ export default functions.https.onRequest(async (req, res) => {
 
         request()
         .then((result) => {
-            console.log('---------------- In Then ----------------');
-            console.log(result);
+            console.log(JSON.stringify(result));
         })
         .catch((error) =>{
-            console.log('--------------- In Error Catch -----------------');
             console.error(error);
         });
 

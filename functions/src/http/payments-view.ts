@@ -35,7 +35,7 @@ export default functions.https.onRequest(async (req, res) => {
                         webview: [
                             {
                                 _attr: {
-                                    href: `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=${productId}&isMine=${isMine}`,
+                                    href: `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=${productId}&isMine=${isMine}&amount=1`,
                                     internal: 'true',
                                 },
                             },

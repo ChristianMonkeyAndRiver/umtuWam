@@ -58,7 +58,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: isChatSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}}&uid=${''}&product=${util.Products.Chats}&isMine=${true}`,
+                                        href: isChatSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Chats}&isMine=${true}&amount=1`,
                                         layout: 'relative',
                                     },
                                 },
@@ -72,7 +72,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: isChatSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}}&uid=${''}&product=${util.Products.Chats}&isMine=${true}`,
+                                        href: isChatSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Chats}&isMine=${true}&amount=1`,
                                         layout: 'relative',
                                     },
                                 },
@@ -86,7 +86,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: isFeaturedSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Boost}&isMine=${true}`,
+                                        href: isFeaturedSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Boost}&isMine=${true}&amount=1`,
                                         layout: 'relative',
                                     },
                                 },

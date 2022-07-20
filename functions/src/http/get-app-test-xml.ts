@@ -58,6 +58,22 @@ export default functions.https.onRequest(async (req, res) => {
                         },
                     },
                     {
+                        drawer: [
+                            {
+                                menuItem: [
+                                    {
+                                        _attr: {
+                                            default: true,
+                                            img: 'https://umtuwam.web.app/logo.png',
+                                            href: doc.exists ? `https://us-central1-umtuwam.cloudfunctions.net/http-getProspectiveDatesXml?id=${uid}&isNextPressed=${0}&randomKey=${randomKey}` : `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupHome?id=${uid}&randomKey=${randomKey}`,
+                                        },
+                                    },
+                                    util.FunctionsConstants.Home,
+                                ],
+                            },
+                        ],
+                    },
+                    {
                         bottom_nav: [
                             {
                                 menuItem: [
