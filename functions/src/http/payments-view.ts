@@ -24,6 +24,10 @@ export default functions.https.onRequest(async (req, res) => {
             const formattedIsMine = Array.isArray(queryIsMine) ? queryIsMine[0] : queryIsMine;
             const isMine = formattedIsMine.toString();
 
+            const queryIsAmount = req.query.amount ?? '';
+            const formattedIsAmount = Array.isArray(queryIsAmount) ? queryIsAmount[0] : queryIsAmount;
+            const amount = formattedIsAmount.toString();
+
             const doc = [{
                 doc: [
                     {
@@ -35,7 +39,7 @@ export default functions.https.onRequest(async (req, res) => {
                         webview: [
                             {
                                 _attr: {
-                                    href: `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=${productId}&isMine=${isMine}&amount=1`,
+                                    href: `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=${productId}&isMine=${isMine}&amount=${amount}`,
                                     internal: 'true',
                                 },
                             },
