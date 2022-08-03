@@ -92,11 +92,11 @@ export default functions.https.onRequest(async (req, res) => {
                                 featuredExpiryDate: expiresAt,
                             });
                         promises.push(promise2);
-                    } else if (productId == util.Products.Chats) {
+                    } else if (productId == util.Products.ChatsAndPhotos) {
                         const promise2 = admin.firestore().collection(util.FunctionsConstants.Users).doc(id)
                             .update({
-                                hasPaidForChats: true,
-                                chatsExpiryDate: expiresAt,
+                                hasPaidForChatsAndPhotos: true,
+                                chatsAndPhotosExpiryDate: expiresAt,
                             });
                         promises.push(promise2);
                     } else if (productId == util.Products.Verified) {
@@ -123,8 +123,8 @@ export default functions.https.onRequest(async (req, res) => {
 
                     const promise2 = admin.firestore().collection(util.FunctionsConstants.Users).doc(uid)
                             .update({
-                                hasPaidForChats: true,
-                                chatsExpiryDate: expiresAt,
+                                hasPaidForChatsAndPhotos: true,
+                                chatsAndPhotosExpiryDate: expiresAt,
                             });
                     promises.push(promise2);
                     const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse(uid);
@@ -138,7 +138,7 @@ export default functions.https.onRequest(async (req, res) => {
             const doc = createResponseDocument('Your Payment Has Completed Successful');
 
             res.status(200).send(xml(doc, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
-            return promises;
+            return Promise.all(promises);
         } catch (error) {
             console.error(error);
             const doc = createResponseDocument(error);

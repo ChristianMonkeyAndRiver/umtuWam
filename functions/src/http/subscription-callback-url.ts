@@ -60,11 +60,12 @@ export default functions.https.onRequest(async (req, res) => {
                                             featuredExpiryDate: expiresAt,
                                         });
                                     promises.push(promise1);
-                                } else if (docs.docs[0].data().productId == util.Products.Chats) {
+                                } else if (docs.docs[0].data().productId == util.Products.ChatsAndPhotos) {
+                                    const expiresAfterAMonth = new admin.firestore.Timestamp(now.seconds + 24 * 60 * 60 * 30, now.nanoseconds);
                                     const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().purchaserId)
                                         .update({
-                                            hasPaidForChats: true,
-                                            chatsExpiryDate: expiresAt,
+                                            hasPaidForChatsAndPhotos: true,
+                                            chatsAndPhotosExpiryDate: expiresAfterAMonth,
                                         });
                                     promises.push(promise1);
                                 } else {
@@ -83,8 +84,8 @@ export default functions.https.onRequest(async (req, res) => {
                             } else {
                                 const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().recipientId)
                                     .update({
-                                        hasPaidForChats: true,
-                                        chatsExpiryDate: expiresAt,
+                                        hasPaidForChatsAndPhotos: true,
+                                        chatsAndPhotosExpiryDate: expiresAt,
                                     });
                                 promises.push(promise1);
 

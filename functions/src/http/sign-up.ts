@@ -54,9 +54,9 @@ export default functions.https.onRequest(async (req, res) => {
                 location: req.query.location,
                 isBanned: false,
                 isVerified: false,
-                hasPaidForChats: false,
+                hasPaidForChatsAndPhotos: false,
                 featuredExpiryDate: now,
-                chatsExpiryDate: now,
+                chatsAndPhotosExpiryDate: now,
                 hasPaidForFeatured: false,
                 genderPreference: genderPreference,
             });

@@ -64,30 +64,15 @@ export default functions.https.onRequest(async (req, res) => {
                     const now = admin.firestore.Timestamp.now();
                     const expiresAt = new admin.firestore.Timestamp(now.seconds + 24 * 60 * 60, now.nanoseconds);
 
-                    if (req.query.productId == util.Products.Photos) {
-                        const queryUid = req.query.uid ?? '';
-                        const formattedUid = Array.isArray(queryUid) ? queryUid[0] : queryUid;
-                        const uid = formattedUid.toString();
-                        const idString = id.concat('_').concat(uid);
+                    await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc(docId).set({
+                        isGift: false,
+                        purchaserId: id,
+                        isPaymentApproved: true,
+                        paymentId: json.transactionId,
+                        expiresAt: expiresAt,
+                        productId: req.query.productId,
+                    });
 
-                        await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc(idString).set({
-                            isGift: false,
-                            purchaserId: id,
-                            isPaymentApproved: true,
-                            paymentId: json.transactionId,
-                            expiresAt: expiresAt,
-                            productId: req.query.productId,
-                        });
-                    } else {
-                        await admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc(docId).set({
-                            isGift: false,
-                            purchaserId: id,
-                            isPaymentApproved: true,
-                            paymentId: json.transactionId,
-                            expiresAt: expiresAt,
-                            productId: req.query.productId,
-                        });
-                    }
                     if (req.query.productId == util.Products.Boost) {
                         await admin.firestore().collection(util.FunctionsConstants.Users).doc('27794614755')
                             .update({
@@ -95,11 +80,11 @@ export default functions.https.onRequest(async (req, res) => {
                                 hasPaidForFeatured: true,
                                 featuredExpiryDate: expiresAt,
                             });
-                    } else if (req.query.productId == util.Products.Chats) {
+                    } else if (req.query.productId == util.Products.ChatsAndPhotos) {
                         await admin.firestore().collection(util.FunctionsConstants.Users).doc('27794614755')
                             .update({
-                                hasPaidForChats: true,
-                                chatsExpiryDate: expiresAt,
+                                hasPaidForChatsAndPhotos: true,
+                                chatsAndPhotosExpiryDate: expiresAt,
                             });
                     } else if (req.query.productId == util.Products.Verified) {
                         await admin.firestore().collection(util.FunctionsConstants.Users).doc('27794614755').update({ isVerified: true });

@@ -102,34 +102,36 @@ export default functions.https.onRequest(async (req, res) => {
                     }
 
                     for (const doc of docs.docs) {
-                        const item = {
-                            item: [
-                                {
-                                    _attr: {
-                                        href: `https://us-central1-umtuwam.cloudfunctions.net/http-viewUserProfile?id=${doc.id}&uid=${uid}`,
-                                        layout: 'relative',
-                                    },
-                                },
-                                {
-                                    img: {
+                        if (doc.id !== document.id) {
+                            const item = {
+                                item: [
+                                    {
                                         _attr: {
-                                            url: doc.data().images.length > 0 ? doc.data().images[0] : util.FunctionsConstants.DefaultImage,
+                                            href: `https://us-central1-umtuwam.cloudfunctions.net/http-viewUserProfile?id=${doc.id}&uid=${uid}`,
+                                            layout: 'relative',
                                         },
                                     },
-                                },
-                                {
-                                    md: [
-                                        {
-                                            _attr: {},
+                                    {
+                                        img: {
+                                            _attr: {
+                                                url: doc.data().images.length > 0 ? doc.data().images[0] : util.FunctionsConstants.DefaultImage,
+                                            },
                                         },
-                                        `${doc.data().name} ${doc.data().age}
-                                    ${doc.data().location}
-                                   `,
-                                    ],
-                                },
-                            ],
-                        };
-                        usersList.push(item);
+                                    },
+                                    {
+                                        md: [
+                                            {
+                                                _attr: {},
+                                            },
+                                            `${doc.data().name} ${doc.data().age}
+                                        ${doc.data().location}
+                                       `,
+                                        ],
+                                    },
+                                ],
+                            };
+                            usersList.push(item);
+                        }
                     }
 
                     let currentIndex;

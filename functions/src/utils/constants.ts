@@ -1,6 +1,5 @@
 enum Products {
-    Chats = 'Chats',
-    Photos = 'Photos',
+    ChatsAndPhotos = 'ChatsAndPhotos',
     Verified = 'Verified',
     Boost = 'Boost',
 }
@@ -63,7 +62,7 @@ enum FunctionsConstants {
     Content = 'content',
     Product = 'product',
     Messages = 'messages',
-    Chatting = 'Chatting',
+    ChatsAndPhotos = 'Chats and Photos',
     Boost = 'Boost',
     Location = 'location',
     UmtuWam = 'UmtuWam',
@@ -83,7 +82,7 @@ enum FunctionsConstants {
     Verified = 'Verified profile',
     SeeAllPhotos = 'See All Photos',
     MoyaSubjectText = 'Moya #datafree app',
-    ClickToPayChats = 'Click to pay R1 to chat for a day',
+    ClickToPayChatsAndPhotos = 'Click to pay R30 to chat and view photos for a month',
     ClickToPayChatsMonth = 'Click to pay R15 to chat for a month',
     ClickToPayPhotos = 'Click to pay R1 to see all profile photos',
     ClickToPayFeatured = 'Click to pay R1 to have your profile boosed for a day',
