@@ -42,7 +42,7 @@ export default functions.https.onRequest(async (req, res) => {
 
             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uidString).collection(util.FunctionsConstants.Chats).doc(docId).delete();
 
-
+            res.set('Content-Type', 'application/xml');
             res.status(200).send(util.SuccessMessages.SuccessMessage);
             return;
         } catch (error) {

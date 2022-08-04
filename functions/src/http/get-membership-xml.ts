@@ -95,6 +95,20 @@ export default functions.https.onRequest(async (req, res) => {
                                 },
                             ],
                         },
+                        // {
+                        //     item: [
+                        //         {
+                        //             _attr: {
+                        //                 style: '',
+                        //                 href: 'https://us-central1-umtuwam.cloudfunctions.net/httpPayment-payfast',
+                        //                 layout: 'relative',
+                        //             },
+                        //         },
+                        //         {
+                        //             md: 'PayFast Payment',
+                        //         },
+                        //     ],
+                        // },
                         !isVerified ? {
                             item: [
                                 {
@@ -113,7 +127,8 @@ export default functions.https.onRequest(async (req, res) => {
                 },
             ],
         }];
-        res.set('Access-Control-Content-Type', 'application/xml');
+        res.set('Content-Type', 'application/xml');
+
         res.status(200).send(xml(doc, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
         return;
     });

@@ -106,7 +106,6 @@ export default functions.https.onRequest(async (req, res) => {
                             item: [
                                 {
                                     _attr: {
-                                        style: '',
                                         href: `https://us-central1-umtuwam.cloudfunctions.net/http-viewUserProfile?id=${doc.id}&uid=${uid}`,
                                         layout: 'relative',
                                     },
@@ -121,9 +120,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     md: [
                                         {
-                                            _attr: {
-                                                style: '',
-                                            },
+                                            _attr: {},
                                         },
                                         `${doc.data().name} ${doc.data().age}
                                     ${doc.data().location}
@@ -159,7 +156,7 @@ export default functions.https.onRequest(async (req, res) => {
                         ],
                     }];
 
-                    res.set('Access-Control-Content-Type', 'application/xml');
+                    res.set('Content-Type', 'application/xml');
                     res.status(200).send(xml(docXML, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
                     return;
                 });
@@ -184,7 +181,6 @@ function addNextButtonItemXML(itemsArray: any[], uid: string, currentIndex: stri
             },
             {
                 _attr: {
-                    style: '',
                     href: `https://us-central1-umtuwam.cloudfunctions.net/http-getProspectiveDatesXml?id=${uid}&isNextPressed=${1}&currentIndex=${currentIndex}`,
                     layout: 'relative',
                 },
@@ -192,9 +188,7 @@ function addNextButtonItemXML(itemsArray: any[], uid: string, currentIndex: stri
             {
                 md: [
                     {
-                        _attr: {
-                            style: '',
-                        },
+                        _attr: {},
                     },
                     util.FunctionsConstants.Next,
                 ],

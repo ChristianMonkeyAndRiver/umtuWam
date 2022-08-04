@@ -16,7 +16,7 @@ export default functions.https.onRequest(async (req, res) => {
 
             if (!userPreferencesDoc.exists) res.status(500).send(util.ErrorMessages.NoUserError);
 
-
+            res.set('Content-Type', 'application/xml');
             res.status(200).send(userPreferencesDoc.data());
             return;
         } catch (error) {

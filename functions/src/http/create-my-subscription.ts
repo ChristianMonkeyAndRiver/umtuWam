@@ -54,6 +54,7 @@ export default functions.https.onRequest(async (req, res) => {
                             productId: req.query.productId,
                         });
                     }
+                    res.set('Content-Type', 'application/xml');
 
                     res.status(200).send(util.SuccessMessages.SuccessMessage);
                     return;
