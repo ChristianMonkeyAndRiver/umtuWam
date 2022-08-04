@@ -19,11 +19,20 @@
 
         function report() {
             event.preventDefault();
+            let reportBtn = document.getElementById("reportBtn");
+            reportBtn.disabled = true;
+            reportBtn.innerText = 'Loading...';
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-report?` +
             `id=${id.value}` +
             `&uid=${uid.value}` +
             `&title=${title.value}` +
-            `&content=${content.value}`);
+            `&content=${content.value}`).then(res => {
+                reportBtn.innerText = 'User successfully Reported.';
+            }).catch(err => {
+                console.log("Error on Report:", err);
+                reportBtn.innerText = 'Something went wrong, please contact an administrator.';
+            });
+                
         }
     </script>
     <div class="container">
@@ -42,7 +51,7 @@
         </p>
         <input type="text" id="id" name="id" hidden value="" />
         <input type="text" id="uid" name="uid" hidden value="" />
-        <button id="report" class="report" onclick="report()">Report</button>
+        <button id="reportBtn" class="report" onclick="report()">Report</button>
     </div>
 </body>
 

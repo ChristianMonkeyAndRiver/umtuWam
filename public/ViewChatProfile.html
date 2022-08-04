@@ -11,6 +11,7 @@
     <script>
         var imageArr = [];
         window.onload = function () {
+            displayBuy.style.display = 'none';
             theirId.setAttribute("value", new URL(location.href).searchParams.get("did"));
             myId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${theirId.value}`)
@@ -28,7 +29,14 @@
                     chat.style.backgroundColor = '#00FF00';
 
                     report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-reportsView?id=${myId.value}&uid=${theirId.value}`);
+                    
                     imageArr = out.images;
+                    const galleryUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?` +
+                        `id=${myId.value}}` +
+                        `&uid=${theirId.value}` +
+                        `&product=${'Photos'}` +
+                        `&isMine=${true}`;
+                    galleryLink.setAttribute('href', galleryUrl);
                 }).catch(err => console.error(err));
         }
         function unlike() {

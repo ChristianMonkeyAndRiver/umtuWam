@@ -65,17 +65,17 @@
                 "Eden",
                 "Overberg",
                 "West Coast",
-            ]
+            ];
 
             cities.sort();
 
-            var list = document.getElementById('locationList')
+            var list = document.getElementById('locationList');
 
             cities.forEach(city => {
                 var option = document.createElement('option');
                 option.value = city;
                 list.appendChild(option);
-            })
+            });
 
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserPreferences?id=${id.value}`)
                 .then(res => res.json())
