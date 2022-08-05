@@ -107,7 +107,10 @@ export default functions.https.onRequest(async (req, res) => {
                         promises.push(promise2);
                     }
 
-                    const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBought(id);
+                    console.log('--------------------------------');
+                    console.log(id);
+                    console.log('--------------------------------');
+                    const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBought(id, productId);
                     promises.push(promise3);
                 } else {
                     const promise1 = admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc('Test Id Purchase Peach').set({
@@ -136,9 +139,10 @@ export default functions.https.onRequest(async (req, res) => {
                 return;
             }
             const doc = createResponseDocument('Your Payment Has Completed Successful');
+            await Promise.all(promises);
 
             res.status(200).send(xml(doc, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
-            return Promise.all(promises);
+            return;
         } catch (error) {
             console.error(error);
             const doc = createResponseDocument(error);

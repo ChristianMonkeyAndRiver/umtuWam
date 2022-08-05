@@ -79,7 +79,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 }
                                 const promise2 = docs.docs[0].ref.update({ expiresAt: expiresAt, isPaymentApproved: true });
                                 promises.push(promise2);
-                                const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBought(docs.docs[0].data().purchaserId);
+                                const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBought(docs.docs[0].data().purchaserId, docs.docs[0].data().productId);
                                 promises.push(promise3);
                             } else {
                                 const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().recipientId)
@@ -104,7 +104,7 @@ export default functions.https.onRequest(async (req, res) => {
                         });
                 });
         } catch (error) {
-            console.error(util.ErrorMessages.ErrorText, error);
+            console.error(error);
             res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }

@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 import * as config from '../config/config';
-
+import * as util from '../utils/constants';
 
 async function sendMoyaMessageAfterBeingLiked(number: string) {
     const options = {
@@ -52,7 +52,8 @@ async function sendMoyaMessageAfterMessageHasBeenSent(number: string) {
     return;
 }
 
-async function sendMoyaMessageAfterSubscriptionHasBeenBought(number: string) {
+async function sendMoyaMessageAfterSubscriptionHasBeenBought(number: string, productId: string) {
+    console.log('Sending message after subscription');
     const options = {
         method: 'POST',
         headers: {
@@ -64,7 +65,7 @@ async function sendMoyaMessageAfterSubscriptionHasBeenBought(number: string) {
             recipient_type: 'individual',
             type: 'text',
             text: {
-                body: 'Your subscription on UmtuWam has started and will end in 24 hours.',
+                body: productId == util.Products.ChatsAndPhotos ? 'Your subscription on UmtuWam has started and will end in 30 days.' : 'Your subscription on UmtuWam has started and will end in 24 hours.',
             },
         }),
     };
@@ -96,6 +97,8 @@ async function sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse(numbe
 
     const response = await fetch(config.MOYA_MESSAGE_API_URL, options);
     const json = await response.json();
+
+    console.log(json);
 
     if (json.error != null) throw json;
 

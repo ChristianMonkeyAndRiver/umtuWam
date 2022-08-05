@@ -36,7 +36,7 @@ export default functions.https.onRequest(async (req, res) => {
             res.set('Content-Type', 'application/xml');
             res.status(200).send(util.SuccessMessages.SuccessMessage);
         } catch (error) {
-            console.error(util.ErrorMessages.ErrorText, error);
+            console.error(error);
             res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }

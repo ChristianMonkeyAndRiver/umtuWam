@@ -158,7 +158,7 @@ export default functions.https.onRequest(async (req, res) => {
             res.status(200).send(xml(app, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
             return;
         } catch (error) {
-            console.error(util.ErrorMessages.ErrorText, error);
+            console.error(error);
             res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }
