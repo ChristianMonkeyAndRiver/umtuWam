@@ -39,6 +39,7 @@ export class BannedAccountsListComponent implements OnInit {
   disable_next: boolean = false;
   disable_prev: boolean = false;
 
+  isLoading:boolean;
 
   constructor(
     private userService: UsersService, 
@@ -48,6 +49,7 @@ export class BannedAccountsListComponent implements OnInit {
     private router: Router,
     private loaderService: LoaderService
   ) {
+    this.isLoading=true;
     if (this.router.url.includes('banned/profile')) {
       this.showDetails = true;
       this.showLocalProfile(); 
@@ -69,6 +71,9 @@ export class BannedAccountsListComponent implements OnInit {
     });
   }
 
+  hideLoader(){
+    this.isLoading=false;
+  }
   
   showLocalProfile(): void {
     this.showDetails =  true;
@@ -115,8 +120,10 @@ export class BannedAccountsListComponent implements OnInit {
   
         //Push first item to use for Previous action
         this.push_prev_startAt(this.firstInResponse);
+        this.loaderService.hideLoader();
       }, error => {
         console.log(error);
+        this.loaderService.hideLoader();
       });
   }
   

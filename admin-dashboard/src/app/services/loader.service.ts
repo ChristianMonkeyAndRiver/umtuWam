@@ -14,7 +14,6 @@ export class LoaderService {
     }
 
     hideLoader() {
-      // console.log(this.dialogRef);
       this.dialogRef?.close();
     }
 

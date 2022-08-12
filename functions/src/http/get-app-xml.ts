@@ -18,6 +18,7 @@ export default functions.https.onRequest(async (req, res) => {
         let indexOfAppId = xBinu.indexOf('appId');
         indexOfAppId = indexOfAppId - 2;
         const id = xBinu.toString().substring(indexOfDid, indexOfAppId);
+
         try {
             let uid = '';
 
@@ -26,6 +27,7 @@ export default functions.https.onRequest(async (req, res) => {
             } else {
                 uid = '27794614755';
             }
+
             const options = {
                 method: 'GET',
                 headers: {
@@ -156,8 +158,7 @@ export default functions.https.onRequest(async (req, res) => {
             res.status(200).send(xml(app, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
             return;
         } catch (error) {
-            console.error(util.ErrorMessages.ErrorText, error);
-
+            console.error(error);
             res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }

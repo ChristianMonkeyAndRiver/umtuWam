@@ -42,7 +42,7 @@ export default functions.firestore.document('reports/{docId}')
         reports: (reports + 1),
       }, { merge: true });
     } catch (error) {
-      console.error(util.ErrorMessages.ErrorText, error);
+      console.error(error);
       return;
     }
   });

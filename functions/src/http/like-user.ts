@@ -56,7 +56,7 @@ export default functions.https.onRequest(async (req, res) => {
             res.status(200).send(util.SuccessMessages.SuccessMessage);
             return;
         } catch (error) {
-            console.error(util.ErrorMessages.ErrorText, error);
+            console.error(error);
             res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }

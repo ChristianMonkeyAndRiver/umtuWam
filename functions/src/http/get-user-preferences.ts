@@ -20,7 +20,7 @@ export default functions.https.onRequest(async (req, res) => {
             res.status(200).send(userPreferencesDoc.data());
             return;
         } catch (error) {
-            console.error(util.ErrorMessages.ErrorText, error);
+            console.error(error);
 
             res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
