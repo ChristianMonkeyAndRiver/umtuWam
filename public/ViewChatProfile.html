@@ -34,9 +34,9 @@
                     const galleryUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?` +
                         `id=${myId.value}}` +
                         `&uid=${theirId.value}` +
-                        `&product=${'Photos'}` +
+                        `&product=${'ChatsAndPhotos'}` +
                         `&isMine=${true}` +
-                        `&amount=${3000}`;
+                        `&amount=${100}`;
                     galleryLink.setAttribute('href', galleryUrl);
                     for (let i = 1; i < imageArr.length; i++) {
                         var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
