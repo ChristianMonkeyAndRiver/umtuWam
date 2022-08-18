@@ -4,6 +4,12 @@ enum Products {
     Boost = 'Boost',
 }
 
+enum Prices {
+    ChatsAndPhotos = 100,
+    Verified = 100,
+    Boost = 100,
+}
+
 enum PaymentState {
     Created = 'CREATED',
     Accepted = 'ACCPETED',
@@ -95,6 +101,7 @@ enum FunctionsConstants {
 
 export {
     Products,
+    Prices,
     PaymentState,
     ErrorMessages,
     SuccessMessages,

@@ -15,6 +15,15 @@
             price.setAttribute("value", new URL(location.href).searchParams.get("amount"))
 
             var product = new URL(location.href).searchParams.get("product");
+            if(product == 'ChatsAndPhotos') {
+                title.innerText = `To see everyone’s photos on UmtuWam, please subscribe for one month for R${price.value/100.00}. Choose the option to pay below:`;
+            }
+            if(product == 'Boost') {
+                title.innerText = `Click to pay R${price.value/100.00} to have your profile boosed for a day`;
+            }
+            if(product == 'verified') {
+                title.innerText = `Click to pay R${price.value/100.00} to show a VERIFIED badge on your profile`;
+            }
             title.innerText = `You do not have an active subscription for ${product}.\nPurchase a subscription for ${product}`;
             productId.setAttribute("value", product);
 
@@ -31,12 +40,14 @@
                 payUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-createMySubscription?` +
                 `id=${myId.value}` +
                 `&uid=${theirId.value}` +
-                `&productId=${productId.value}`;
+                `&productId=${productId.value}` +
+                `&amount=${price.value}`;
             } else {
                 payUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-createOtherSubscription` +
                 `id=${myId.value}` +
                 `&uid=${theirId.value}` +
-                `&productId=${productId.value}`;
+                `&productId=${productId.value}` +
+                `&amount=${price.value}`;
             }
             
             fetch(payUrl).then(res => {
@@ -58,7 +69,7 @@
                     `&uid=${theirId.value}` +
                     `&product=${productId.value}` +
                     `&isMine=${isMine.value}` +
-                    `&amount=${price.value}`;
+                    `&amount=${price.value/100.00}`;
                     peachForm.hidden = false;
                 });
         }

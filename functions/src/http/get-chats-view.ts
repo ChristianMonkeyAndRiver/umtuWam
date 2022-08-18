@@ -45,7 +45,7 @@ export default functions.https.onRequest(async (req, res) => {
                         webview: [
                             {
                                 _attr: {
-                                    href: isChatAndPhotosSubscriptionValid ? `https://umtuwam.web.app/Chats.html?id=${id}&uid=${uid}` : `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=Chats&isMine=${true}`,
+                                    href: isChatAndPhotosSubscriptionValid ? `https://umtuwam.web.app/Chats.html?id=${id}&uid=${uid}` : `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=${util.Products.ChatsAndPhotos}&isMine=${true}&amount=${util.Prices.ChatsAndPhotos}`,
                                     internal: 'true',
                                 },
                             },

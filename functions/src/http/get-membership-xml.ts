@@ -58,7 +58,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: isChatAndPhotosSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.ChatsAndPhotos}&isMine=${true}&amount=30`,
+                                        href: isChatAndPhotosSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.ChatsAndPhotos}&isMine=${true}&amount=${util.Prices.ChatsAndPhotos}`,
                                         layout: 'relative',
                                     },
                                 },
@@ -72,7 +72,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: isFeaturedSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Boost}&isMine=${true}&amount=1`,
+                                        href: isFeaturedSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Boost}&isMine=${true}&amount=${util.Prices.Boost}`,
                                         layout: 'relative',
                                     },
                                 },
@@ -86,7 +86,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Verified}&isMine=${true}&amount=1`,
+                                        href: `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Verified}&isMine=${true}&amount=${util.Prices.Verified}`,
                                         layout: 'relative',
                                     },
                                 },
