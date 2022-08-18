@@ -11,8 +11,11 @@
     </div>
     <div class="list-tile-container" *ngFor="let user of filteredActiveUsers;" (click)="showProfile(true, user)">
         <div class="information-container">
+            <div *ngIf="isLoading" id="matSpinnerDiv">
+                <mat-spinner color="#b01f60" diameter="50"></mat-spinner>
+            </div>
             <img src="{{user.images[0] ?? 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53'}}"
-                alt="">
+                alt="" [ngStyle]="{visibility:isLoading?'hidden':''}" (load)="hideLoader()" (error)="hideLoader()"/>
             <div class="details-container">
                 <div class="name-container">
                     {{user.name}}

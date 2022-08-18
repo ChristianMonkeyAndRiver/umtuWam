@@ -11,6 +11,7 @@
     <script>
         var imageArr = [];
         window.onload = function () {
+            displayBuy.style.display = 'none';
             theirId.setAttribute("value", new URL(location.href).searchParams.get("did"));
             myId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${theirId.value}`)
@@ -28,7 +29,22 @@
                     chat.style.backgroundColor = '#00FF00';
 
                     report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-reportsView?id=${myId.value}&uid=${theirId.value}`);
+                    
                     imageArr = out.images;
+                    const galleryUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?` +
+                        `id=${myId.value}}` +
+                        `&uid=${theirId.value}` +
+                        `&product=${'Photos'}` +
+                        `&isMine=${true}` +
+                        `&amount=${3000}`;
+                    galleryLink.setAttribute('href', galleryUrl);
+                    for (let i = 1; i < imageArr.length; i++) {
+                        var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
+                        const ImageToAppend = document.createElement("img");
+                        ImageToAppend.src = imageArr[i];
+                        ImageToAppend.classList.add('blur');
+                        imageDisplay.append(ImageToAppend);
+                    }
                 }).catch(err => console.error(err));
         }
         function unlike() {
@@ -50,12 +66,10 @@
             }).then((out) => {
                 if (out.value != false) {
                     displayView.style.display = 'none';
-                    for (let i = 1; i < imageArr.length; i++) {
-                        var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
-                        const imgTest = document.createElement("img");
-                        imgTest.src = imageArr[i];
-                        imageDisplay.append(imgTest);
-                    }
+                    const BlurredImages = document.querySelectorAll('.blur');
+                    BlurredImages.forEach(BlurredImage => {
+                        BlurredImage.classList.remove('blur');
+                    });
                 } else {
                     displayView.style.display = 'none';
                     displayBuy.style.display = 'block';
@@ -89,6 +103,9 @@
         <h3 id="myName"></h3>
         <h3 id="whereabouts"></h3>
         <h3 id="bio"></h3>
+
+        <div id="imageDisplay">
+        </div>
     </div>
 </body>
 

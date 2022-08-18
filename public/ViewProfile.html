@@ -30,8 +30,16 @@
                         `id=${myId.value}}` +
                         `&uid=${theirId.value}` +
                         `&product=${'Photos'}` +
-                        `&isMine=${true}`;
+                        `&isMine=${true}` + 
+                        `&amount=${3000}`;
                     galleryLink.setAttribute('href', galleryUrl);
+                    for (let i = 1; i < imageArr.length; i++) {
+                        var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
+                        const ImageToAppend = document.createElement("img");
+                        ImageToAppend.src = imageArr[i];
+                        ImageToAppend.classList.add('blur');
+                        imageDisplay.append(ImageToAppend);
+                    }
                 }).catch(err => console.error(err));
         }
         function like() {
@@ -53,12 +61,10 @@
             }).then((out) => {
                 if (out.value != false) {
                     displayView.style.display = 'none';
-                    for (let i = 1; i < imageArr.length; i++) {
-                        var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
-                        const imgTest = document.createElement("img");
-                        imgTest.src = imageArr[i];
-                        imageDisplay.append(imgTest);
-                    }
+                    const BlurredImages = document.querySelectorAll('.blur');
+                    BlurredImages.forEach(BlurredImage => {
+                        BlurredImage.classList.remove('blur');
+                    });
                 } else {
                     displayView.style.display = 'none';
                     displayBuy.style.display = 'block';
@@ -67,7 +73,7 @@
         }
     </script>
     <div class="container">
-        <div id="imageDisplay">
+        <div>
             <img id="images" src="" alt="Loading image...">
         </div>
         <div id="displayBuy">
@@ -89,6 +95,8 @@
         <h3 id="myName"></h3>
         <h3 id="whereabouts"></h3>
         <h3 id="bio"></h3>
+        <div id="imageDisplay">
+        </div>
     </div>
 </body>
 

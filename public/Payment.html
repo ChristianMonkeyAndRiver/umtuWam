@@ -12,7 +12,18 @@
         window.onload = function () {
             myId.setAttribute("value", new URL(location.href).searchParams.get("id"));
 
+            price.setAttribute("value", new URL(location.href).searchParams.get("amount"))
+
             var product = new URL(location.href).searchParams.get("product");
+            if(product == 'ChatsAndPhotos') {
+                title.innerText = `To see everyone’s photos on UmtuWam, please subscribe for one month for R${price.value/100.00}. Choose the option to pay below:`;
+            }
+            if(product == 'Boost') {
+                title.innerText = `Click to pay R${price.value/100.00} to have your profile boosed for a day`;
+            }
+            if(product == 'verified') {
+                title.innerText = `Click to pay R${price.value/100.00} to show a VERIFIED badge on your profile`;
+            }
             title.innerText = `You do not have an active subscription for ${product}.\nPurchase a subscription for ${product}`;
             productId.setAttribute("value", product);
 
@@ -23,59 +34,42 @@
 
         function moyaPay() {
             PeachPay.hidden = true;
-            FlashPay.hidden = true;
             MoyaPay.hidden = true;
             var payUrl = ''
             if(isMine.value) {
                 payUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-createMySubscription?` +
                 `id=${myId.value}` +
                 `&uid=${theirId.value}` +
-                `&productId=${productId.value}`;
+                `&productId=${productId.value}` +
+                `&amount=${price.value}`;
             } else {
                 payUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-createOtherSubscription` +
                 `id=${myId.value}` +
                 `&uid=${theirId.value}` +
-                `&productId=${productId.value}`;
+                `&productId=${productId.value}` +
+                `&amount=${price.value}`;
             }
             
             fetch(payUrl).then(res => {
-                console.log(res);
-                // window.history.back();
+                MoyaPayMessage.hidden = false;
             }).catch(err => console.error(err));
-        }
-
-        function flashPay() {
-            PeachPay.hidden = true;
-            FlashPay.hidden = true;
-            MoyaPay.hidden = true;
-            var payUrl = 'https://us-central1-umtuwam.cloudfunctions.net/httpPayment-flashPaymentGift?'
-            if(isMine.value) {
-                payUrl = payUrl +
-                `id=${myId.value}` +
-                `&uid=${myId.value}` +
-                `&pin=${FlashPay.value}` +
-                `&amount${price.value}` +
-                `&productId=${productId.value}`;
-            } else {
-                payUrl = payUrl +
-                `id=${myId.value}` +
-                `&uid=${theirId.value}` +
-                `&pin=${FlashPay.value}` +
-                `&amount${price.value}` +
-                `&productId=${productId.value}`;
-            }
         }
         
         function peachPay() {
             PeachPay.hidden = true;
-            FlashPay.hidden = true;
             MoyaPay.hidden = true;
-            var payUrl = `https://us-central1-umtuwam.cloudfunctions.net/httpPayment-peachPayment?amount=${price.value}`;
+            var payUrl = ` https://us-central1-umtuwam.cloudfunctions.net/httpPayment-peachPayment?amount=${price.value}`;
 
             fetch(payUrl)
                 .then(res => res.json())
                 .then((out) => {
-                    peachForm.src = `https://umtuwam.web.app/Form.html?id=${out.id}`
+                    peachForm.src = `https://umtuwam.web.app/Form.html?` +
+                    `payId=${out.id}` +
+                    `&id=${myId.value}` +
+                    `&uid=${theirId.value}` +
+                    `&product=${productId.value}` +
+                    `&isMine=${isMine.value}` +
+                    `&amount=${price.value/100.00}`;
                     peachForm.hidden = false;
                 });
         }
@@ -88,12 +82,8 @@
         <input type="text" id="isMine" name="isMine" hidden value="" />
         <input type="text" id="price" name="price" hidden value="" />
         <iframe class="peachFrame" id="peachForm" src="" title="Peach Pay" hidden></iframe>
-        <label id="flash" hidden>
-            Please enter your PIN:
-            <input type="text" id="FlashPin" />
-        </label>
+        <label id="MoyaPayMessage" class="btn" hidden>Please complete your transaction on MoyaPay then refresh the content</label>
         <button id="MoyaPay" class="btn" onclick="moyaPay()">Pay with MoyaPay</button>
-        <button id="FlashPay" class="btn" onclick="flashPay()">Pay with Flash Payments</button>
         <button id="PeachPay" class="btn" onclick="peachPay()">Pay with Peach Payments</button>
         
         <h2 id="status"></h2>

@@ -140,12 +140,15 @@
                 `&id=${id.value}`;
 
                 checkBtn.disabled = true;
-                checkBtn.innerText = 'Loading...'
+                checkBtn.innerText = 'Loading...';
                 fetch(url).then(function (response) {
-                    checkBtn.innerText = 'Signup was successful!'
+                    checkBtn.innerText = 'Signup was successful!';
+                    setTimeout(() => {
+                        checkBtn.innerText = 'Please reopen the app to Start Dating!';
+                    }, 200)
                 }).catch((error) => {
                     console.error('Error:', error);
-                });;
+                });
             }
         }
     </script>

@@ -15,7 +15,7 @@
       "port": 9099
     },
     "functions": {
-      "port": 5001
+      "port": 13000
     },
     "firestore": {
       "port": 3005
@@ -23,6 +23,9 @@
     "ui": {
       "enabled": true,
       "port": 8080
+    },
+    "hosting": {
+      "port": 5004
     }
   },
   "hosting": {

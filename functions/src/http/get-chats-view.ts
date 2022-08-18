@@ -29,9 +29,9 @@ export default functions.https.onRequest(async (req, res) => {
 
             const now = admin.firestore.Timestamp.now();
 
-            const chatTimeDiff = now.seconds - document.data()?.chatsExpiryDate.seconds ?? 0;
-            const daysDifference = Math.floor(chatTimeDiff / 1000 / 60);
-            const isChatSubscriptionValid = (document.data()?.hasPaidForChats && daysDifference < 0);
+            const chatTimeDiff = now.seconds - document.data()?.chatsAndPhotosExpiryDate.seconds ?? 0;
+            const daysDifference = Math.floor(chatTimeDiff / 1000 / 60*30);
+            const isChatAndPhotosSubscriptionValid = (document.data()?.hasPaidForChatsAndPhotos && daysDifference < 0);
 
 
             const doc = [{
@@ -45,7 +45,7 @@ export default functions.https.onRequest(async (req, res) => {
                         webview: [
                             {
                                 _attr: {
-                                    href: isChatSubscriptionValid ? `https://umtuwam.web.app/Chats.html?id=${id}&uid=${uid}` : `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=Chats&isMine=${true}`,
+                                    href: isChatAndPhotosSubscriptionValid ? `https://umtuwam.web.app/Chats.html?id=${id}&uid=${uid}` : `https://umtuwam.web.app/Payment.html?id=${id}&uid=${uid}&product=${util.Products.ChatsAndPhotos}&isMine=${true}&amount=${util.Prices.ChatsAndPhotos}`,
                                     internal: 'true',
                                 },
                             },
@@ -58,7 +58,7 @@ export default functions.https.onRequest(async (req, res) => {
             res.send(xml(doc, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
             return;
         } catch (error) {
-            console.error(util.ErrorMessages.ErrorText, error);
+            console.error(error);
             res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }

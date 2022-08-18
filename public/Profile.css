@@ -65,3 +65,8 @@ label textarea {
 body {
     padding-bottom: 150px;
 }
+
+.input {
+    height: 30px;
+    width: 80%;
+}

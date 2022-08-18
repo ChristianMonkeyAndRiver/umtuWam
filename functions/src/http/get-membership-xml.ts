@@ -20,9 +20,9 @@ export default functions.https.onRequest(async (req, res) => {
 
         const now = admin.firestore.Timestamp.now();
 
-        const chatTimeDiff = now.seconds - userDocument.data()?.chatsExpiryDate.seconds ?? 0;
-        let daysDifference = Math.floor(chatTimeDiff / 1000 / 60);
-        const isChatSubscriptionValid = (userDocument.data()?.hasPaidForChats && daysDifference < 0);
+        const chatTimeDiff = now.seconds - userDocument.data()?.chatsAndPhotosExpiryDate.seconds ?? 0;
+        let daysDifference = Math.floor(chatTimeDiff / 1000 / 60*30);
+        const isChatAndPhotosSubscriptionValid = (userDocument.data()?.hasPaidForChatsAndPhotos && daysDifference < 0);
 
         const featuredTimeDiff = now.seconds - userDocument.data()?.featuredExpiryDate.seconds ?? 0;
         daysDifference = Math.floor(featuredTimeDiff / 1000 / 60);
@@ -58,12 +58,12 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: isChatSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}}&uid=${''}&product=${util.Products.Chats}&isMine=${true}`,
+                                        href: isChatAndPhotosSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.ChatsAndPhotos}&isMine=${true}&amount=${util.Prices.ChatsAndPhotos}`,
                                         layout: 'relative',
                                     },
                                 },
                                 {
-                                    md: isChatSubscriptionValid ? 'Chat subscription is currently active' : `${util.FunctionsConstants.Chatting}: ${util.FunctionsConstants.ClickToPayChats}`,
+                                    md: isChatAndPhotosSubscriptionValid ? 'Chat and Photos subscription is currently active' : `${util.FunctionsConstants.ChatsAndPhotos}: ${util.FunctionsConstants.ClickToPayChatsAndPhotos}`,
                                 },
                             ],
                         },
@@ -72,21 +72,7 @@ export default functions.https.onRequest(async (req, res) => {
                                 {
                                     _attr: {
                                         style: '',
-                                        href: isChatSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}}&uid=${''}&product=${util.Products.Chats}&isMine=${true}`,
-                                        layout: 'relative',
-                                    },
-                                },
-                                {
-                                    md: isChatSubscriptionValid ? 'Chat subscription is currently active' : `${util.FunctionsConstants.Chatting}: ${util.FunctionsConstants.ClickToPayChatsMonth}`,
-                                },
-                            ],
-                        },
-                        {
-                            item: [
-                                {
-                                    _attr: {
-                                        style: '',
-                                        href: isFeaturedSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Boost}&isMine=${true}`,
+                                        href: isFeaturedSubscriptionValid ? '' : `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Boost}&isMine=${true}&amount=${util.Prices.Boost}`,
                                         layout: 'relative',
                                     },
                                 },
@@ -95,26 +81,12 @@ export default functions.https.onRequest(async (req, res) => {
                                 },
                             ],
                         },
-                        // {
-                        //     item: [
-                        //         {
-                        //             _attr: {
-                        //                 style: '',
-                        //                 href: 'https://us-central1-umtuwam.cloudfunctions.net/httpPayment-payfast',
-                        //                 layout: 'relative',
-                        //             },
-                        //         },
-                        //         {
-                        //             md: 'PayFast Payment',
-                        //         },
-                        //     ],
-                        // },
                         !isVerified ? {
                             item: [
                                 {
                                     _attr: {
                                         style: '',
-                                        href: `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Verified}&isMine=${true}`,
+                                        href: `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.Verified}&isMine=${true}&amount=${util.Prices.Verified}`,
                                         layout: 'relative',
                                     },
                                 },
@@ -133,3 +105,19 @@ export default functions.https.onRequest(async (req, res) => {
         return;
     });
 });
+
+
+// isChatSubscriptionValid ? {
+//     item: [
+//         {
+//             _attr: {
+//                 style: '',
+//                 href: `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?id=${uid}&uid=${''}&product=${util.Products.ChatsAndPhotos}&isMine=${true}&amount=15`,
+//                 layout: 'relative',
+//             },
+//         },
+//         {
+//             md: `${util.FunctionsConstants.Chatting}: ${util.FunctionsConstants.ClickToPayChatsMonth}`,
+//         },
+//     ],
+// } : {},

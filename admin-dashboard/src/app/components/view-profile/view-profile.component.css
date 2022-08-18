@@ -126,9 +126,28 @@
 }
 
 .mat-elevation-z4 {
-    padding: auto;
+    padding: 0;
+    margin: 5%;
+    background-color: transparent !important;
+}
+
+.image {
+    border-radius: 5%;
 }
 
 .image:hover {
     cursor: pointer;
+}
+
+#matSpinnerDiv {
+    height: 10%;
+    height: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+mat-spinner {
+    margin: 8px 16px;
+    border-radius: 50%;
 }

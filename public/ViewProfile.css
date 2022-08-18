@@ -46,3 +46,7 @@ body {
     border-radius: 5px;
     width: 100%;
 }
+
+.blur {
+    filter: blur(15px);
+}

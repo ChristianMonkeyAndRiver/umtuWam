@@ -11,6 +11,72 @@
     <script>
         window.onload = function () {
             var did = new URL(location.href).searchParams.get("did");
+
+            var cities = [
+                "Alfred Nzo",
+                "Amatole",
+                "Cacadu",
+                "Chris Hani",
+                "Nelson Mandela Bay",
+                "Or Thambo",
+                "Ukhahlamba",
+                "Lejweleputswa",
+                "Motheo",
+                "Northern Free State",
+                "Thabo Mofutsanyane",
+                "Xhariep",
+                "Ekurhuleni",
+                "Johannesburg",
+                "Metsweding",
+                "Sedibeng",
+                "Tshwane",
+                "West Rand",
+                "Amajuba",
+                "Ethekwini",
+                "Ilembe",
+                "Sisonke",
+                "Ugu",
+                "Umgungundlovu",
+                "Umkhanyakude",
+                "Umzinyathi",
+                "Uthukela",
+                "Uthungulu",
+                "Zululand",
+                "Capricorn",
+                "Mopani",
+                "Sekhukhune",
+                "Vhembe",
+                "Waterberg",
+                "Ehlanzeni",
+                "Gert Sibande",
+                "Nkangala",
+                "Bojanala Platinum",
+                "Bophirima",
+                "Central Province",
+                "Southern Province",
+                "Frances Baard",
+                "Kgalagadi",
+                "Namakwa",
+                "Pixley Ka Seme",
+                "Siyanda",
+                "Cape Town Metro",
+                "Cape Winelands",
+                "Central Karoo",
+                "Eden",
+                "Overberg",
+                "West Coast",
+            ]
+
+            cities.sort();
+
+            var list = document.getElementById('locationList');
+
+            cities.forEach(city => {
+                var option = document.createElement('option');
+                option.value = city;
+                list.appendChild(option);
+            });
+
             id.setAttribute("value", did);
             image.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/http-getImageView?id=${did}`)
             fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${did}`)
@@ -18,13 +84,13 @@
                 .then((out) => {
                     myName.setAttribute("value", out.name);
                     age.setAttribute("value", out.age);
-                    bio.setAttribute("value", out.bio);
+                    bio.innerText = out.bio;
                     membership.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/http-getMembershipXml?id=${did}`);
 
-                    var whereabouts = document.getElementById("whereabouts").children;
-                    for (var i = 0; i < whereabouts.length; i++) {
-                        if (whereabouts[i].value == out.location) {
-                            whereabouts[i].selected = true;
+                    const location = locationList.children;
+                    for (var i = 0; i < location.length; i++) {
+                        if (location[i].value == out.location) {
+                            whereabouts.value = out.location;
                             break;
                         }
                     }
@@ -42,7 +108,6 @@
             checkBtn.disabled = true;
             checkBtn.innerText = 'Loading...'
             fetch(url).then(function (response) {
-                console.log(response);
                 checkBtn.innerText = 'Changes saved!';
                 let timeout = setTimeout(reset, 3000);
                 return response.json();
@@ -74,21 +139,9 @@
                 </label>
             </p>
             <p>
-                <label>Location:
-                    <select name="whereabouts" id="whereabouts" required>
-                        <option value="" disabled selected>Select your location</option>
-                        <option value="Bloemfontein">Bloemfontein</option>
-                        <option value="Cape Town">Cape Town</option>
-                        <option value="Durban">Durban</option>
-                        <option value="Johannesburg">Johannesburg</option>
-                        <option value="Kimberley">Kimberley</option>
-                        <option value="Nelspruit">Nelspruit</option>
-                        <option value="PE">PE</option>
-                        <option value="Polokwane">Polokwane</option>
-                        <option value="Pretoria">Pretoria</option>
-                        <option value="Soweto">Soweto</option>
-                    </select>
-                </label>
+                <datalist id="locationList">
+                </datalist>
+                <input id="whereabouts" class="input" autoComplete="on" list="locationList" placeholder="Select your location">
             </p>
             <p>
                 <label>About me:

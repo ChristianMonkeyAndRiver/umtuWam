@@ -60,11 +60,12 @@ export default functions.https.onRequest(async (req, res) => {
                                             featuredExpiryDate: expiresAt,
                                         });
                                     promises.push(promise1);
-                                } else if (docs.docs[0].data().productId == util.Products.Chats) {
+                                } else if (docs.docs[0].data().productId == util.Products.ChatsAndPhotos) {
+                                    const expiresAfterAMonth = new admin.firestore.Timestamp(now.seconds + 24 * 60 * 60 * 30, now.nanoseconds);
                                     const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().purchaserId)
                                         .update({
-                                            hasPaidForChats: true,
-                                            chatsExpiryDate: expiresAt,
+                                            hasPaidForChatsAndPhotos: true,
+                                            chatsAndPhotosExpiryDate: expiresAfterAMonth,
                                         });
                                     promises.push(promise1);
                                 } else {
@@ -78,13 +79,13 @@ export default functions.https.onRequest(async (req, res) => {
                                 }
                                 const promise2 = docs.docs[0].ref.update({ expiresAt: expiresAt, isPaymentApproved: true });
                                 promises.push(promise2);
-                                const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBought(docs.docs[0].data().purchaserId);
+                                const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBought(docs.docs[0].data().purchaserId, docs.docs[0].data().productId);
                                 promises.push(promise3);
                             } else {
                                 const promise1 = admin.firestore().collection(util.FunctionsConstants.Users).doc(docs.docs[0].data().recipientId)
                                     .update({
-                                        hasPaidForChats: true,
-                                        chatsExpiryDate: expiresAt,
+                                        hasPaidForChatsAndPhotos: true,
+                                        chatsAndPhotosExpiryDate: expiresAt,
                                     });
                                 promises.push(promise1);
 
@@ -103,7 +104,7 @@ export default functions.https.onRequest(async (req, res) => {
                         });
                 });
         } catch (error) {
-            console.error(util.ErrorMessages.ErrorText, error);
+            console.error(error);
             res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }

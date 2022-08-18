@@ -12,11 +12,14 @@ import { LoaderService } from 'src/app/services/loader.service';
 export class ViewProfileComponent implements OnInit {
 
   user: any;
+  isLoading:boolean;
 
   constructor(
     public dialog: MatDialog, private loaderService: LoaderService,
     private userData: ViewProfileServiceService, private modalPopupService: ModalPopupService,
-  ) {}
+  ) {
+    this.isLoading=true;
+  }
 
   ngOnInit(): void {
     this.loaderService.showLoader();
@@ -24,6 +27,10 @@ export class ViewProfileComponent implements OnInit {
       this.user = userObj;
       this.loaderService.hideLoader();
     })
+  }
+
+  hideLoader(){
+    this.isLoading=false;
   }
 
   showDelete(image: string) {

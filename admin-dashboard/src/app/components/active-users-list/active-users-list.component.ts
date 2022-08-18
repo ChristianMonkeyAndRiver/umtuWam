@@ -40,6 +40,8 @@ export class ActiveUsersListComponent implements OnInit {
   disable_next: boolean = false;
   disable_prev: boolean = false;
 
+  isLoading:boolean;
+
   public searchController = new FormControl('');
 
   constructor(
@@ -50,6 +52,7 @@ export class ActiveUsersListComponent implements OnInit {
     private router: Router,
     private loaderService: LoaderService
   ) {
+    this.isLoading=true;
     if (this.router.url.includes('active/profile')) {
       this.showDetails = true;
       this.showLocalProfile(); 
@@ -84,6 +87,10 @@ export class ActiveUsersListComponent implements OnInit {
     this.userData.setUser(user);
     localStorage.setItem('RECENT_USER', JSON.stringify(this.user));
     this.router.navigate(['profile'], { relativeTo: this.route })
+  }
+
+  hideLoader(){
+    this.isLoading=false;
   }
 
   loadUsers(): void {
@@ -224,7 +231,7 @@ export class ActiveUsersListComponent implements OnInit {
         } else {
             this.disable_next = false;
         }
-      this.disable_prev = false;
+        this.disable_prev = false;
         this.loaderService.hideLoader();
       }, error => {
         this.disable_next = false;

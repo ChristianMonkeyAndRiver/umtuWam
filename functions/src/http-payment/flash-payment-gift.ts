@@ -78,8 +78,8 @@ export default functions.https.onRequest(async (req, res) => {
 
                     await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid)
                     .update({
-                        hasPaidForChats: true,
-                        chatsExpiryDate: expiresAt,
+                        hasPaidForChatsAndPhotos: true,
+                        chatsAndPhotosExpiryDate: expiresAt,
                     });
                     res.status(200).send(json);
                 } else if (json.responseCode != null) {
@@ -116,7 +116,7 @@ export default functions.https.onRequest(async (req, res) => {
                 return;
             });
         } catch (error) {
-            console.error(util.ErrorMessages.ErrorText, error);
+            console.error(error);
             res.status(404).send(util.ErrorMessages.UnexpectedError);
             return;
         }
