@@ -1,0 +1,153 @@
+.profile-page {
+    height: 25%;
+    min-width: 100%;
+    margin: 15px 0px;
+    display: flex;
+}
+
+.personal-info img {
+    height: 90%;
+    margin: 8px 16px;
+    border-radius: 10%;
+}
+
+.personal-info {
+    height: 75%;
+    width: 40%;
+    margin: 0px 16px;
+    display: flex;
+    padding: auto;
+    border-radius: 15px;
+    box-shadow: box-shadow;
+    background-color: #FFFFFF;
+    border: 1px solid #79747E;
+}
+
+.personal-info-details-container {
+    float: left;
+    display: flex;
+    padding: 16px 0px;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.name-container {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 4px 4px;
+    overflow: hidden;
+}
+
+.gender-container {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 4px 4px;
+    overflow: hidden;
+}
+
+.id-container {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 4px 4px;
+    overflow: hidden;
+}
+
+.location-container {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 4px 4px;
+    overflow: hidden;
+}
+
+
+.about-info {
+    height: 75%;
+    width: 40%;
+    display: flex;
+    padding: auto;
+    border-radius: 15px;
+    box-shadow: box-shadow;
+    background-color: #FFFFFF;
+    border: 1px solid #79747E;
+}
+
+.about-info-details-container {
+    display: flex;
+    padding: 16px 16x;
+    flex-direction: column;
+    justify-content: space-around;
+    float: left;
+}
+
+.about-container h3 {
+    font-size: 30px;
+    font-weight: 600;
+    margin: 0px 16px;
+    margin-top: 8px;
+}
+
+.bio-container {
+    font-size: 12px;
+    font-weight: 400;
+    margin: 0px 16px;
+    height: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.read-more-container button {
+    background-color: #b01f60;
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 8px;
+    margin-left: 16px;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+}
+
+.report-card .mat-button {
+    background-color: #b01f60;
+    border-radius: 20px;
+    color: white;
+    width: 100%;
+    height: 50px;
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.report-card {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 400;
+    padding: 15px;
+}
+
+.mat-elevation-z4 {
+    padding: 0;
+    margin: 5%;
+    background-color: transparent !important;
+}
+
+.image {
+    border-radius: 5%;
+}
+
+.image:hover {
+    cursor: pointer;
+}
+
+#matSpinnerDiv {
+    height: 10%;
+    height: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+mat-spinner {
+    margin: 8px 16px;
+    border-radius: 50%;
+}

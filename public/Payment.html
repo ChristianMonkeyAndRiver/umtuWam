@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>UmtuWam</title>
+    <link rel="stylesheet" href="./Payment.css" type="text/css">
+</head>
+
+<body>
+    <script>
+        window.onload = function () {
+            myId.setAttribute("value", new URL(location.href).searchParams.get("id"));
+
+            price.setAttribute("value", new URL(location.href).searchParams.get("amount"))
+
+            var product = new URL(location.href).searchParams.get("product");
+            if(product == 'ChatsAndPhotos') {
+                title.innerText = `To see everyone’s photos on UmtuWam, please subscribe for one month for R${price.value/100.00}. Choose the option to pay below:`;
+            }
+            if(product == 'Boost') {
+                title.innerText = `Click to pay R${price.value/100.00} to have your profile boosed for a day`;
+            }
+            if(product == 'verified') {
+                title.innerText = `Click to pay R${price.value/100.00} to show a VERIFIED badge on your profile`;
+            }
+            title.innerText = `You do not have an active subscription for ${product}.\nPurchase a subscription for ${product}`;
+            productId.setAttribute("value", product);
+
+            theirId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
+
+            isMine.setAttribute("value", new URL(location.href).searchParams.get("isMine"));
+        }
+
+        function moyaPay() {
+            PeachPay.hidden = true;
+            MoyaPay.hidden = true;
+            var payUrl = ''
+            if(isMine.value) {
+                payUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-createMySubscription?` +
+                `id=${myId.value}` +
+                `&uid=${theirId.value}` +
+                `&productId=${productId.value}` +
+                `&amount=${price.value}`;
+            } else {
+                payUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-createOtherSubscription` +
+                `id=${myId.value}` +
+                `&uid=${theirId.value}` +
+                `&productId=${productId.value}` +
+                `&amount=${price.value}`;
+            }
+            
+            fetch(payUrl).then(res => {
+                MoyaPayMessage.hidden = false;
+            }).catch(err => console.error(err));
+        }
+        
+        function peachPay() {
+            PeachPay.hidden = true;
+            MoyaPay.hidden = true;
+            var payUrl = ` https://us-central1-umtuwam.cloudfunctions.net/httpPayment-peachPayment?amount=${price.value}`;
+
+            fetch(payUrl)
+                .then(res => res.json())
+                .then((out) => {
+                    peachForm.src = `https://umtuwam.web.app/Form.html?` +
+                    `payId=${out.id}` +
+                    `&id=${myId.value}` +
+                    `&uid=${theirId.value}` +
+                    `&product=${productId.value}` +
+                    `&isMine=${isMine.value}` +
+                    `&amount=${price.value/100.00}`;
+                    peachForm.hidden = false;
+                });
+        }
+    </script>
+    <div class="container">
+        <h2 class="title" id="title"></h2>
+        <input type="text" id="productId" hidden value="">
+        <input type="text" id="myId" name="id" hidden value="" />
+        <input type="text" id="theirId" name="uid" hidden value="" />
+        <input type="text" id="isMine" name="isMine" hidden value="" />
+        <input type="text" id="price" name="price" hidden value="" />
+        <iframe class="peachFrame" id="peachForm" src="" title="Peach Pay" hidden></iframe>
+        <label id="MoyaPayMessage" class="btn" hidden>Please complete your transaction on MoyaPay then refresh the content</label>
+        <button id="MoyaPay" class="btn" onclick="moyaPay()">Pay with MoyaPay</button>
+        <button id="PeachPay" class="btn" onclick="peachPay()">Pay with Peach Payments</button>
+        
+        <h2 id="status"></h2>
+    </div>
+</body>
+
+</html>

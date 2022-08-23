@@ -1,0 +1,44 @@
+button {
+    height: 50px;
+    font-size: x-large;
+    width: 80%;
+    margin: 10px auto;
+    display: block;
+    border: solid black 2px;
+    border-radius: 5px;
+}
+
+.container {
+    padding-left: 10%;
+}
+
+.logo {
+    width: 30%;
+    padding-left: 35%;
+}
+
+.h {
+    text-align: center;
+}
+
+label {
+    vertical-align: top;
+}
+
+select {
+    height: 35px;
+}
+
+.input {
+    height: 30px;
+    width: 80%;
+}
+
+body {
+    padding-bottom: 150px;
+}
+
+.age {
+    text-align: center;
+    width: 10% !important;
+}

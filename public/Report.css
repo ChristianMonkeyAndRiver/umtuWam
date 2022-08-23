@@ -1,0 +1,22 @@
+.report {
+    width: 100%;
+    margin: 10px auto;
+    background-color: red;
+    color: white;
+    height: 40px;
+    font-size: large;
+}
+
+.container {
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+.content {
+    resize: none;
+    width: 80%;
+}
+
+body {
+    padding-bottom: 150px;
+}

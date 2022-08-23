@@ -1,0 +1,20 @@
+.container {
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+.title {
+    margin-bottom: 100px;
+}
+
+.btn {
+    width: 100%;
+    margin: 10px auto;
+    height: 35px;
+}
+
+.peachFrame {
+    border: 0;
+    height: 700px;
+    width: 100%;
+}

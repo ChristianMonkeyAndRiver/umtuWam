@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>UmtuWam</title>
+    <link rel="stylesheet" href="./Filters.css" type="text/css">
+</head>
+
+<body>
+    <script>
+        window.onload = function () {
+            id.setAttribute("value", new URL(location.href).searchParams.get("did"));
+           
+            var cities = [
+                "Alfred Nzo",
+                "Amatole",
+                "Cacadu",
+                "Chris Hani",
+                "Nelson Mandela Bay",
+                "Or Thambo",
+                "Ukhahlamba",
+                "Lejweleputswa",
+                "Motheo",
+                "Northern Free State",
+                "Thabo Mofutsanyane",
+                "Xhariep",
+                "Ekurhuleni",
+                "Johannesburg",
+                "Metsweding",
+                "Sedibeng",
+                "Tshwane",
+                "West Rand",
+                "Amajuba",
+                "Ethekwini",
+                "Ilembe",
+                "Sisonke",
+                "Ugu",
+                "Umgungundlovu",
+                "Umkhanyakude",
+                "Umzinyathi",
+                "Uthukela",
+                "Uthungulu",
+                "Zululand",
+                "Capricorn",
+                "Mopani",
+                "Sekhukhune",
+                "Vhembe",
+                "Waterberg",
+                "Ehlanzeni",
+                "Gert Sibande",
+                "Nkangala",
+                "Bojanala Platinum",
+                "Bophirima",
+                "Central Province",
+                "Southern Province",
+                "Frances Baard",
+                "Kgalagadi",
+                "Namakwa",
+                "Pixley Ka Seme",
+                "Siyanda",
+                "Cape Town Metro",
+                "Cape Winelands",
+                "Central Karoo",
+                "Eden",
+                "Overberg",
+                "West Coast",
+            ];
+
+            cities.sort();
+
+            var list = document.getElementById('locationList');
+
+            cities.forEach(city => {
+                var option = document.createElement('option');
+                option.value = city;
+                list.appendChild(option);
+            });
+
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserPreferences?id=${id.value}`)
+                .then(res => res.json())
+                .then((out) => {
+                    for(i of out.gender) {
+                        if(i == "Female") {
+                            female.setAttribute("checked", true);
+                        }
+                        if(i == "Male") {
+                            male.setAttribute("checked", true);
+                        }
+                    }
+
+                    ageFrom.setAttribute("value", out.ageMin);
+                    ageTo.setAttribute("value", out.ageMax);
+
+                    const location = locationList.children;
+                    for (var i = 0; i < location.length; i++) {
+                        if (location[i].value == out.location) {
+                            whereabouts.value = out.location;
+                            break;
+                        }
+                    }
+                }).catch(err => console.error(err));
+        }
+
+        function validateThis() {
+            var checkboxes = document.getElementsByName("lookingFor");
+            var okay = false;
+            for (var i = 0, l = checkboxes.length; i < l; i++) {
+                if (checkboxes[i].checked) {
+                    okay = true;
+                    break;
+                }
+            }
+            if (!okay) {
+                lookingForError.removeAttribute("hidden");
+                return false;
+            } else {
+                lookingForError.setAttribute("hidden", true);
+                return true;
+            }
+        }
+
+        function stop() {
+            event.preventDefault();
+            var test = validateThis();
+            if (test) {
+                var lookingForMale = 0;
+                var lookingForFemale = 0;
+                var inputs = document.getElementsByName("lookingFor");
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].checked) {
+                        if (inputs[i].value == "Female") {
+                            lookingForFemale = 1;
+                        }
+                        if (inputs[i].value == "Male") {
+                            lookingForMale = 1;
+                        }
+                    }
+                }
+
+                var url = `https://us-central1-umtuwam.cloudfunctions.net/http-updateUserPreferences?` +
+                    `ageMin=${ageFrom.value}` +
+                    `&ageMax=${ageTo.value}` +
+                    `&location=${whereabouts.value}` +
+                    `&lookingForFemale=${lookingForFemale}` +
+                    `&lookingForMale=${lookingForMale}` +
+                    `&id=${id.value}`;
+
+                checkBtn.disabled = true;
+                checkBtn.innerText = 'Loading...';
+
+                fetch(url).then(function (response) {
+                    checkBtn.innerText = 'Changes saved!';
+                    let timeout = setTimeout(reset, 3000);
+                    return response.json();
+                }).catch(err => console.error(err));
+            }
+        }
+
+        function reset() {
+            checkBtn.disabled = false;
+            checkBtn.innerText = 'Save changes'
+        }
+
+    </script>
+    <form onsubmit="stop();" method="get">
+        <!-- <img class="logo" src="./logo.png" alt="UmtuWam"> -->
+        <hr>
+        <h2>Preferences:</h2>
+        <hr>
+        <div class="container">
+            <p>
+                <label>Ages:
+                    <input class="age" type="text" id="ageFrom" name="ageMin" pattern="[0-9]+" maxlength="3" required>
+                    <label for="ageTo">to:</label>
+                    <input class="age" type="text" id="ageTo" name="ageMax" pattern="[0-9]+" maxlength="3" required>
+                </label>
+            </p>
+            <p>
+                <label>Looking for:
+                    <input id="female" type="checkbox" name="lookingFor" value="Female">
+                    <label for="female">Woman</label>
+                    <input id="male" type="checkbox" name="lookingFor" value="Male">
+                    <label for="male">Man</label>
+                </label>
+            <p id="lookingForError" hidden style="color: red;">Please select at least one checkbox</p>
+            </p>
+            <p>
+                <datalist id="locationList">
+                </datalist>
+                <input id="whereabouts" class="input" autoComplete="on" list="locationList" placeholder="Select your location">
+            </p>
+            <input type="text" id="id" name="id" hidden value= />
+        </div>
+        <button id="checkBtn" type="submit">Save Changes</button>
+    </form>
+</body>
+
+</html>

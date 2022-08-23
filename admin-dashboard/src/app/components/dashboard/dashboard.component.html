@@ -1,0 +1,48 @@
+<mat-toolbar class="navbar">
+  <button mat-icon-button class="example-icon" (click)="drawer.toggle()">
+    <mat-icon matSuffix>menu</mat-icon>
+  </button>
+  <div class="admin-portal-text"><span>Admin Portal</span></div>
+  <span class="example-spacer"></span>
+  <div>
+    <!-- <button mat-icon-button class="example-icon" (click)="logout()">
+      <mat-icon matSuffix>notifications</mat-icon>
+    </button> -->
+    <button mat-icon-button class="example-icon" (click)="logout()">
+      <mat-icon matSuffix>exit_to_app</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
+
+<mat-drawer-container class="example-container" autosize>
+
+  <mat-drawer #drawer class="example-sidenav" mode="side">
+    <div>
+      <button mat-flat-button class="drawer-icon-button" (click)="showActiveUsers()"
+        [ngStyle]="{'background-color': currentIndex === 0 ? '#f6e3ed' : 'white'}">
+        <mat-icon class="drawer-button-icon">supervisor_account</mat-icon>
+        <span>Active Users</span>
+      </button>
+    </div>
+
+    <div>
+      <button mat-flat-button class="drawer-icon-button" (click)="showReports()"
+        [ngStyle]="{'background-color': currentIndex === 1 ? '#f6e3ed' : 'white'}">
+        <mat-icon class="drawer-button-icon">error_outline</mat-icon>
+        <span>Abuse Reports</span>
+      </button>
+    </div>
+
+    <div>
+      <button mat-flat-button class="drawer-icon-button" (click)="showBannedUsers()"
+        [ngStyle]="{'background-color': currentIndex === 2 ? '#f6e3ed' : 'white'}">
+        <mat-icon class="drawer-button-icon">not_interested</mat-icon>
+        <span>Banned Accounts</span>
+      </button>
+    </div>
+  </mat-drawer>
+
+  <div class="example-sidenav-content">
+    <router-outlet></router-outlet>
+  </div>
+</mat-drawer-container>

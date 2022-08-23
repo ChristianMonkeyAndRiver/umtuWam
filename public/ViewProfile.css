@@ -1,0 +1,52 @@
+.heart {
+    background-color: #efefef;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    text-decoration: none;
+    height: 40px;
+    font-size: large;
+    margin: 10px auto;
+    display: flex;
+    border: solid black 2px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 100%;
+    border: 2px black;
+}
+
+.container {
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+body {
+    padding-bottom: 150px;
+}
+
+.report {
+    background-color: red;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    height: 40px;
+    font-size: large;
+    margin: 10px auto;
+    display: flex;
+    border: solid black 2px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.blur {
+    filter: blur(15px);
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>UmtuWam</title>
+    <link rel="stylesheet" href="./ViewProfile.css" type="text/css">
+</head>
+
+<body>
+    <script>
+        var imageArr = [];
+        window.onload = function () {
+            displayBuy.style.display = 'none';
+            theirId.setAttribute("value", new URL(location.href).searchParams.get("did"));
+            myId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
+            fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${theirId.value}`)
+                .then(res => res.json())
+                .then((out) => {
+                    myName.innerText = out.name + ", " + out.age;
+                    whereabouts.innerText = out.location;
+                    bio.innerText = out.bio;
+                    images.src = out.images[0];
+                    report.setAttribute('href', `https://us-central1-umtuwam.cloudfunctions.net/http-reportsView?` +
+                    `id=${myId.value}` +
+                    `&uid=${theirId.value}` +
+                    `&name=${out.name}`);
+                    imageArr = out.images;
+                    const galleryUrl = `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?` +
+                        `id=${myId.value}}` +
+                        `&uid=${theirId.value}` +
+                        `&product=${'ChatsAndPhotos'}` +
+                        `&isMine=${true}` + 
+                        `&amount=${100}`;
+                    galleryLink.setAttribute('href', galleryUrl);
+                    for (let i = 1; i < imageArr.length; i++) {
+                        var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
+                        const ImageToAppend = document.createElement("img");
+                        ImageToAppend.src = imageArr[i];
+                        ImageToAppend.classList.add('blur');
+                        imageDisplay.append(ImageToAppend);
+                    }
+                }).catch(err => console.error(err));
+        }
+        function like() {
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/http-likeUser?id=${myId.value}&uid=${theirId.value}`
+            btnLike.disabled = true;
+            btnLike.innerText = 'Loading..';
+            fetch(url)
+                .then((out) => {
+                    btnLike.style.backgroundColor = '#FFC0CB';
+                    btnLike.innerText = 'Liked!';
+                }).catch(err => console.error(err));
+        }
+        function gallery() {
+            var url = `https://us-central1-umtuwam.cloudfunctions.net/http-getGalleryView?id=${myId.value}&uid=${theirId.value}`;
+            btnGallery.innerText = 'Loading..'
+            btnGallery.disabled = true;
+            fetch(url).then(res => {
+                return res.json();
+            }).then((out) => {
+                if (out.value != false) {
+                    displayView.style.display = 'none';
+                    const BlurredImages = document.querySelectorAll('.blur');
+                    BlurredImages.forEach(BlurredImage => {
+                        BlurredImage.classList.remove('blur');
+                    });
+                } else {
+                    displayView.style.display = 'none';
+                    displayBuy.style.display = 'block';
+                }
+            }).catch(err => console.error(err));
+        }
+    </script>
+    <div class="container">
+        <div>
+            <img id="images" src="" alt="Loading image...">
+        </div>
+        <div id="displayBuy">
+            <a href="" id="galleryLink" class="heart" hidden>Buy access to view gallery?</a>
+        </div>
+        <div id="displayView">
+            <button id="btnGallery" onclick="gallery()" class="heart">View more images</button>
+        </div>
+        <div>
+            <button id="btnLike" onclick="like()" class="heart">Like</button>
+        </div>
+        <div>
+            <a id="report" class="report" href="">Report</a>
+        </div>
+
+        <input type="text" id="myId" name="id" hidden value="" />
+        <input type="text" id="theirId" name="id" hidden value="" />
+
+        <h3 id="myName"></h3>
+        <h3 id="whereabouts"></h3>
+        <h3 id="bio"></h3>
+        <div id="imageDisplay">
+        </div>
+    </div>
+</body>
+
+</html>
