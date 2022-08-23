@@ -1,6 +1,7 @@
 import * as cors from 'cors';
 import * as admin from 'firebase-admin';
 import * as util from '../utils/constants';
+import fetch from 'cross-fetch';
 import * as config from '../config/config';
 import * as functions from 'firebase-functions';
 import { sendMoyaMessageAfterSubscriptionHasBeenBought, sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse } from '../utils/messaging_api';
