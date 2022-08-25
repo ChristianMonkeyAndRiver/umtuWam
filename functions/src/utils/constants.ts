@@ -12,7 +12,7 @@ enum Prices {
 
 enum PaymentState {
     Created = 'CREATED',
-    Accepted = 'ACCPETED',
+    Accepted = 'ACCEPTED',
     Approved = 'APPROVED',
 }
 
@@ -91,7 +91,7 @@ enum FunctionsConstants {
     ClickToPayChatsAndPhotos = 'Click to pay R30 to chat and view photos for a month',
     ClickToPayChatsMonth = 'Click to pay R15 to chat for a month',
     ClickToPayPhotos = 'Click to pay R1 to see all profile photos',
-    ClickToPayFeatured = 'Click to pay R1 to have your profile boosed for a day',
+    ClickToPayFeatured = 'Click to pay R1 to have your profile boosted for a day',
     ClickToPayVerified = 'Click to pay R1 to show a VERIFIED badge on your profile',
     NextImage = 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fnext_button%20(2).png?alt=media&token=5b91d688-b483-4725-8e8b-d932583dc166',
     DefaultImage = 'https://firebasestorage.googleapis.com/v0/b/umtuwam.appspot.com/o/logos%2Fprofile_logo.png?alt=media&token=8163c425-06f0-485f-9e35-dde862ce0c53',

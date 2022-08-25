@@ -12,19 +12,20 @@
         window.onload = function () {
             myId.setAttribute("value", new URL(location.href).searchParams.get("id"));
 
-            price.setAttribute("value", new URL(location.href).searchParams.get("amount"))
+            price.setAttribute("value", new URL(location.href).searchParams.get("amount"));
+
+            title.innerText = 'Subscription Payment';
 
             var product = new URL(location.href).searchParams.get("product");
             if(product == 'ChatsAndPhotos') {
-                title.innerText = `To see everyone’s photos on UmtuWam, please subscribe for one month for R${price.value/100.00}. Choose the option to pay below:`;
+                subTitle.innerText = `To see everyone’s photos on UmtuWam, please subscribe for one month for R${price.value/100.00}. Choose the option to pay below:`;
             }
             if(product == 'Boost') {
-                title.innerText = `Click to pay R${price.value/100.00} to have your profile boosed for a day`;
+                subTitle.innerText = `Click to pay R${price.value/100.00} to have your profile boosed for a day`;
             }
             if(product == 'verified') {
-                title.innerText = `Click to pay R${price.value/100.00} to show a VERIFIED badge on your profile`;
+                subTitle.innerText = `Click to pay R${price.value/100.00} to show a VERIFIED badge on your profile`;
             }
-            title.innerText = `You do not have an active subscription for ${product}.\nPurchase a subscription for ${product}`;
             productId.setAttribute("value", product);
 
             theirId.setAttribute("value", new URL(location.href).searchParams.get("uid"));
@@ -52,6 +53,7 @@
             
             fetch(payUrl).then(res => {
                 MoyaPayMessage.hidden = false;
+                subTitle.hidden = true;
             }).catch(err => console.error(err));
         }
         
@@ -71,18 +73,20 @@
                     `&isMine=${isMine.value}` +
                     `&amount=${price.value/100.00}`;
                     peachForm.hidden = false;
+                    subTitle.hidden = true;
                 });
         }
     </script>
     <div class="container">
         <h2 class="title" id="title"></h2>
+        <h2 class="title" id="subTitle"></h2>
         <input type="text" id="productId" hidden value="">
         <input type="text" id="myId" name="id" hidden value="" />
         <input type="text" id="theirId" name="uid" hidden value="" />
         <input type="text" id="isMine" name="isMine" hidden value="" />
         <input type="text" id="price" name="price" hidden value="" />
         <iframe class="peachFrame" id="peachForm" src="" title="Peach Pay" hidden></iframe>
-        <label id="MoyaPayMessage" class="btn" hidden>Please complete your transaction on MoyaPay then refresh the content</label>
+        <label id="MoyaPayMessage" class="btn" hidden>Thank you for your payment. Enjoy using UmtuWam.</label>
         <button id="MoyaPay" class="btn" onclick="moyaPay()">Pay with MoyaPay</button>
         <button id="PeachPay" class="btn" onclick="peachPay()">Pay with Peach Payments</button>
         
