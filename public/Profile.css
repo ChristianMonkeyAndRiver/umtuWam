@@ -24,7 +24,7 @@ select {
     height: 35px;
 }
 
-input[type="text"] {
+input[type='text'] {
     width: 80%;
     height: 30px;
 }

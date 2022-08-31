@@ -1,162 +1,196 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <link rel="stylesheet" href="./Image.css" type="text/css" />
+    </head>
 
-<head>
-    <link rel="stylesheet" href="./Image.css" type="text/css">
-</head>
-
-<body>
-    <div>
-        <form method="post" enctype="multipart/form-data" id="form">
-            <input type="text" id="id" name="id" hidden value="" />
-            <div class="container">
-                <label class="custom-file-upload">
-                    Upload image for preview
-                    <input id="imgInp" name="imgInp" type="file" accept="image/*" />
-                </label>
-            </div>
-            <div class="container" id="card">
-
-            </div>
-            <div class="container" id="uploadContainer">
-                <div>
-                    <button class="custom-file-upload" onclick="rotate()">Rotate Image</button>
+    <body>
+        <div>
+            <form method="post" enctype="multipart/form-data" id="form">
+                <input type="text" id="id" name="id" hidden value="" />
+                <div class="container">
+                    <label class="custom-file-upload">
+                        Upload image for preview
+                        <input id="imgInp" name="imgInp" type="file" accept="image/*;capture=camera" />
+                    </label>
                 </div>
-                <div>
-                    <button id="btnUpload" class="custom-file-upload" onclick="upload()">Upload this image</button>
+                <div class="container" id="card"></div>
+                <div class="container" id="uploadContainer">
+                    <div>
+                        <button class="custom-file-upload" onclick="rotate()">Rotate Image</button>
+                    </div>
+                    <div>
+                        <button id="btnUpload" class="custom-file-upload" onclick="upload()">Upload this image</button>
+                    </div>
                 </div>
-            </div>
-        </form>
-    </div>
+                <div class="container" id="errorContainer">
+                    <h2>Unsupported file type uploaded</h2>
+                </div>
+            </form>
+        </div>
 
-    <script>
-        function rotate() {
-            event.preventDefault();
-            var canvas = document.getElementById("preview");
-            var context = canvas.getContext("2d");
-            var cw = canvas.width;
-            var ch = canvas.height;
+        <script>
+            const fileTypes = [
+                'image/apng',
+                'image/bmp',
+                'image/gif',
+                'image/jpeg',
+                'image/pjpeg',
+                'image/png',
+                'image/svg+xml',
+                'image/tiff',
+                'image/webp',
+                'image/x-icon',
+            ];
 
-            var myImageData, rotating = false;
+            function validFileType(file) {
+                return fileTypes.includes(file.type);
+            }
 
-            if (!rotating) {
-                rotating = true;
-                // store current data to an image
-                myImageData = new Image();
-                myImageData.src = canvas.toDataURL();
+            function rotate() {
+                event.preventDefault();
+                var canvas = document.getElementById('preview');
+                var context = canvas.getContext('2d');
+                var cw = canvas.width;
+                var ch = canvas.height;
 
-                myImageData.onload = function () {
-                    // reset the canvas with new dimensions
-                    canvas.width = ch;
-                    canvas.height = cw;
-                    cw = canvas.width;
-                    ch = canvas.height;
-
-                    context.save();
-                    // translate and rotate
-                    context.translate(cw, ch / cw);
-                    context.rotate(Math.PI / 2);
-                    // draw the previows image, now rotated
-                    context.drawImage(myImageData, 0, 0);
-                    context.restore();
-
-                    // clear the temporary image
-                    myImageData = null;
-
+                var myImageData,
                     rotating = false;
+
+                if (!rotating) {
+                    rotating = true;
+                    // store current data to an image
+                    myImageData = new Image();
+                    myImageData.src = canvas.toDataURL();
+
+                    myImageData.onload = function () {
+                        // reset the canvas with new dimensions
+                        canvas.width = ch;
+                        canvas.height = cw;
+                        cw = canvas.width;
+                        ch = canvas.height;
+
+                        context.save();
+                        // translate and rotate
+                        context.translate(cw, ch / cw);
+                        context.rotate(Math.PI / 2);
+                        // draw the previows image, now rotated
+                        context.drawImage(myImageData, 0, 0);
+                        context.restore();
+
+                        // clear the temporary image
+                        myImageData = null;
+
+                        rotating = false;
+                    };
                 }
             }
-        }
 
-        window.onload = function () {
-            id.setAttribute("value", new URL(location.href).searchParams.get("id"));
-            uploadContainer.style.display = "none";
-        }
+            window.onload = function () {
+                id.setAttribute('value', new URL(location.href).searchParams.get('id'));
+                uploadContainer.style.display = 'none';
 
-        function upload() {
-            event.preventDefault();
+                document.getElementById('errorContainer').style.display = 'none';
+            };
 
-            preview.toBlob(
-                (blob) => {
-                    var image = blob;
+            function upload() {
+                const id = document.getElementById('id').value;
+                event.preventDefault();
 
-                    btnUpload.disabled = true;
-                    btnUpload.innerText = 'Loading...';
-                    fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-uploadImage?id=${id.value}`, {
-                        method: 'POST',
-                        body: blob,
-                    }).then(response => {
-                        btnUpload.innerText = 'Upload successful';
-                        let timeout = setTimeout(reset, 3000);
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok.')
+                preview.toBlob(
+                    (blob) => {
+                        var image = blob;
+
+                        btnUpload.disabled = true;
+                        btnUpload.innerText = 'Loading...';
+                        fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-uploadImage?id=${id}`, {
+                            method: 'POST',
+                            body: blob,
+                        })
+                            .then((response) => {
+                                btnUpload.innerText = 'Upload successful';
+                                let timeout = setTimeout(reset, 3000);
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok.');
+                                }
+                                window.location.replace(
+                                    `https://us-central1-umtuwam.cloudfunctions.net/http-getMyGalleryView?id=${id}`
+                                );
+                            })
+                            .catch(console.error);
+                    },
+                    MIME_TYPE,
+                    QUALITY
+                );
+            }
+
+            function reset() {
+                checkBtn.disabled = false;
+                checkBtn.innerText = 'Save changes';
+            }
+
+            const MAX_WIDTH = 480;
+            const MAX_HEIGHT = 480;
+            const MIME_TYPE = 'image/jpeg';
+            const QUALITY = 0.7;
+
+            const input = document.getElementById('imgInp');
+            input.onchange = function (ev) {
+                const file = ev.target.files[0];
+                if (validFileType(file)) {
+                    const blobURL = URL.createObjectURL(file);
+                    const img = new Image();
+                    img.src = blobURL;
+                    img.onerror = function () {
+                        URL.revokeObjectURL(this.src);
+                        // Handle the failure properly
+                        console.log('Cannot load image');
+                    };
+                    img.onload = function () {
+                        URL.revokeObjectURL(this.src);
+                        const [newWidth, newHeight] = calculateSize(img, MAX_WIDTH, MAX_HEIGHT);
+                        const canvas = document.createElement('canvas');
+                        let doc = document.getElementById('preview');
+                        if (doc) {
+                            doc.remove();
                         }
-                    }).catch(console.error)
-                },
-                MIME_TYPE,
-                QUALITY
-            );
-        }
-
-        function reset() {
-            checkBtn.disabled = false;
-            checkBtn.innerText = 'Save changes'
-        }
-
-        const MAX_WIDTH = 480;
-        const MAX_HEIGHT = 480;
-        const MIME_TYPE = "image/png";
-        const QUALITY = 0.7;
-
-        const input = document.getElementById("imgInp");
-        input.onchange = function (ev) {
-            const file = ev.target.files[0];
-            const blobURL = URL.createObjectURL(file);
-            const img = new Image();
-            img.src = blobURL;
-            img.onerror = function () {
-                URL.revokeObjectURL(this.src);
-                // Handle the failure properly
-                console.log("Cannot load image");
+                        canvas.id = 'preview';
+                        canvas.width = newWidth;
+                        canvas.height = newHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                        document.getElementById('card').append(canvas);
+                        canvas.setAttribute('class', 'card');
+                        uploadContainer.removeAttribute('style');
+                    };
+                } else {
+                    document.getElementById('errorContainer').removeAttribute('style');
+                    document.getElementById('uploadContainer').style.display = 'none';
+                    let doc = document.getElementById('preview');
+                    if (doc) {
+                        doc.remove();
+                    }
+                }
             };
-            img.onload = function () {
-                URL.revokeObjectURL(this.src);
-                const [newWidth, newHeight] = calculateSize(img, MAX_WIDTH, MAX_HEIGHT);
-                const canvas = document.createElement("canvas");
-                var doc = document.getElementById("preview");
-                if (doc) {
-                    doc.remove();
-                }
-                canvas.id = "preview";
-                canvas.width = newWidth;
-                canvas.height = newHeight;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, newWidth, newHeight);
-                document.getElementById("card").append(canvas);
-                canvas.setAttribute('class', 'card')
-                uploadContainer.removeAttribute("style");;
-            };
-        };
 
-        function calculateSize(img, maxWidth, maxHeight) {
-            let width = img.width;
-            let height = img.height;
+            function calculateSize(img, maxWidth, maxHeight) {
+                let width = img.width;
+                let height = img.height;
 
-            // calculate the width and height, constraining the proportions
-            if (width > height) {
-                if (width > maxWidth) {
-                    height = Math.round((height * maxWidth) / width);
-                    width = maxWidth;
+                // calculate the width and height, constraining the proportions
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
                 }
-            } else {
-                if (height > maxHeight) {
-                    width = Math.round((width * maxHeight) / height);
-                    height = maxHeight;
-                }
+                return [width, height];
             }
-            return [width, height];
-        }
-    </script>
-</body>
-
+        </script>
+    </body>
 </html>

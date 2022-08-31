@@ -1,161 +1,185 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>UmtuWam</title>
+        <link rel="stylesheet" href="./Profile.css" type="text/css" />
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <title>UmtuWam</title>
-    <link rel="stylesheet" href="./Profile.css" type="text/css">
-</head>
+    <body>
+        <script>
+            window.onload = function () {
+                var did = new URL(location.href).searchParams.get('did');
 
-<body>
-    <script>
-        window.onload = function () {
-            var did = new URL(location.href).searchParams.get("did");
+                var cities = [
+                    'Alfred Nzo',
+                    'Amatole',
+                    'Cacadu',
+                    'Chris Hani',
+                    'Nelson Mandela Bay',
+                    'Or Thambo',
+                    'Ukhahlamba',
+                    'Lejweleputswa',
+                    'Motheo',
+                    'Northern Free State',
+                    'Thabo Mofutsanyane',
+                    'Xhariep',
+                    'Ekurhuleni',
+                    'Johannesburg',
+                    'Metsweding',
+                    'Sedibeng',
+                    'Tshwane',
+                    'West Rand',
+                    'Amajuba',
+                    'Ethekwini',
+                    'Ilembe',
+                    'Sisonke',
+                    'Ugu',
+                    'Umgungundlovu',
+                    'Umkhanyakude',
+                    'Umzinyathi',
+                    'Uthukela',
+                    'Uthungulu',
+                    'Zululand',
+                    'Capricorn',
+                    'Mopani',
+                    'Sekhukhune',
+                    'Vhembe',
+                    'Waterberg',
+                    'Ehlanzeni',
+                    'Gert Sibande',
+                    'Nkangala',
+                    'Bojanala Platinum',
+                    'Bophirima',
+                    'Central Province',
+                    'Southern Province',
+                    'Frances Baard',
+                    'Kgalagadi',
+                    'Namakwa',
+                    'Pixley Ka Seme',
+                    'Siyanda',
+                    'Cape Town Metro',
+                    'Cape Winelands',
+                    'Central Karoo',
+                    'Eden',
+                    'Overberg',
+                    'West Coast',
+                ];
 
-            var cities = [
-                "Alfred Nzo",
-                "Amatole",
-                "Cacadu",
-                "Chris Hani",
-                "Nelson Mandela Bay",
-                "Or Thambo",
-                "Ukhahlamba",
-                "Lejweleputswa",
-                "Motheo",
-                "Northern Free State",
-                "Thabo Mofutsanyane",
-                "Xhariep",
-                "Ekurhuleni",
-                "Johannesburg",
-                "Metsweding",
-                "Sedibeng",
-                "Tshwane",
-                "West Rand",
-                "Amajuba",
-                "Ethekwini",
-                "Ilembe",
-                "Sisonke",
-                "Ugu",
-                "Umgungundlovu",
-                "Umkhanyakude",
-                "Umzinyathi",
-                "Uthukela",
-                "Uthungulu",
-                "Zululand",
-                "Capricorn",
-                "Mopani",
-                "Sekhukhune",
-                "Vhembe",
-                "Waterberg",
-                "Ehlanzeni",
-                "Gert Sibande",
-                "Nkangala",
-                "Bojanala Platinum",
-                "Bophirima",
-                "Central Province",
-                "Southern Province",
-                "Frances Baard",
-                "Kgalagadi",
-                "Namakwa",
-                "Pixley Ka Seme",
-                "Siyanda",
-                "Cape Town Metro",
-                "Cape Winelands",
-                "Central Karoo",
-                "Eden",
-                "Overberg",
-                "West Coast",
-            ]
+                cities.sort();
 
-            cities.sort();
+                var list = document.getElementById('locationList');
 
-            var list = document.getElementById('locationList');
+                cities.forEach((city) => {
+                    var option = document.createElement('option');
+                    option.value = city;
+                    list.appendChild(option);
+                });
 
-            cities.forEach(city => {
-                var option = document.createElement('option');
-                option.value = city;
-                list.appendChild(option);
-            });
+                id.setAttribute('value', did);
 
-            id.setAttribute("value", did);
-            image.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/http-getImageView?id=${did}`)
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${did}`)
-                .then(res => res.json())
-                .then((out) => {
-                    myName.setAttribute("value", out.name);
-                    age.setAttribute("value", out.age);
-                    bio.innerText = out.bio;
-                    membership.setAttribute("href", `https://us-central1-umtuwam.cloudfunctions.net/http-getMembershipXml?id=${did}`);
+                const gallery = document.getElementById('gallery');
+                gallery.setAttribute(
+                    'href',
+                    `https://us-central1-umtuwam.cloudfunctions.net/http-getMyGalleryView?id=${did}`
+                );
+                fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${did}`)
+                    .then((res) => res.json())
+                    .then((out) => {
+                        myName.setAttribute('value', out.name);
+                        age.setAttribute('value', out.age);
+                        bio.innerText = out.bio;
+                        membership.setAttribute(
+                            'href',
+                            `https://us-central1-umtuwam.cloudfunctions.net/http-getMembershipXml?id=${did}`
+                        );
 
-                    const location = locationList.children;
-                    for (var i = 0; i < location.length; i++) {
-                        if (location[i].value == out.location) {
-                            whereabouts.value = out.location;
-                            break;
+                        const location = locationList.children;
+                        for (var i = 0; i < location.length; i++) {
+                            if (location[i].value == out.location) {
+                                whereabouts.value = out.location;
+                                break;
+                            }
                         }
-                    }
-                }).catch(err => console.error(err));
-        }
-        function stop() {
-            event.preventDefault();
-            var url = `https://us-central1-umtuwam.cloudfunctions.net/http-updateUserInformation?` +
-            `name=${myName.value}` +
-            `&age=${age.value}` +
-            `&location=${whereabouts.value}` +
-            `&bio=${bio.value}` +
-            `&id=${id.value}`;
+                    })
+                    .catch((err) => console.error(err));
+            };
+            function stop() {
+                event.preventDefault();
+                var url =
+                    `https://us-central1-umtuwam.cloudfunctions.net/http-updateUserInformation?` +
+                    `name=${myName.value}` +
+                    `&age=${age.value}` +
+                    `&location=${whereabouts.value}` +
+                    `&bio=${bio.value}` +
+                    `&id=${id.value}`;
 
-            checkBtn.disabled = true;
-            checkBtn.innerText = 'Loading...'
-            fetch(url).then(function (response) {
-                checkBtn.innerText = 'Changes saved!';
-                let timeout = setTimeout(reset, 3000);
-                return response.json();
-            }).catch(err => console.error(err));
-        }
-        function reset() {
-            checkBtn.disabled = false;
-            checkBtn.innerText = 'Save changes'
-        }
-    </script>
-    <div>
-        <hr>
-        <h2>Your profile - make it complete!</h2>
-        <hr>
-    </div>
-    <form id="form" onsubmit="stop();" method="get">
-        <div class="container">
-            <p>
-                <label>Name:
-                    <br />
-                    <input type="text" id="myName" name="myName" pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$"
-                        maxlength="50" required>
-                </label>
-            </p>
-            <p>
-                <label>Age:
-                    <br />
-                    <input type="text" id="age" name="age" pattern="[0-9]+" maxlength="3" required>
-                </label>
-            </p>
-            <p>
-                <datalist id="locationList">
-                </datalist>
-                <input id="whereabouts" class="input" autoComplete="on" list="locationList" placeholder="Select your location">
-            </p>
-            <p>
-                <label>About me:
-                    <br />
-                    <textarea class="bio" id="bio" maxlength="255" name="bio" rows="5"></textarea>
-                </label>
-            </p>
-            <input type="text" id="id" name="id" hidden value="" />
+                checkBtn.disabled = true;
+                checkBtn.innerText = 'Loading...';
+                fetch(url)
+                    .then(function (response) {
+                        checkBtn.innerText = 'Changes saved!';
+                        let timeout = setTimeout(reset, 3000);
+                        return response.json();
+                    })
+                    .catch((err) => console.error(err));
+            }
+            function reset() {
+                checkBtn.disabled = false;
+                checkBtn.innerText = 'Save changes';
+            }
+        </script>
+        <div>
+            <hr />
+            <h2>Your profile - make it complete!</h2>
+            <hr />
         </div>
+        <form id="form" onsubmit="stop();" method="get">
+            <div class="container">
+                <p>
+                    <label
+                        >Name:
+                        <br />
+                        <input
+                            type="text"
+                            id="myName"
+                            name="myName"
+                            pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$"
+                            maxlength="50"
+                            required
+                        />
+                    </label>
+                </p>
+                <p>
+                    <label
+                        >Age:
+                        <br />
+                        <input type="text" id="age" name="age" pattern="[0-9]+" maxlength="3" required />
+                    </label>
+                </p>
+                <p>
+                    <datalist id="locationList"> </datalist>
+                    <input
+                        id="whereabouts"
+                        class="input"
+                        autocomplete="on"
+                        list="locationList"
+                        placeholder="Select your location"
+                    />
+                </p>
+                <p>
+                    <label
+                        >About me:
+                        <br />
+                        <textarea class="bio" id="bio" maxlength="255" name="bio" rows="5"></textarea>
+                    </label>
+                </p>
+                <input type="text" id="id" name="id" hidden value="" />
+            </div>
 
-        <a href="" id="image" class="btn">Add your photos</a>
-        <a href="" id="membership" class="btn membership">Membership (chat and more)</a>
-        <button type="submit" id="checkBtn">Save changes</button>
-    </form>
-</body>
-
+            <a href="" id="gallery" class="btn">My Gallery</a>
+            <a href="" id="membership" class="btn membership">Membership (chat and more)</a>
+            <button type="submit" id="checkBtn">Save changes</button>
+        </form>
+    </body>
 </html>

@@ -103,6 +103,24 @@ export default functions.https.onRequest(async (req, res) => {
 
                     for (const doc of docs.docs) {
                         if (doc.id !== document.id) {
+                            let displayData = [
+                                {
+                                    _attr: {},
+                                },
+                                `${doc.data().name} ${doc.data().age}
+                            ${doc.data().location}
+                           `,
+                            ];
+                            if (doc.data().isVerified) {
+                                displayData = [
+                                    {
+                                        _attr: {},
+                                    },
+                                    `${doc.data().name} ${doc.data().age}
+                                ${doc.data().location}
+                               Verified`,
+                                ];
+                            }
                             const item = {
                                 item: [
                                     {
@@ -119,14 +137,7 @@ export default functions.https.onRequest(async (req, res) => {
                                         },
                                     },
                                     {
-                                        md: [
-                                            {
-                                                _attr: {},
-                                            },
-                                            `${doc.data().name} ${doc.data().age}
-                                        ${doc.data().location}
-                                       `,
-                                        ],
+                                        md: displayData,
                                     },
                                 ],
                             };

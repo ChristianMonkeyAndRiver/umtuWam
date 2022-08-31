@@ -45,11 +45,12 @@ async function sendMoyaMessageAfterMessageHasBeenSent(number: string) {
     };
 
     const response = await fetch(config.MOYA_MESSAGE_API_URL, options);
-    const json = await response.json();
+    // const json = await response.json();
 
-    if (json.error != null) throw json;
+    return response.json();
+    // if (json.error != null) throw json;
 
-    return;
+    // return;
 }
 
 async function sendMoyaMessageAfterSubscriptionHasBeenBought(number: string, productId: string) {
@@ -71,11 +72,13 @@ async function sendMoyaMessageAfterSubscriptionHasBeenBought(number: string, pro
     };
 
     const response = await fetch(config.MOYA_MESSAGE_API_URL, options);
-    const json = await response.json();
 
-    if (json.error != null) throw json;
+    return response.json();
+    // const json = await response.json();
 
-    return;
+    // if (json.error != null) throw json;
+
+    // return;
 }
 
 async function sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse(number: string) {
@@ -96,13 +99,12 @@ async function sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse(numbe
     };
 
     const response = await fetch(config.MOYA_MESSAGE_API_URL, options);
-    const json = await response.json();
+    return response.json();
+    // const json = await response.json();
 
-    console.log(json);
+    // if (json.error != null) throw json;
 
-    if (json.error != null) throw json;
-
-    return;
+    // return;
 }
 
 export {

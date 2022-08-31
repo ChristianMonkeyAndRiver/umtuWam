@@ -1,64 +1,60 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>UmtuWam</title>
+        <link rel="stylesheet" href="./Chats.css" type="text/css" />
+    </head>
 
-<head>
-    <title>UmtuWam</title>
-    <link rel="stylesheet" href="./Chats.css" type="text/css">
-</head>
+    <body>
+        <section class="msger">
+            <form class="msger-inputarea">
+                <input type="text" class="msger-input" placeholder="Enter your message..." />
+                <button type="submit" class="msger-send-btn">Send</button>
+            </form>
 
-<body>
-    <section class="msger">
-        <form class="msger-inputarea">
-            <input type="text" class="msger-input" placeholder="Enter your message...">
-            <button type="submit" class="msger-send-btn">Send</button>
-        </form>
+            <main class="msger-chat"></main>
+        </section>
 
-        <main class="msger-chat">
-
-        </main>
-
-
-    </section>
-
-    <script>
-        var myId = "";
-        var matchId = "";
-        window.onload = function () {
-            theirId = new URL(location.href).searchParams.get("uid");
-            myId = new URL(location.href).searchParams.get("id");
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getChat?id=${myId}&uid=${theirId}`)
-                .then(res => res.json())
-                .then((out) => {
-                    for (var i = 0; i < out.length; i++) {
-                        if (out[i].idTo == theirId) {
-                            appendMessage("right", out[i].content, new Date())
-                        } else {
-                            appendMessage("left", out[i].content, new Date())
+        <script>
+            var myId = '';
+            var matchId = '';
+            window.onload = function () {
+                theirId = new URL(location.href).searchParams.get('uid');
+                myId = new URL(location.href).searchParams.get('id');
+                fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getChat?id=${myId}&uid=${theirId}`)
+                    .then((res) => res.json())
+                    .then((out) => {
+                        for (var i = 0; i < out.length; i++) {
+                            if (out[i].idTo == theirId) {
+                                appendMessage('right', out[i].content, new Date());
+                            } else {
+                                appendMessage('left', out[i].content, new Date());
+                            }
                         }
-                    }
-                }).catch(err => console.error(err));
-        }
+                    })
+                    .catch((err) => console.error(err));
+            };
 
-        const msgerForm = get(".msger-inputarea");
-        const msgerInput = get(".msger-input");
-        const msgerChat = get(".msger-chat");
+            const msgerForm = get('.msger-inputarea');
+            const msgerInput = get('.msger-input');
+            const msgerChat = get('.msger-chat');
 
-        msgerForm.addEventListener("submit", event => {
-            event.preventDefault();
+            msgerForm.addEventListener('submit', (event) => {
+                event.preventDefault();
 
-            const msgText = msgerInput.value;
-            if (!msgText) return;
+                const msgText = msgerInput.value;
+                if (!msgText) return;
 
-            appendMessage("right", msgText, new Date());
-            fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-sendMessage?id=${myId}&uid=${theirId}&content=${msgText}`)
-                .catch(err => console.error(err));
-            msgerInput.value = "";
-        });
+                appendMessage('right', msgText, new Date());
+                fetch(
+                    `https://us-central1-umtuwam.cloudfunctions.net/http-sendMessage?id=${myId}&uid=${theirId}&content=${msgText}`
+                ).catch((err) => console.error(err));
+                msgerInput.value = '';
+            });
 
-        function appendMessage(side, text, date) {
-
-            //   Simple solution for small apps
-            const msgHTML = `
+            function appendMessage(side, text, date) {
+                //   Simple solution for small apps
+                const msgHTML = `
     <div class="msg ${side}-msg">
 
       <div class="msg-bubble">
@@ -71,21 +67,20 @@
     </div>
   `;
 
-            msgerChat.insertAdjacentHTML("afterbegin", msgHTML);
-        }
+                msgerChat.insertAdjacentHTML('afterbegin', msgHTML);
+            }
 
-        // Utils
-        function get(selector, root = document) {
-            return root.querySelector(selector);
-        }
+            // Utils
+            function get(selector, root = document) {
+                return root.querySelector(selector);
+            }
 
-        function formatDate(date) {
-            const h = date.getHours();
-            const m = date.getMinutes();
+            function formatDate(date) {
+                const h = date.getHours();
+                const m = date.getMinutes();
 
-            return `${date.toDateString()} ${h}:${m}`;
-        }
-    </script>
-</body>
-
+                return `${date.toDateString()} ${h}:${m}`;
+            }
+        </script>
+    </body>
 </html>

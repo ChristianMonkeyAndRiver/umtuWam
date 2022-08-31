@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>UmtuWam</title>
+        <link rel="stylesheet" href="./MyGallery.css" type="text/css" />
+    </head>
+
+    <body>
+        <script>
+            window.onload = () => {
+                const id = new URL(location.href).searchParams.get('id');
+                document.getElementById('id').value = id;
+                let imageArr = [];
+
+                fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${id}`)
+                    .then((res) => res.json())
+                    .then((out) => {
+                        imageArr = out.images;
+
+                        for (let i = 0; i < imageArr.length; i++) {
+                            const ImageToAppend = document.createElement('img');
+                            ImageToAppend.src = imageArr[i];
+                            ImageToAppend.onclick = function () {
+                                let images = document.getElementsByTagName('img');
+                                for (let num = 0; num < images.length; num++) {
+                                    if (i != num) {
+                                        images[num].style.display = 'none';
+                                    }
+                                }
+                                const deleteBtn = document.getElementById('deleteBtn');
+                                deleteBtn.removeAttribute('style');
+                                deleteBtn.onclick = function () {
+                                    deleteBtn.disabled = true;
+                                    deleteBtn.innerText = 'Loading...';
+                                    const newArr = [];
+                                    for (let num = 0; num < images.length; num++) {
+                                        if (i != num) {
+                                            newArr.push(images[num].src);
+                                        }
+                                    }
+                                    const obj = {
+                                        newArr: newArr,
+                                        link: images[i].src,
+                                    };
+                                    fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-deleteImage?id=${id}`, {
+                                        method: 'POST',
+                                        body: JSON.stringify(obj),
+                                    })
+                                        .then(() => {
+                                            deleteBtn.innerText = 'Delete successful';
+                                            setTimeout(() => {
+                                                window.location.replace(
+                                                    `https://us-central1-umtuwam.cloudfunctions.net/http-getMyGalleryView?id=${id}`
+                                                );
+                                            }, 3000);
+                                        })
+                                        .catch((err) => console.error(err));
+                                };
+                                const setMain = document.getElementById('setMain');
+                                setMain.removeAttribute('style');
+                                setMain.onclick = function () {
+                                    setMain.disabled = true;
+                                    setMain.innerText = 'Loading...';
+                                    const newArr = [];
+                                    newArr.push(images[i].src);
+                                    for (let num = 0; num < images.length; num++) {
+                                        if (i != num) {
+                                            newArr.push(images[num].src);
+                                        }
+                                    }
+                                    const obj = {
+                                        newArr: newArr,
+                                    };
+                                    fetch(
+                                        `https://us-central1-umtuwam.cloudfunctions.net/http-setProfilePic?id=${id}`,
+                                        {
+                                            method: 'POST',
+                                            body: JSON.stringify(obj),
+                                        }
+                                    )
+                                        .then(() => {
+                                            setMain.innerText = 'Delete successful';
+                                            setTimeout(() => {
+                                                window.location.replace(
+                                                    `https://us-central1-umtuwam.cloudfunctions.net/http-getMyGalleryView?id=${id}`
+                                                );
+                                            }, 3000);
+                                        })
+                                        .catch((err) => console.error(err));
+                                };
+                            };
+                            document.getElementById('imageList').append(ImageToAppend);
+                        }
+                    })
+                    .catch((err) => console.error(err));
+            };
+
+            function deleteImage(num) {
+                window.location.reload();
+            }
+
+            function setMain(num) {
+                window.location.reload();
+            }
+
+            function uploadImage() {
+                const id = document.getElementById('id').value;
+                window.location.href = `https://us-central1-umtuwam.cloudfunctions.net/http-getImageView?id=${id}`;
+            }
+        </script>
+
+        <div>
+            <input type="text" id="id" name="id" hidden value="" />
+            <button id="upload" onclick="uploadImage()">Upload an Image</button>
+            <div id="imageList"></div>
+            <button id="deleteBtn" style="display: none">Delete Image</button>
+            <button id="setMain" style="display: none">Set as Profile Pic</button>
+        </div>
+    </body>
+</html>

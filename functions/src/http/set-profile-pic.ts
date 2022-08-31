@@ -12,19 +12,14 @@ export default functions.https.onRequest(async (req, res) => {
             const formattedId = Array.isArray(queryId) ? queryId[0] : queryId;
             const uid = formattedId.toString();
 
+            const data = JSON.parse(req.body);
             const updateObject = {};
-
-            if (req.query.age != null) Object.assign(updateObject, { age: req.query.age });
-
-            if (req.query.bio != null) Object.assign(updateObject, { bio: req.query.bio });
-
-            if (req.query.name != null) Object.assign(updateObject, { name: req.query.name });
-
-            if (req.query.location != null) Object.assign(updateObject, { location: req.query.location });
+            Object.assign(updateObject, {
+                images: data.newArr,
+            });
 
             await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).update(updateObject);
 
-            res.set('Content-Type', 'application/xml');
             res.status(200).send(util.SuccessMessages.SuccessMessage);
             return;
         } catch (error) {

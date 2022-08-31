@@ -11,17 +11,8 @@ const corsHandler = cors({ origin: true });
 export default functions.https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
         const header = req.headers;
-        const stringBinuHeaders = [
-            'x-binu-did',
-            'X-Binu-Did',
-            'x-Binu-did',
-            'x-Binu-Did',
-            'xbinu-did',
-        ];
-        const maxDebugHeaders = [
-            'xbinu',
-            'x-binu',
-        ];
+        const stringBinuHeaders = ['x-binu-did', 'X-Binu-Did', 'x-Binu-did', 'x-Binu-Did', 'xbinu-did'];
+        const maxDebugHeaders = ['xbinu', 'x-binu'];
 
         let headerInfo;
         let did;
@@ -45,7 +36,6 @@ export default functions.https.onRequest(async (req, res) => {
             } else {
                 did = headerInfo;
             }
-            console.log(did);
             if (!(did.length > 0)) {
                 // DID could not be parsed, big problem
                 did = null;
@@ -69,10 +59,7 @@ export default functions.https.onRequest(async (req, res) => {
                 uid = 'undefined';
             }
 
-            const doc = await admin.firestore()
-            .collection(util.FunctionsConstants.Users)
-            .doc(uid)
-            .get();
+            const doc = await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).get();
 
             // Links to logos
             const DatesLogo = 'https://umtuwam.web.app/logo.png';
@@ -98,116 +85,122 @@ export default functions.https.onRequest(async (req, res) => {
                 ProfileLink = `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupProfile?id=${uid}`;
             }
 
-            const app = [{
-                app: [
-                    {
-                        _attr: {
-                            styleurl: '',
-                            showfree: false,
-                            title: util.FunctionsConstants.UmtuWam,
-                        },
-                    },
-                    {
-                        bottom_nav: [
-                            {
-                                menuItem: [
-                                    {
-                                        _attr: {
-                                            default: true,
-                                            img: DatesLogo,
-                                            href: DatesLink,
-                                        },
-                                    },
-                                    util.FunctionsConstants.Home,
-                                ],
-                            },
-                            {
-                                menuItem: [
-                                    {
-                                        _attr: {
-                                            img: MatchesLogo,
-                                            href: MatchesLink,
-                                        },
-                                    },
-                                    util.FunctionsConstants.Chats,
-                                ],
-                            },
-                            {
-                                menuItem: [
-                                    {
-                                        _attr: {
-                                            img: PreferencesLogo,
-                                            href: PreferencesLink,
-                                        },
-                                    },
-                                    util.FunctionsConstants.PreferencesCapital,
-                                ],
-                            },
-                            {
-                                menuItem: [
-                                    {
-                                        _attr: {
-                                            img: ProfileLogo,
-                                            href: ProfileLink,
-                                        },
-                                    },
-                                    util.FunctionsConstants.Profile,
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        menu: [
-                            {
-                                menuItem: [
-                                    {
-                                        _attr: {
-                                            action: util.FunctionsConstants.Usage,
-                                        },
-                                    },
-                                    util.FunctionsConstants.About,
-                                ],
-                            },
-                            {
-                                menuItem: [
-                                    {
-                                        _attr: {
-                                            action: util.FunctionsConstants.Share,
-                                        },
-                                    },
-                                    util.FunctionsConstants.ShareMoya,
-                                ],
-                            },
-                            {
-                                menuItem: [
-                                    {
-                                        _attr: {
-                                            action: util.FunctionsConstants.Rate,
-                                        },
-                                    },
-                                    util.FunctionsConstants.RateMoya,
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        share: {
+            const app = [
+                {
+                    app: [
+                        {
                             _attr: {
-                                action: util.FunctionsConstants.Send,
-                                title: util.FunctionsConstants.Moya,
-                                text: util.FunctionsConstants.MoyaShareText,
-                                subject: util.FunctionsConstants.MoyaSubjectText,
+                                styleurl: '',
+                                showfree: false,
+                                title: util.FunctionsConstants.UmtuWam,
                             },
                         },
-                    },
-                ],
-            }];
+                        {
+                            bottom_nav: [
+                                {
+                                    menuItem: [
+                                        {
+                                            _attr: {
+                                                default: true,
+                                                img: DatesLogo,
+                                                href: DatesLink,
+                                            },
+                                        },
+                                        util.FunctionsConstants.Home,
+                                    ],
+                                },
+                                {
+                                    menuItem: [
+                                        {
+                                            _attr: {
+                                                img: MatchesLogo,
+                                                href: MatchesLink,
+                                            },
+                                        },
+                                        util.FunctionsConstants.Chats,
+                                    ],
+                                },
+                                {
+                                    menuItem: [
+                                        {
+                                            _attr: {
+                                                img: PreferencesLogo,
+                                                href: PreferencesLink,
+                                            },
+                                        },
+                                        util.FunctionsConstants.PreferencesCapital,
+                                    ],
+                                },
+                                {
+                                    menuItem: [
+                                        {
+                                            _attr: {
+                                                img: ProfileLogo,
+                                                href: ProfileLink,
+                                            },
+                                        },
+                                        util.FunctionsConstants.Profile,
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            menu: [
+                                {
+                                    menuItem: [
+                                        {
+                                            _attr: {
+                                                action: util.FunctionsConstants.Usage,
+                                            },
+                                        },
+                                        util.FunctionsConstants.About,
+                                    ],
+                                },
+                                {
+                                    menuItem: [
+                                        {
+                                            _attr: {
+                                                action: util.FunctionsConstants.Share,
+                                            },
+                                        },
+                                        util.FunctionsConstants.ShareMoya,
+                                    ],
+                                },
+                                {
+                                    menuItem: [
+                                        {
+                                            _attr: {
+                                                action: util.FunctionsConstants.Rate,
+                                            },
+                                        },
+                                        util.FunctionsConstants.RateMoya,
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            share: {
+                                _attr: {
+                                    action: util.FunctionsConstants.Send,
+                                    title: util.FunctionsConstants.Moya,
+                                    text: util.FunctionsConstants.MoyaShareText,
+                                    subject: util.FunctionsConstants.MoyaSubjectText,
+                                },
+                            },
+                        },
+                    ],
+                },
+            ];
             res.set('Content-Type', 'application/xml');
             if (!doc.exists) {
                 res.set('Max-Age', '0');
                 res.set('Cache-Control', 'no-cache');
             }
-            res.status(200).send(xml(app, { declaration: { standalone: 'yes', encoding: 'UTF-8' } }));
+            res.status(200).send(
+                xml(app, {
+                    declaration: { standalone: 'yes', encoding: 'UTF-8' },
+                })
+            );
             return;
         } catch (error) {
             console.error(error);
@@ -219,10 +212,10 @@ export default functions.https.onRequest(async (req, res) => {
 
 // let uid = '';
 
-    // if (id == '97618f4b0cec4667' || id == ':"0727779845"') {
-    //     uid = '27727888675';
-    // } else {
-    //     uid = '27794614755';
+// if (id == '97618f4b0cec4667' || id == ':"0727779845"') {
+//     uid = '27727888675';
+// } else {
+//     uid = '27794614755';
 // }
 // `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupHome?id=${uid}`
 // `https://us-central1-umtuwam.cloudfunctions.net/http-getStartupMatches?id=${uid}`

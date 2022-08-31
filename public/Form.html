@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        
-    </head>
-    
+    <head> </head>
+
     <body>
         <script>
-            window.onload = function() {
-                let myId = new URL(location.href).searchParams.get("id");
-                let uid = new URL(location.href).searchParams.get("uid");
-                let product = new URL(location.href).searchParams.get("product");
-                let isMine = new URL(location.href).searchParams.get("isMine");
-                let amount = new URL(location.href).searchParams.get("amount");
-                let checkout = new URL(location.href).searchParams.get("payId");
-                let payScript = document.createElement("script");
-                payScript.setAttribute("src", `https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId=${checkout}`);
+            window.onload = function () {
+                let myId = new URL(location.href).searchParams.get('id');
+                let uid = new URL(location.href).searchParams.get('uid');
+                let product = new URL(location.href).searchParams.get('product');
+                let isMine = new URL(location.href).searchParams.get('isMine');
+                let amount = new URL(location.href).searchParams.get('amount');
+                let checkout = new URL(location.href).searchParams.get('payId');
+                let payScript = document.createElement('script');
+                payScript.setAttribute('src', `https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId=${checkout}`);
                 document.body.appendChild(payScript);
 
-                peachPayForm.action = `https://us-central1-umtuwam.cloudfunctions.net/httpPayment-peachCallback?` +
+                peachPayForm.action =
+                    `https://us-central1-umtuwam.cloudfunctions.net/httpPayment-peachCallback?` +
                     `checkoutId=${checkout}` +
                     `&id=${myId}` +
                     `&uid=${uid}` +
                     `&product=${product}` +
                     `&isMine=${isMine}` +
                     `&amount=${amount}`;
-            }
+            };
         </script>
         <form action="" id="peachPayForm" class="paymentWidgets" data-brands="VISA MASTER AMEX" target="_self"></form>
     </body>
