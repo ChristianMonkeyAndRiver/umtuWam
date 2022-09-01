@@ -36,6 +36,12 @@ enum SuccessMessages {
     UserPreferencesSuccessfulUpdate = 'User preferences successfully updated',
 }
 
+enum Events {
+    Liked = 'Liked',
+    Message = 'Message',
+    Subscription = 'Subscription',
+}
+
 enum FunctionsConstants {
     Bio = 'bio',
     Uid = 'uid',
@@ -99,4 +105,4 @@ enum FunctionsConstants {
     PaymentId = 'paymentId',
 }
 
-export { Products, Prices, PaymentState, ErrorMessages, SuccessMessages, FunctionsConstants };
+export { Products, Prices, PaymentState, ErrorMessages, SuccessMessages, FunctionsConstants, Events };

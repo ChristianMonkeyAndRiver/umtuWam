@@ -1,3 +1,4 @@
+/* eslint-disable space-before-function-paren */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as xml from 'xml';
 import * as cors from 'cors';
@@ -5,7 +6,7 @@ import * as https from 'https';
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import * as util from '../utils/constants';
-import { sendMoyaMessageAfterSubscriptionHasBeenBought, sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse } from '../utils/messaging_api';
+import { sendMoyaMessage } from '../utils/messaging_api';
 
 const corsHandler = cors({ origin: true });
 
@@ -32,7 +33,7 @@ export default functions.https.onRequest(async (req, res) => {
 
     corsHandler(req, res, async () => {
         const request = async () => {
-            let path=`/v1/checkouts/${checkoutId}/payment`;
+            let path = `/v1/checkouts/${checkoutId}/payment`;
             path += '?entityId=8ac7a4c981a409ed0181a5ce03740312';
             const options = {
                 port: 443,
@@ -44,7 +45,7 @@ export default functions.https.onRequest(async (req, res) => {
                 },
             };
             return new Promise((resolve, reject) => {
-                const postRequest = https.request(options, function(res) {
+                const postRequest = https.request(options, function (res) {
                     const buf: any[] = [];
                     res.on('data', (chunk) => {
                         buf.push(Buffer.from(chunk));
@@ -74,63 +75,67 @@ export default functions.https.onRequest(async (req, res) => {
 
             if (resultCodes.includes(json.result.code)) {
                 if (isMine == 'true') {
-                    const promise1 = admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc('Test Id Purchase Peach').set({
-                        isGift: false,
-                        purchaserId: id,
-                        isPaymentApproved: true,
-                        paymentId: json.id,
-                        productId: productId,
-                        expiresAt: expiresAt,
-                    });
+                    const promise1 = admin
+                        .firestore()
+                        .collection(util.FunctionsConstants.Subscriptions)
+                        .doc('Test Id Purchase Peach')
+                        .set({
+                            isGift: false,
+                            purchaserId: id,
+                            isPaymentApproved: true,
+                            paymentId: json.id,
+                            productId: productId,
+                            expiresAt: expiresAt,
+                        });
                     promises.push(promise1);
 
                     if (productId == util.Products.Boost) {
-                        const promise2 = admin.firestore().collection(util.FunctionsConstants.Users).doc(id)
-                            .update({
-                                points: 10,
-                                hasPaidForFeatured: true,
-                                featuredExpiryDate: expiresAt,
-                            });
+                        const promise2 = admin.firestore().collection(util.FunctionsConstants.Users).doc(id).update({
+                            points: 10,
+                            hasPaidForFeatured: true,
+                            featuredExpiryDate: expiresAt,
+                        });
                         promises.push(promise2);
                     } else if (productId == util.Products.ChatsAndPhotos) {
-                        const promise2 = admin.firestore().collection(util.FunctionsConstants.Users).doc(id)
-                            .update({
-                                hasPaidForChatsAndPhotos: true,
-                                chatsAndPhotosExpiryDate: expiresAt,
-                            });
+                        const promise2 = admin.firestore().collection(util.FunctionsConstants.Users).doc(id).update({
+                            hasPaidForChatsAndPhotos: true,
+                            chatsAndPhotosExpiryDate: expiresAt,
+                        });
                         promises.push(promise2);
                     } else if (productId == util.Products.Verified) {
-                        const promise2 = admin.firestore().collection(util.FunctionsConstants.Users).doc(id)
-                            .update({
-                                isVerified: true,
-                            });
+                        const promise2 = admin.firestore().collection(util.FunctionsConstants.Users).doc(id).update({
+                            isVerified: true,
+                        });
                         promises.push(promise2);
                     }
 
                     console.log('--------------------------------');
                     console.log(id);
                     console.log('--------------------------------');
-                    const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBought(id, productId);
+                    const promise3 = sendMoyaMessage(id, util.Events.Subscription, false, productId);
                     promises.push(promise3);
                 } else {
-                    const promise1 = admin.firestore().collection(util.FunctionsConstants.Subscriptions).doc('Test Id Purchase Peach').set({
-                        isGift: false,
-                        purchaserId: id,
-                        recipientId: uid,
-                        isPaymentApproved: true,
-                        paymentId: json.id,
-                        productId: productId,
-                        expiresAt: expiresAt,
-                    });
+                    const promise1 = admin
+                        .firestore()
+                        .collection(util.FunctionsConstants.Subscriptions)
+                        .doc('Test Id Purchase Peach')
+                        .set({
+                            isGift: false,
+                            purchaserId: id,
+                            recipientId: uid,
+                            isPaymentApproved: true,
+                            paymentId: json.id,
+                            productId: productId,
+                            expiresAt: expiresAt,
+                        });
                     promises.push(promise1);
 
-                    const promise2 = admin.firestore().collection(util.FunctionsConstants.Users).doc(uid)
-                            .update({
-                                hasPaidForChatsAndPhotos: true,
-                                chatsAndPhotosExpiryDate: expiresAt,
-                            });
+                    const promise2 = admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).update({
+                        hasPaidForChatsAndPhotos: true,
+                        chatsAndPhotosExpiryDate: expiresAt,
+                    });
                     promises.push(promise2);
-                    const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse(uid);
+                    const promise3 = sendMoyaMessage(uid, util.Events.Subscription, true);
                     promises.push(promise3);
                 }
             } else {
@@ -153,32 +158,34 @@ export default functions.https.onRequest(async (req, res) => {
 });
 
 function createResponseDocument(message: any) {
-    const doc = [{
-        doc: [
-            {
-                _attr: {
-                    title: 'Status',
-                },
-            },
-            {
-                list: [
-                    {
-                        item: [
-                            {
-                                _attr: {
-                                    style: '',
-                                    layout: 'relative',
-                                },
-                            },
-                            {
-                                md: `## ${message}`,
-                            },
-                        ],
+    const doc = [
+        {
+            doc: [
+                {
+                    _attr: {
+                        title: 'Status',
                     },
-                ],
-            },
-        ],
-    }];
+                },
+                {
+                    list: [
+                        {
+                            item: [
+                                {
+                                    _attr: {
+                                        style: '',
+                                        layout: 'relative',
+                                    },
+                                },
+                                {
+                                    md: `## ${message}`,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ];
 
     return doc;
 }

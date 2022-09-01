@@ -2,7 +2,7 @@ import * as cors from 'cors';
 import * as admin from 'firebase-admin';
 import * as util from '../utils/constants';
 import * as functions from 'firebase-functions';
-import { sendMoyaMessageAfterMessageHasBeenSent } from '../utils/messaging_api';
+import { sendMoyaMessage } from '../utils/messaging_api';
 
 const corsHandler = cors({ origin: true });
 
@@ -20,7 +20,13 @@ export default functions.https.onRequest(async (req, res) => {
             const chatId = id.concat('_').concat(uid);
             const timestamp = admin.firestore.Timestamp.now();
 
-            await admin.firestore().collection(util.FunctionsConstants.Users).doc(id).collection(util.FunctionsConstants.Chats).doc(chatId).collection(util.FunctionsConstants.Messages)
+            await admin
+                .firestore()
+                .collection(util.FunctionsConstants.Users)
+                .doc(id)
+                .collection(util.FunctionsConstants.Chats)
+                .doc(chatId)
+                .collection(util.FunctionsConstants.Messages)
                 .doc()
                 .set({
                     idFrom: id,
@@ -31,7 +37,13 @@ export default functions.https.onRequest(async (req, res) => {
 
             const chatId2 = uid.concat('_').concat(id);
 
-            await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).collection(util.FunctionsConstants.Chats).doc(chatId2).collection(util.FunctionsConstants.Messages)
+            await admin
+                .firestore()
+                .collection(util.FunctionsConstants.Users)
+                .doc(uid)
+                .collection(util.FunctionsConstants.Chats)
+                .doc(chatId2)
+                .collection(util.FunctionsConstants.Messages)
                 .doc()
                 .set({
                     idFrom: id,
@@ -40,7 +52,7 @@ export default functions.https.onRequest(async (req, res) => {
                     content: req.query.content,
                 });
 
-            await sendMoyaMessageAfterMessageHasBeenSent(uid);
+            await sendMoyaMessage(uid, util.Events.Message);
 
             res.set('Content-Type', 'application/xml');
             res.status(200).send(util.SuccessMessages.SuccessMessage);

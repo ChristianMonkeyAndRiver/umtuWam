@@ -1,8 +1,9 @@
+/* eslint-disable operator-linebreak */
 import * as cors from 'cors';
 import * as admin from 'firebase-admin';
 import * as util from '../utils/constants';
 import * as functions from 'firebase-functions';
-import { sendMoyaMessageAfterBeingLiked } from '../utils/messaging_api';
+import { sendMoyaMessage } from '../utils/messaging_api';
 
 const corsHandler = cors({ origin: true });
 
@@ -24,29 +25,51 @@ export default functions.https.onRequest(async (req, res) => {
             const docId = uid.concat('_').concat(id);
             const docId2 = id.concat('_').concat(uid);
 
-            await admin.firestore().collection(util.FunctionsConstants.Likes).doc(docId).get()
+            await admin
+                .firestore()
+                .collection(util.FunctionsConstants.Likes)
+                .doc(docId)
+                .get()
                 .then(async (doc) => {
                     if (!doc.exists) {
                         await admin.firestore().collection(util.FunctionsConstants.Likes).doc(docId2).set({
                             userA: id,
                             userB: uid,
                         });
-                        await sendMoyaMessageAfterBeingLiked(uid);
+                        await sendMoyaMessage(uid, util.Events.Liked);
                     } else {
-                        await admin.firestore().collection(util.FunctionsConstants.Users).doc(id).collection(util.FunctionsConstants.Chats).doc(docId2).set({
-                            id: uid,
-                            chatsPaymentID: '',
-                            imagesPaymentID: '',
-                            name: userBdoc.data()?.name,
-                            imageUrl: userBdoc.data()?.images.length > 0 ? userBdoc.data()?.images[0] : util.FunctionsConstants.DefaultImage,
-                        });
-                        await admin.firestore().collection(util.FunctionsConstants.Users).doc(uid).collection(util.FunctionsConstants.Chats).doc(docId).set({
-                            id: id,
-                            chatsPaymentID: '',
-                            imagesPaymentID: '',
-                            name: userDocument.data()?.name,
-                            imageUrl: userDocument.data()?.images.length > 0 ? userDocument.data()?.images[0] : util.FunctionsConstants.DefaultImage,
-                        });
+                        await admin
+                            .firestore()
+                            .collection(util.FunctionsConstants.Users)
+                            .doc(id)
+                            .collection(util.FunctionsConstants.Chats)
+                            .doc(docId2)
+                            .set({
+                                id: uid,
+                                chatsPaymentID: '',
+                                imagesPaymentID: '',
+                                name: userBdoc.data()?.name,
+                                imageUrl:
+                                    userBdoc.data()?.images.length > 0
+                                        ? userBdoc.data()?.images[0]
+                                        : util.FunctionsConstants.DefaultImage,
+                            });
+                        await admin
+                            .firestore()
+                            .collection(util.FunctionsConstants.Users)
+                            .doc(uid)
+                            .collection(util.FunctionsConstants.Chats)
+                            .doc(docId)
+                            .set({
+                                id: id,
+                                chatsPaymentID: '',
+                                imagesPaymentID: '',
+                                name: userDocument.data()?.name,
+                                imageUrl:
+                                    userDocument.data()?.images.length > 0
+                                        ? userDocument.data()?.images[0]
+                                        : util.FunctionsConstants.DefaultImage,
+                            });
                         await admin.firestore().collection(util.FunctionsConstants.Likes).doc(docId).delete();
                     }
                 });

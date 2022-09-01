@@ -4,10 +4,7 @@ import * as util from '../utils/constants';
 import fetch from 'cross-fetch';
 import * as config from '../config/config';
 import * as functions from 'firebase-functions';
-import {
-    sendMoyaMessageAfterSubscriptionHasBeenBought,
-    sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse,
-} from '../utils/messaging_api';
+import { sendMoyaMessage } from '../utils/messaging_api';
 const corsHandler = cors({ origin: true });
 
 function sleep(milliseconds: number) {
@@ -107,8 +104,10 @@ export default functions.https.onRequest(async (req, res) => {
                                     isPaymentApproved: true,
                                 });
                                 promises.push(promise2);
-                                const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBought(
+                                const promise3 = sendMoyaMessage(
                                     docs.docs[0].data().purchaserId,
+                                    util.Events.Subscription,
+                                    false,
                                     docs.docs[0].data().productId
                                 );
                                 promises.push(promise3);
@@ -129,8 +128,10 @@ export default functions.https.onRequest(async (req, res) => {
                                 });
                                 promises.push(promise2);
 
-                                const promise3 = sendMoyaMessageAfterSubscriptionHasBeenBoughtForSomeoneElse(
-                                    docs.docs[0].data().recipientId
+                                const promise3 = sendMoyaMessage(
+                                    docs.docs[0].data().recipientId,
+                                    util.Events.Subscription,
+                                    true
                                 );
                                 promises.push(promise3);
                             }
