@@ -10,7 +10,8 @@
         <script>
             var imageArr = [];
             window.onload = function () {
-                displayBuy.style.display = 'none';
+                document.getElementById('displayBuy').style.display = 'none';
+                document.getElementById('verified').style.display = 'none';
                 theirId.setAttribute('value', new URL(location.href).searchParams.get('did'));
                 myId.setAttribute('value', new URL(location.href).searchParams.get('uid'));
                 fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${theirId.value}`)
@@ -29,6 +30,10 @@
                             `https://us-central1-umtuwam.cloudfunctions.net/http-getChatsView?id=${myId.value}&uid=${theirId.value}`
                         );
                         chat.style.backgroundColor = '#00FF00';
+
+                        if (out.isVerified) {
+                            document.getElementById('verified').style.display = 'block';
+                        }
 
                         report.setAttribute(
                             'href',
@@ -112,6 +117,7 @@
             <input type="text" id="theirId" name="id" hidden value="" />
 
             <h3 id="myName"></h3>
+            <h4 id="verified">Verified</h4>
             <h3 id="whereabouts"></h3>
             <h3 id="bio"></h3>
 

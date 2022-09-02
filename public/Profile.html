@@ -10,6 +10,7 @@
         <script>
             window.onload = function () {
                 var did = new URL(location.href).searchParams.get('did');
+                document.getElementById('verified').style.display = 'none';
 
                 var cities = [
                     'Alfred Nzo',
@@ -88,6 +89,9 @@
                     .then((out) => {
                         myName.setAttribute('value', out.name);
                         age.setAttribute('value', out.age);
+                        if (out.isVerified) {
+                            document.getElementById('verified').style.display = 'block';
+                        }
                         bio.innerText = out.bio;
                         membership.setAttribute(
                             'href',
@@ -174,6 +178,7 @@
                         <textarea class="bio" id="bio" maxlength="255" name="bio" rows="5"></textarea>
                     </label>
                 </p>
+                <h4 id="verified">Verified</h4>
                 <input type="text" id="id" name="id" hidden value="" />
             </div>
 

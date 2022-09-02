@@ -10,24 +10,37 @@
         <script>
             var imageArr = [];
             window.onload = function () {
-                displayBuy.style.display = 'none';
-                theirId.setAttribute('value', new URL(location.href).searchParams.get('did'));
+                document.getElementById('displayBuy').style.display = 'none';
+                document.getElementById('verified').style.display = 'none';
+                const myId = document.getElementById('myId');
+                const theirId = document.getElementById('theirId');
                 myId.setAttribute('value', new URL(location.href).searchParams.get('uid'));
+                theirId.setAttribute('value', new URL(location.href).searchParams.get('did'));
+
                 fetch(`https://us-central1-umtuwam.cloudfunctions.net/http-getUserInformation?id=${theirId.value}`)
                     .then((res) => res.json())
                     .then((out) => {
-                        myName.innerText = out.name + ', ' + out.age;
-                        whereabouts.innerText = out.location;
-                        bio.innerText = out.bio;
-                        images.src = out.images[0];
-                        report.setAttribute(
-                            'href',
-                            `https://us-central1-umtuwam.cloudfunctions.net/http-reportsView?` +
-                                `id=${myId.value}` +
-                                `&uid=${theirId.value}` +
-                                `&name=${out.name}`
-                        );
+                        document.getElementById('myName').innerText = out.name + ', ' + out.age;
+                        document.getElementById('whereabouts').innerText = out.location;
+                        document.getElementById('bio').innerText = out.bio;
+                        document.getElementById('images').src = out.images[0];
+
+                        if (out.isVerified) {
+                            document.getElementById('verified').style.display = 'block';
+                        }
+
+                        document
+                            .getElementById('report')
+                            .setAttribute(
+                                'href',
+                                `https://us-central1-umtuwam.cloudfunctions.net/http-reportsView?` +
+                                    `id=${myId.value}` +
+                                    `&uid=${theirId.value}` +
+                                    `&name=${out.name}`
+                            );
+
                         imageArr = out.images;
+
                         const galleryUrl =
                             `https://us-central1-umtuwam.cloudfunctions.net/http-paymentsView?` +
                             `id=${myId.value}` +
@@ -35,13 +48,14 @@
                             `&product=${'ChatsAndPhotos'}` +
                             `&isMine=${true}` +
                             `&amount=${3000}`;
-                        galleryLink.setAttribute('href', galleryUrl);
+                        document.getElementById('galleryLink').setAttribute('href', galleryUrl);
+
                         for (let i = 1; i < imageArr.length; i++) {
                             var imghtml = `<img src="${imageArr[i]}" alt="Loading image...">`;
                             const ImageToAppend = document.createElement('img');
                             ImageToAppend.src = imageArr[i];
                             ImageToAppend.classList.add('blur');
-                            imageDisplay.append(ImageToAppend);
+                            document.getElementById('imageDisplay').append(ImageToAppend);
                         }
                     })
                     .catch((err) => console.error(err));
@@ -101,6 +115,7 @@
             <input type="text" id="theirId" name="id" hidden value="" />
 
             <h3 id="myName"></h3>
+            <h4 id="verified">Verified</h4>
             <h3 id="whereabouts"></h3>
             <h3 id="bio"></h3>
             <div id="imageDisplay"></div>
