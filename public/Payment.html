@@ -24,7 +24,7 @@
                 if (product == 'Boost') {
                     subTitle.innerText = `Click to pay R${price.value / 100.0} to have your profile boosed for a day`;
                 }
-                if (product == 'verified') {
+                if (product == 'Verified') {
                     subTitle.innerText = `Click to pay R${
                         price.value / 100.0
                     } to show a VERIFIED badge on your profile`;
@@ -72,6 +72,7 @@
                 fetch(payUrl)
                     .then((res) => res.json())
                     .then((out) => {
+                        console.log(out);
                         peachForm.src =
                             `https://umtuwam.web.app/Form.html?` +
                             `payId=${out.id}` +
@@ -79,7 +80,7 @@
                             `&uid=${theirId.value}` +
                             `&product=${productId.value}` +
                             `&isMine=${isMine.value}` +
-                            `&amount=${price.value / 100.0}`;
+                            `&amount=${price.value}`;
                         peachForm.hidden = false;
                         subTitle.hidden = true;
                     });

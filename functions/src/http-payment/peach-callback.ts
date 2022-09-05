@@ -34,14 +34,23 @@ export default functions.https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
         const request = async () => {
             let path = `/v1/checkouts/${checkoutId}/payment`;
-            path += '?entityId=8ac7a4c981a409ed0181a5ce03740312';
+            path += '?entityId=8ac9a4ce81f6a88f018216412bfc206b';
+            // const options = {
+            //     port: 443,
+            //     host: 'eu-test.oppwa.com',
+            //     path: path,
+            //     method: 'GET',
+            //     headers: {
+            //         'Authorization': 'Bearer OGFjN2E0Y2E4MWE0MTNmMjAxODFhNWNkZmYyNjA1MjB8WENaUVRlRDVOWQ==',
+            //     },
+            // };
             const options = {
                 port: 443,
-                host: 'eu-test.oppwa.com',
+                host: 'eu-prod.oppwa.com',
                 path: path,
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Bearer OGFjN2E0Y2E4MWE0MTNmMjAxODFhNWNkZmYyNjA1MjB8WENaUVRlRDVOWQ==',
+                    'Authorization': 'Bearer OGFjOWE0Y2Q4MWY2OTliOTAxODIxNjE3MGMxYzEwM2Z8YjQyY0FNNWtweg==',
                 },
             };
             return new Promise((resolve, reject) => {

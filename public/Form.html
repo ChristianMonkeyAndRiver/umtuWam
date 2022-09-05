@@ -12,7 +12,9 @@
                 let amount = new URL(location.href).searchParams.get('amount');
                 let checkout = new URL(location.href).searchParams.get('payId');
                 let payScript = document.createElement('script');
-                payScript.setAttribute('src', `https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId=${checkout}`);
+                console.log(checkout);
+                // payScript.setAttribute('src', `https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId=${checkout}`);
+                payScript.setAttribute('src', `https://eu-prod.oppwa.com/v1/paymentWidgets.js?checkoutId=${checkout}`);
                 document.body.appendChild(payScript);
 
                 peachPayForm.action =
