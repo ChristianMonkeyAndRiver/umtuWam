@@ -7,7 +7,7 @@ enum Products {
 enum Prices {
     ChatsAndPhotos = 3000,
     Verified = 500,
-    Boost = 1000,
+    Boost = 500,
 }
 
 enum PaymentState {

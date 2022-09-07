@@ -11,8 +11,9 @@
             window.onload = function () {
                 var name = new URL(location.href).searchParams.get('name');
 
-                id.setAttribute('value', new URL(location.href).searchParams.get('id'));
-                uid.setAttribute('vale', new URL(location.href).searchParams.get('uid'));
+                id.setAttribute('value', new URL(location.href).searchParams.get('did'));
+                uid.setAttribute('value', new URL(location.href).searchParams.get('uid'));
+                transgressorName.setAttribute('value', name);
                 head.innerText = `Report ${name}`;
             };
 
@@ -26,7 +27,8 @@
                         `id=${id.value}` +
                         `&uid=${uid.value}` +
                         `&title=${title.value}` +
-                        `&content=${content.value}`
+                        `&content=${content.value}` +
+                        `&name=${transgressorName.value}`
                 )
                     .then((res) => {
                         reportBtn.innerText = 'User successfully Reported.';
@@ -55,6 +57,7 @@
             </p>
             <input type="text" id="id" name="id" hidden value="" />
             <input type="text" id="uid" name="uid" hidden value="" />
+            <input type="text" id="transgressorName" name="transgressorName" hidden value="" />
             <button id="reportBtn" class="report" onclick="report()">Report</button>
         </div>
     </body>

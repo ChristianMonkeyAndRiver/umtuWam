@@ -24,11 +24,16 @@ export default functions.https.onRequest(async (req, res) => {
             const formattedContent = Array.isArray(queryContent) ? queryContent[0] : queryContent;
             const content = formattedContent.toString();
 
+            const queryName = req.query.name ?? '';
+            const formattedName = Array.isArray(queryName) ? queryName[0] : queryName;
+            const name = formattedName;
+
             const now = admin.firestore.Timestamp.now();
             await admin.firestore().collection(util.FunctionsConstants.Reports).doc().set({
                 reporterId: id,
                 transgressorId: uid,
                 title: title,
+                name: name,
                 content: content,
                 timestamp: now,
             });
