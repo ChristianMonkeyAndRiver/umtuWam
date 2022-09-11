@@ -15,7 +15,7 @@ async function sendMoyaMessage(number: string, event: string, isGift?: boolean, 
     let message = '';
     switch (event) {
         case util.Events.Liked:
-            message = 'Someone has Liked you back on UmtuWam - click to see who it is.';
+            message = 'Someone has Liked you, click here to keep Liking!';
             break;
         case util.Events.Message:
             message = 'Someone has sent you a message on UmtuWam - click to see who it is.';

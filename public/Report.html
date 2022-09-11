@@ -14,7 +14,7 @@
                 id.setAttribute('value', new URL(location.href).searchParams.get('did'));
                 uid.setAttribute('value', new URL(location.href).searchParams.get('uid'));
                 transgressorName.setAttribute('value', name);
-                head.innerText = `Report ${name}`;
+                head.innerText = `Report ${name} for?`;
             };
 
             function report() {
@@ -45,7 +45,11 @@
                 <label
                     >Reason for report
                     <br />
-                    <input type="text" id="title" />
+                    <select name="title" id="title">
+                        <option value="Photos">Photos</option>
+                        <option value="Bad Language">Bad Language</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </label>
             </p>
             <p>

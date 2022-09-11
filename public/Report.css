@@ -20,3 +20,8 @@
 body {
     padding-bottom: 150px;
 }
+
+select {
+    height: 35px;
+    width: 80%;
+}

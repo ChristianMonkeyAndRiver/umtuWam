@@ -9,6 +9,7 @@
     <body>
         <script>
             window.onload = function () {
+                document.getElementById('PeachPay').style.display = 'none';
                 myId.setAttribute('value', new URL(location.href).searchParams.get('id'));
 
                 price.setAttribute('value', new URL(location.href).searchParams.get('amount'));

@@ -10,6 +10,7 @@
         <script>
             window.onload = function () {
                 id.setAttribute('value', new URL(location.href).searchParams.get('did'));
+                document.getElementById('errorText').style.display = 'none';
 
                 checkBtn.disabled = true;
 
@@ -101,11 +102,24 @@
                 }
             }
 
+            function hasNumber(stringToTest) {
+                return /\d/.test(stringToTest);
+            }
+
             function stop() {
+                const errorMessage = document.getElementById('errorText');
+                errorMessage.style.display = 'none';
                 event.preventDefault();
                 var test = validateThis();
 
                 if (test) {
+                    const name = myName.value;
+                    const testName = hasNumber(name);
+                    if (testName) {
+                        errorMessage.style.display = 'block';
+                        errorMessage.innerText = 'Name contains invalid or banned characters';
+                        return;
+                    }
                     var gender = '';
                     var inputs = document.getElementsByName('gender');
                     for (var i = 0; i < inputs.length; i++) {
@@ -131,12 +145,12 @@
 
                     var url =
                         `https://us-central1-umtuwam.cloudfunctions.net/http-signUp?` +
-                        `name=${myName.value}` +
+                        `name=${name}` +
                         `&gender=${gender}` +
                         `&lookingForFemale=${lookingForFemale}` +
                         `&lookingForMale=${lookingForMale}` +
                         `&age=${age.value}` +
-                        `&location=${whereabouts.value}` +
+                        `&location=${location}` +
                         `&id=${id.value}`;
 
                     checkBtn.disabled = true;
@@ -157,7 +171,7 @@
         <form onsubmit="stop();" method="get">
             <div>
                 <img class="logo" src="./logo.png" alt="UmtuWam" />
-                <h2 class="h">Lets start dating!</h2>
+                <h2 class="h">Meet singles and find love! Mingle with people on UmtuWam! Sign up now!</h2>
                 <div class="container">
                     <p>
                         <label
@@ -230,6 +244,7 @@
                     <input type="text" id="id" name="id" hidden value= />
                 </div>
                 <button type="submit" id="checkBtn">Start dating</button>
+                <div id="errorText"></div>
             </div>
         </form>
     </body>
